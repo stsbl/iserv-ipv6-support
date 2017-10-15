@@ -18,6 +18,7 @@ Depends:
   isc-dhcp-server,
   libexpr-ipv6-perl,
   libnetaddr-mac-perl,
+  lsb-base,
 Description: IPv6 Support für IServ
  Bringt experimentellen IPv6-Support für IServ mit.
 Tag: suite::iserv
