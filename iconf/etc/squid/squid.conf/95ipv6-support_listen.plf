@@ -1,0 +1,14 @@
+#!/usr/bin/perl -p -CSDAL
+
+my @ips = sort split "\n", qx(netquery6 --global --lan --format "ip");
+push @ips, "::1";
+my $out = "";
+
+for (@ips)
+{
+  $out .= "  http_port [$_]:1328\n";
+  next if $_ eq "::1";
+  $out .= "  http_port [$_]:1329 intercept\n";
+}
+
+s/(?:(# Allow access only from the local network))$/$1\n$out/;

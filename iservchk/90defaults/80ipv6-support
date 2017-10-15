@@ -1,0 +1,5 @@
+Test "update iservcfg -> LAN for IPv6"
+  chklan6cfg
+  ---
+  chklan6cfg -r
+

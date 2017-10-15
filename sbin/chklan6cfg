@@ -1,0 +1,71 @@
+#!/usr/bin/perl -CSDAL
+
+# refresh iservcfg -> LAN with current IPv6 addresses
+use warnings;
+use strict;
+use Getopt::Long;
+use IServ::Conf;
+use Regexp::IPv6;
+
+my $repaired = 0;
+my %opt;
+
+GetOptions(\%opt,
+    "help|h",
+    "repair|r"
+  ) or $opt{help} = 1;
+
+print <<USAGE and exit if $opt{help};
+Usage: chklan6cfg [options]
+  -h, --help         show this help
+  -r, --repair       write new config
+USAGE
+
+my @current = @{ $conf->{LAN} };
+
+my %seen;
+$seen{$_} = 1 
+  for @current;
+
+my %old_ipv6 = map { $_ => 1 } grep /$Regexp::IPv6::IPv6_re\/(\d+)/, @current;
+my %new_ipv6 = map { $_ => 1 } split "\n", qx(netquery6 --global --lan --format prefix/length);
+
+for (keys %new_ipv6)
+{
+  unless (defined $seen{$_})
+  {
+    print "ip range $_ missing.\n";
+    $repaired++;
+  }
+}
+
+for (keys %old_ipv6)
+{
+  unless (defined $new_ipv6{$_})
+  {
+    print "ip range $_ obsolete.\n";
+  }
+}
+
+exit 0 if !$repaired;
+
+# reset all ipv6 addresses for fill current from netquery6
+delete $seen{$_} for keys %old_ipv6;
+
+# fill new ips
+$seen{$_} = 1 for keys %new_ipv6;
+
+exit 0 if !keys %seen;
+
+if ($opt{repair})
+{
+  # build value for store_cfg
+  my $arg = '("'.join('" "', sort keys %seen).'")';
+  system "store_cfg", "/etc/iserv/config", "LAN", $arg
+    and die "failed to write new config: $!\n";
+  system "iservchk", "-a", "config";
+} 
+else
+{
+  exit 1;
+}

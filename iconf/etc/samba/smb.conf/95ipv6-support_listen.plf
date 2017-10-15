@@ -1,0 +1,7 @@
+#!/usr/bin/perl -p -CSDAL
+
+my @ips = sort split "\n", qx(netquery6 --global --lan --format "ip");
+push @ips, "::1";
+my $out = join " ", @ips;
+
+s/interfaces = (.*)$/interfaces = $1 $out/g;

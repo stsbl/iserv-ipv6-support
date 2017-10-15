@@ -1,0 +1,7 @@
+#!/usr/bin/perl -p -CSDAL
+
+my @ips = sort split "\n", qx(netquery6 --global --lan --format "ip/length;");
+push @ips, "::1/128;";
+my $out = join " ", @ips;
+
+s/listen-on-v6 \{ \}\;/listen-on-v6 \{ $out \}\;/g;
