@@ -1,0 +1,3 @@
+# Eigene Regeln, z. B. Port-Forwarding
+[ -f /etc/nat6.local ] && . /etc/nat6.local
+

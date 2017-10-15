@@ -13,6 +13,7 @@ Architecture: all
 Depends:
   ${misc:Depends},
   ${perl:Depends},
+  iserv-portal,
   iserv-server-incron,
   stsbl-iserv-config-ipv6,
   radvd,

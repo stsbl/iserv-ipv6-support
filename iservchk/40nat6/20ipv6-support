@@ -1,6 +1,6 @@
-#Check /etc/nat6
-#Check /etc/nat6.local
-#ChPerm 755 root:root /etc/nat6{,.local}
+Check /etc/nat6
+Touch /etc/nat6.local
+ChPerm 755 root:root /etc/nat6{,.local}
 ChPerm 0755 root:root /etc/nat6
 Shell "start nat6" service nat6 restart
 

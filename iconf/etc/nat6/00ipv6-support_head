@@ -1,0 +1,9 @@
+#!/bin/bash
+# This file is generated automatically by iservchk.
+# It is not recommended to make any changes to this file.
+# If really necessary you can save changes permanently using:
+#   iconf save /etc/nat
+#
+# For your own settings you can use:
+#   /etc/nat6.local
+
