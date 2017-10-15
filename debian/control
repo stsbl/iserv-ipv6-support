@@ -1,12 +1,10 @@
 Source: stsbl-iserv-ipv6-support
-Section: unknown
-Priority: optional
+Section: misc
+Priority: extra
 Maintainer: Stadtteilschule Blankenese <repository@stsbl.de>
 Build-Depends: debhelper (>= 9)
 Standards-Version: 3.9.8
-Homepage: <insert the upstream URL, if relevant>
-#Vcs-Git: https://anonscm.debian.org/collab-maint/stsbl-iserv-ipv6-support.git
-#Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/stsbl-iserv-ipv6-support.git
+Homepage: https://it.stsbl.de
 
 Package: stsbl-iserv-ipv6-support
 Architecture: all
@@ -19,5 +17,7 @@ Depends:
   radvd,
   isc-dhcp-server,
   libexpr-ipv6-perl,
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+  libnetaddr-mac-perl,
+Description: IPv6 Support für IServ
+ Bringt experimentellen IPv6-Support für IServ mit.
+Tag: suite::iserv

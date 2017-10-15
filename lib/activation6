@@ -1,0 +1,152 @@
+#!/usr/bin/perl -T -CSDAL
+use warnings;
+use strict;
+use File::Slurp::Unicode;
+use IPC::Run qw(run);
+use IServ::Conf;
+use IServ::DB;
+use NetAddr::MAC;
+undef %ENV;
+
+$ENV{PATH} = '/usr/sbin:/usr/bin:/sbin:/bin';
+
+exit 0 if !$conf->{Activation};
+
+IServ::DB::Do "DELETE FROM nacs WHERE timer IS NOT NULL AND timer <= now()";
+IServ::DB::Do "UPDATE hosts SET override_route = NULL, override_until = NULL, ".
+  "override_by = NULL WHERE override_until <= now()";
+IServ::DB::Do "UPDATE hosts SET deploy_until = NULL ".
+  "WHERE deploy_until <= now()";
+
+my %host = IServ::DB::SelectAll_Hash "
+  -- add whitelisted hosts
+  SELECT mac, proxyenforce FROM hosts
+    WHERE
+      -- whitelisted in computer management
+      internet
+      -- whitelisted in the computer module
+      OR override_route
+      -- whitelisted by deploy
+      OR deploy_until IS NOT NULL
+  -- add users with inet_access privilege
+  UNION SELECT mac, proxyenforce FROM samba_user_last
+    JOIN users_priv USING (act)
+    LEFT OUTER JOIN hosts USING (ip)
+    WHERE privilege LIKE 'inet_access'
+  -- add users with NACs
+  UNION SELECT mac, proxyenforce FROM nacs
+    LEFT OUTER JOIN hosts USING (ip)
+    WHERE ip IS NOT NULL
+    AND timer IS NOT NULL
+  -- remove hosts that have been blacklisted in the computer module
+  EXCEPT SELECT mac, proxyenforce FROM hosts WHERE NOT override_route
+  -- remove users with inet_block privilege
+  EXCEPT SELECT mac, proxyenforce FROM samba_user_last
+    JOIN users_priv USING (act)
+    LEFT OUTER JOIN hosts USING (ip)
+    WHERE privilege LIKE 'inet_block'
+  ORDER BY 1
+  ";
+
+use Data::Dumper;
+
+sub mac2ipv6($$)
+{
+  my ($mac, $prefix) = @_;
+  $mac = new NetAddr::MAC shift;
+ 
+  return if not defined $mac or not defined $prefix;
+  
+  my $ipv6 = $prefix . ":" . as_ipv6_suffix $mac;
+  $ipv6 =~ s/::/:/;
+  
+  $ipv6;
+}
+
+my %active;
+my @prefixes = sort split "\n", qx(netquery6 --lan --global --format "prefix");
+
+for my $h (keys %host)
+{
+  for my $prefix (@prefixes)
+  {
+    $prefix =~ s/:$//;
+    $active{mac2ipv6($h, $prefix)} = $host{$h};
+  }
+}
+
+# always allow localhost for testing purposes
+$active{"0000:0000:0000:0000:0000:0000:0000:0001"} = { proxyenforce => 0 };
+
+# update iptables
+# only hosts with proxyenforce='f' will be whitelisted in NAT
+my %rules = map {("-A activation_out -s $_ -j ACCEPT", 1)}
+    grep { !$active{$_}{'proxyenforce'} } keys %active;
+run ["ip6tables-save", "-t", "filter"], ">", \$_ or die $!;
+for (split /\n/)
+{
+  s/\s+$//;
+  s/\/32\b//;
+  if (exists $rules{$_})
+  {
+    delete $rules{$_};
+  }
+  elsif (s/^-A(?= activation_)/-D/)
+  {
+    $rules{$_}++;
+  }
+}
+
+if (%rules)
+{
+  my $upd = join "", map "$_\n", "*filter", keys %rules, "COMMIT";
+  printf "update iptables (%d rules)\n", scalar keys %rules;
+  run ["ip6tables-restore", "-n"], "<", \$upd or die $!;
+}
+
+my $reloadsquid = 0;
+
+# update Squid
+# hosts will be whitelisted in Squid regardless of their proxyenforce setting
+my $fn = "/etc/squidguard/active_ips6";
+my $old = read_file $fn, err_mode => "quiet";
+my $new = join "", map "$_\n", sort keys %active;
+if (!defined $old or $old ne $new)
+{
+  print "update $fn\n";
+  write_file $fn, {atomic => 1}, $new;
+  $reloadsquid = 1;
+}
+
+# update squid proxyonly
+# only hosts with proxyenforce='t' will be whitelisted in proxyonly_ips
+
+my $release = qx{bash -c '. /usr/lib/iserv/sh-functions.d/get_debian_release ; echo "\$(get_debian_release)";'};
+chomp($release);
+
+if ($release eq "jessie") {
+  $fn = "/etc/squid3/proxyonly_ips6";
+} else {
+  $fn = "/etc/squid/proxyonly_ips6";
+}
+$old = read_file($fn, err_mode => "quiet");
+$new = join "", map "$_\n", grep { $active{$_}{'proxyenforce'} }
+    keys %active;
+if (!defined $old or $old ne $new)
+{
+  print "update $fn\n";
+  write_file $fn, {atomic => 1}, $new;
+  $reloadsquid = 1;
+  if (!$old != !$new)
+  {
+    if ($release eq "jessie") {
+      system "iconf repair /etc/squid3/squid.conf >/dev/null";
+    } else {
+      system "iconf repair /etc/squid/squid.conf >/dev/null";
+    }
+  }
+}
+
+system '/usr/lib/iserv/squid_reload' if $reloadsquid;
+
+
