@@ -16,7 +16,7 @@ Depends:
   stsbl-iserv-config-ipv6,
   radvd,
   isc-dhcp-server,
-  libexpr-ipv6-perl,
+  libregexp-ipv6-perl,
   libnetaddr-mac-perl,
   lsb-base,
 Description: IPv6 Support für IServ
