@@ -1,0 +1,5 @@
+Link /usr/share/iserv/samba/ipv6/ipv6-disable-randomize-identifier.bat
+  /etc/samba/netlogon/
+Link /usr/share/iserv/samba/ipv6/ipv6-enable-randomize-identifier.bat
+  /etc/samba/netlogon/
+

@@ -1,0 +1,7 @@
+UseDHCPv6:
+name            Use DHCPv6 to manage IPv6 addresses in local network
+description     DHCPv6 is not required, but highly recommended to ensure that a client uses the correct address. Without it, is not safe that client uses the intended ip address.
+group           Network
+type            bool
+default         true
+
