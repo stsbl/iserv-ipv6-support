@@ -30,12 +30,16 @@ then
     echo "  MinRtrAdvInterval 3;"
     echo "  MaxRtrAdvInterval 10;"
     echo
-    for h in $(netquery6 --global --format "nic prefix/length" --lan | uniq | grep -E "^$i" | awk '{ print $2 }')
+    for h in $(netquery6 --global --lan --format "nic prefix/length" | uniq | grep -E "^$i\s" | awk '{ print $2 }')
     do
       echo "  prefix $h {"
       echo "    AdvOnLink on;"
       echo "    AdvAutonomous $(if [ "$UseDHCPv6" ]; then echo "off"; else echo "on"; fi);"
       echo "    AdvRouterAddr on;"
+      echo "  };"
+      echo
+      echo "  RDNSS $(netquery6 --global --lan --format "nic ip" | grep -E "^$i\s" | awk '{ print $2 }') {"
+      echo "    AdvRDNSSLifetime 300;"
       echo "  };"
     done
     echo "};"
