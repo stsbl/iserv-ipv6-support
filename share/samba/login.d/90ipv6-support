@@ -3,6 +3,7 @@ use warnings;
 use strict;
 use IServ::DB;
 use IServ::Conf;
+use IServ::RPC;
 
 # run asynchronously
 fork and exit;
