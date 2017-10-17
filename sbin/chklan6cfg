@@ -63,7 +63,7 @@ if ($opt{repair})
   my $arg = '("'.join('" "', sort keys %seen).'")';
   system "store_cfg", "/etc/iserv/config", "LAN", $arg
     and die "failed to write new config: $!\n";
-  system "iservchk", "-a", "config";
+  system "iservchk", "-a";
 } 
 else
 {
