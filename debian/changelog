@@ -1,3 +1,12 @@
+stsbl-iserv-ipv6-support (17.10.18-0) experimental; urgency=medium
+
+  * Fixed typo and added support to disable DHCPv6.
+  * samba/login.d: Fixed module import.
+  * chklan6cfg: Perform complete iservchk on repair.
+  * radvd: Added dns server.
+
+ -- Felix Jacobi <felix.jacobi@iserv.eu>  Wed, 18 Oct 2017 00:17:02 +0200
+
 stsbl-iserv-ipv6-support (17.10.16-2) experimental; urgency=medium
 
   * Added missing interfaces config for dhcpd6.
