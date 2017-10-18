@@ -1,3 +1,10 @@
+stsbl-iserv-ipv6-support (17.10.18-1) experimental; urgency=medium
+
+  * nat: Fixed hardcoded interface for dhcpv6
+  * squid: Fixed wrong port.
+
+ -- Felix Jacobi <felix.jacobi@iserv.eu>  Wed, 18 Oct 2017 19:17:39 +0200
+
 stsbl-iserv-ipv6-support (17.10.18-0) experimental; urgency=medium
 
   * Fixed typo and added support to disable DHCPv6.
