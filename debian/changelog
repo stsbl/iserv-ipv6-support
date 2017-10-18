@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (17.10.19-1) experimental; urgency=medium
+
+  * radvd: Set {Min,Max}RtrAdvInterval for wan interfaces.
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Thu, 19 Oct 2017 01:12:10 +0200
+
 stsbl-iserv-ipv6-support (17.10.18-1) experimental; urgency=medium
 
   * nat: Fixed hardcoded interface for dhcpv6
