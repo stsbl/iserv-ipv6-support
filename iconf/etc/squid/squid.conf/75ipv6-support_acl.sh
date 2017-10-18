@@ -23,6 +23,3 @@ then
   echo
 fi
 
-echo "# Listen on ipv6-localhost"
-echo "  http_port [::1]:3128"
-echo
