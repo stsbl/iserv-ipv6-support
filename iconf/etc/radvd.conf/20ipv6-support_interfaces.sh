@@ -8,6 +8,9 @@ do
   echo "  AdvSendAdvert on;"
   echo "  AdvDefaultLifetime 0;"
   echo
+  echo "  MinRtrAdvInterval 3;"
+  echo "  MaxRtrAdvInterval 10;"
+  echo
   for h in $(netquery6 --global --format "nic prefix/length" | grep -v $i | awk '{ print $2 }')
   do
     echo "  route $h {"
