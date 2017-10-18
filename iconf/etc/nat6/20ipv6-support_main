@@ -69,10 +69,13 @@ if [ -n "$LAN_SPEC" ]
 then
   ip6tables -A INPUT -s $LAN_SPEC -j input_lan
   # DHCPv6 auch von Geräten ohne IP behandeln
-  ip6tables -A INPUT -i eth1 -p udp --dport 546 -j input_lan # DHCPv6
-  ip6tables -A INPUT -i eth1 -p udp --dport 547 -j input_lan # DHCPv6
+  for i in $(netquery6 --lan --format nic)
+  do
+    ip6tables -A INPUT -i $i -p udp --dport 546 -j input_lan # DHCPv6
+    ip6tables -A INPUT -i $i -p udp --dport 547 -j input_lan # DHCPv6
+  done
 
-  ip6tables -A input_lan -p udp --dport 546 -j input_lan
+  ip6tables -A input_lan -p udp --dport 546 -j ACCEPT
   ip6tables -A input_lan -p udp --dport 547 -j ACCEPT
   ip6tables -A input_lan -p tcp --dport domain -j ACCEPT
   ip6tables -A input_lan -p udp --dport domain -j ACCEPT
