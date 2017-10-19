@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (17.10.19-2) experimental; urgency=medium
+
+  * Added store_cfg fork for array storing in iservcfg
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Thu, 19 Oct 2017 17:42:01 +0200
+
 stsbl-iserv-ipv6-support (17.10.19-1) experimental; urgency=medium
 
   * radvd: Set {Min,Max}RtrAdvInterval for wan interfaces.
