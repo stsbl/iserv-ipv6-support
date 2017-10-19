@@ -61,7 +61,7 @@ if ($opt{repair})
 {
   # build value for store_cfg
   my $arg = '("'.join('" "', sort keys %seen).'")';
-  system "store_cfg", "/etc/iserv/config", "LAN", $arg
+  system "store_cfg_array", "/etc/iserv/config", "LAN", $arg
     and die "failed to write new config: $!\n";
   system "iservchk", "-a";
 } 

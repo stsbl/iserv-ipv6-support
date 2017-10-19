@@ -1,0 +1,15 @@
+#!/bin/sh
+if [ $# -ne 3 ]
+then
+  echo "Usage: store_cfg <filename> <option> <value>"
+  exit 1
+fi
+
+FN="$1"
+VAR="$2"
+STR="$3"
+
+# quote all except letters and digits
+STR="$(echo "$STR" | sed 's/\([^A-Za-z0-9]\)/\\\1/g')"
+
+sed -i "s/^$VAR *=.*\$/$VAR=$STR/" $FN
