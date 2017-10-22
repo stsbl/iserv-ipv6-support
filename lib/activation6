@@ -48,8 +48,6 @@ my %host = IServ::DB::SelectAll_Hash "
   ORDER BY 1
   ";
 
-use Data::Dumper;
-
 sub mac2ipv6($$)
 {
   my ($mac, $prefix) = @_;
