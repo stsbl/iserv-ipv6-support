@@ -184,7 +184,7 @@ ip6tables -A FORWARD -j REJECT --reject-with icmp6-adm-prohibited
 # unbekannte eingehende Pakete verbieten
 #ip6tables -A INPUT -j LOG --log-prefix "INPUT rejected: "
 # TCP-Pakete mit TCP-RST ablehnen; funktioniert besser mit nmap
-#ip6tables -A INPUT -p tcp -j REJECT --reject-with icmp6-port-unreachable
+ip6tables -A INPUT -p tcp -j REJECT --reject-with tcp-reset
 ip6tables -A INPUT -j REJECT
 
 # Routing aktivieren
