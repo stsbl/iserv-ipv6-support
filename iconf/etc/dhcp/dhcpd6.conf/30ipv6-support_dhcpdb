@@ -1,0 +1,21 @@
+on commit {
+  execute("/usr/lib/iserv/dhcpdb", "--commit",
+      "--ip", binary-to-ascii(16, 8, ":", leased-address),
+      "--mac", binary-to-ascii(16, 8, ":", substring(hardware, 1, 6)),
+      "--options", binary-to-ascii(10, 8, ":",
+          option dhcp-parameter-request-list)
+    );
+}
+on expiry {
+  execute("/usr/lib/iserv/dhcpdb", "--expiry",
+      "--ip", binary-to-ascii(16, 8, ":", leased-address),
+      "--mac", binary-to-ascii(16, 8, ":", substring(hardware, 1, 6))
+    );
+}
+on release {
+  execute("/usr/lib/iserv/dhcpdb", "--release",
+      "--ip", binary-to-ascii(16, 8, ":", leased-address),
+      "--mac", binary-to-ascii(16, 8, ":", substring(hardware, 1, 6))
+    );
+}
+

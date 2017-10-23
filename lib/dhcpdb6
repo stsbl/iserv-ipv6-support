@@ -1,0 +1,43 @@
+#!/usr/bin/perl -CSDAL
+
+use strict;
+use warnings;
+use Getopt::Long;
+use IServ::DB;
+use Regexp::IPv6;
+
+my %opt;
+GetOptions(\%opt,
+    "commit",
+    "expiry",
+    "release",
+    "ip=s",
+    "mac=s",
+    "options=s",
+);
+
+defined $opt{ip} or die "No IP specified!\n";
+defined $opt{mac} or die "No MAC specified!\n";
+# fix MAC because dhcpd strips leading zeros
+$opt{mac} = join ":", map { sprintf "%02s", $_ } split /:/, $opt{mac};
+# validate
+$opt{ip} =~ /^$Regexp::IPv6::IPv6_re$/ or die "Invalid IP!\n";
+$opt{mac} =~ /^([[:xdigit:]]{2}:){5}[[:xdigit:]]{2}$/ or die "Invalid MAC!\n";
+
+if(defined $opt{commit}) {
+  # commit
+
+  # remove stale entries
+  DBH->do("DELETE FROM host_dhcp6 WHERE ip = ? AND mac = ?", undef,
+      $opt{ip}, $opt{mac});
+
+  # insert new entry
+  DBH->do("INSERT INTO host_dhcp6 VALUES (?, ?, ?)", undef,
+      $opt{ip}, $opt{mac}, 1);
+} elsif(defined $opt{expiry} || defined $opt{release}) {
+  # expiry / release
+  DBH->do("UPDATE host_dhcp6 SET active = false WHERE ip = ? AND mac = ?",
+      undef, $opt{ip}, $opt{mac});
+} else {
+  die "Invalid argument!\n";
+}
