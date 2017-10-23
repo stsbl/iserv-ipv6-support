@@ -1,5 +1,5 @@
 on commit {
-  execute("/usr/lib/iserv/dhcpdb", "--commit",
+  execute("/usr/lib/iserv/dhcpdb6", "--commit",
       "--ip", binary-to-ascii(16, 8, ":", leased-address),
       "--mac", binary-to-ascii(16, 8, ":", substring(hardware, 1, 6)),
       "--options", binary-to-ascii(10, 8, ":",
@@ -7,13 +7,13 @@ on commit {
     );
 }
 on expiry {
-  execute("/usr/lib/iserv/dhcpdb", "--expiry",
+  execute("/usr/lib/iserv/dhcpdb6", "--expiry",
       "--ip", binary-to-ascii(16, 8, ":", leased-address),
       "--mac", binary-to-ascii(16, 8, ":", substring(hardware, 1, 6))
     );
 }
 on release {
-  execute("/usr/lib/iserv/dhcpdb", "--release",
+  execute("/usr/lib/iserv/dhcpdb6", "--release",
       "--ip", binary-to-ascii(16, 8, ":", leased-address),
       "--mac", binary-to-ascii(16, 8, ":", substring(hardware, 1, 6))
     );
