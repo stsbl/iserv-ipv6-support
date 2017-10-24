@@ -19,8 +19,6 @@ Depends:
   libregexp-ipv6-perl,
   libnetaddr-mac-perl,
   lsb-base,
-Replaces:
-  stsbl-iserv-config-ipv6 (<< 17.10.24-2),
 Description: IPv6 Support für IServ
  Bringt experimentellen IPv6-Support für IServ mit.
 Tag: suite::iserv
