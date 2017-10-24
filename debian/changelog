@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (17.10.24-4) experimental; urgency=medium
+
+  * Moved touch of leases file from config-ipv6
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Tue, 24 Oct 2017 13:57:30 +0200
+
 stsbl-iserv-ipv6-support (17.10.24-3) experimental; urgency=medium
 
   * Fixed deps
