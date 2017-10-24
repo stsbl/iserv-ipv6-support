@@ -1,3 +1,16 @@
+stsbl-iserv-ipv6-support (17.10.24-1) experimental; urgency=medium
+
+  * nat: Added tcp-reset for tcp packages.
+  * Removed perl dump import.
+  * Added dhcpdb.
+  * dhcpdb: Fixed command.
+  * dhcpv6: Improved ipv6 conversion.
+  * dhcpdb: Set number length to 16 bits.
+  * dhcpdb: updated hook config
+  * Improved dhcpd6 host list generation.
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Tue, 24 Oct 2017 12:09:47 +0200
+
 stsbl-iserv-ipv6-support (17.10.19-2) experimental; urgency=medium
 
   * Added store_cfg fork for array storing in iservcfg
