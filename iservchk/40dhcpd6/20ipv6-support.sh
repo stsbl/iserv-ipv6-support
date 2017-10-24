@@ -2,6 +2,7 @@
 
 . /usr/lib/iserv/cfg
 
+echo 'Touch /var/lib/dhcp/dhcpd6.leases'
 echo 'Check /etc/init.d/isc-dhcp-server6'
 echo 'Check /etc/default/isc-dhcp-server6'
 echo 'ChPerm 0755 root:root /etc/init.d/isc-dhcp-server6'
