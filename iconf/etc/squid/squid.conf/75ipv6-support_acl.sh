@@ -16,10 +16,13 @@ then
     echo "intercepted"
     echo
   fi
-  echo "# Allow activated computers"
-  echo "  acl active6 src \"/etc/squidguard/active_ips6\""
-  echo "  http_access allow active6"
-  echo "  icp_access allow active6"
-  echo
+  if [ -s /etc/squidguard/active_ips6 ]
+  then
+    echo "# Allow activated computers"
+    echo "  acl active6 src \"/etc/squidguard/active_ips6\""
+    echo "  http_access allow active6"
+    echo "  icp_access allow active6"
+    echo
+  fi
 fi
 
