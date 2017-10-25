@@ -1,3 +1,11 @@
+stsbl-iserv-ipv6-support (17.10.25-1) experimental; urgency=medium
+
+  * Removed debug code.
+  * Fixed squid on servers without lan interfaces.
+  * Fixed broken pipe error in radvd iservchk script
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Wed, 25 Oct 2017 23:35:20 +0200
+
 stsbl-iserv-ipv6-support (17.10.24-5) experimental; urgency=medium
 
   * Moved network interfaces post-up script to config-ipv6.
