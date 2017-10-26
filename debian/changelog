@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (17.10.26-2) experimental; urgency=medium
+
+  * iconf: Use new wan option of netquery6
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Thu, 26 Oct 2017 04:48:17 +0200
+
 stsbl-iserv-ipv6-support (17.10.26-1) experimental; urgency=medium
 
   * Fixed wrong blocking of DHCPv6 request which prevents renewal of
