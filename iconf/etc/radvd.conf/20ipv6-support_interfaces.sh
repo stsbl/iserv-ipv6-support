@@ -2,7 +2,7 @@
 
 . /usr/lib/iserv/cfg
 
-for i in $(netquery6 --global --format nic | uniq | grep -v "$(netquery6 --format nic --lan)")
+for i in $(netquery6 --global --wan --format nic | uniq)
 do
   echo "interface $i {"
   echo "  AdvSendAdvert on;"
