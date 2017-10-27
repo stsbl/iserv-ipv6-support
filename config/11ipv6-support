@@ -5,3 +5,17 @@ group           Network
 type            bool
 default         true
 
+UpdateIPv6Regdns:
+name            Update Regdns configuration automatically to include current IPv6 addresses
+description     If enabled a cron job will update the iservcfg option External IPs to include all current IPv6 addresses of the server.
+group           Network
+type            bool
+default         true
+
+UpdateIPv6LAN:
+name            Update LAN ranges automatically to include current IPv6 addresses
+description     If enabled a cron job will update the iservcfg option Local Network to include all current IPv6 ranges of the server.
+group           Network
+type            bool
+default         true
+

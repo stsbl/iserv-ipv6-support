@@ -21,6 +21,8 @@ Usage: chklan6cfg [options]
   -r, --repair       write new config
 USAGE
 
+exit 0 if !$conf->{UpdateIPv6LAN};
+
 my @current = @{ $conf->{LAN} };
 
 my %seen;

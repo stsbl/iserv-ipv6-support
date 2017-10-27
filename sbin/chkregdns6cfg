@@ -1,6 +1,6 @@
 #!/usr/bin/perl -CSDAL
 
-# refresh iservcfg -> LAN with current IPv6 addresses
+# refresh iservcfg -> ExternalIPs with current IPv6 addresses
 use warnings;
 use strict;
 use Getopt::Long;
@@ -20,6 +20,8 @@ Usage: chkregdns6cfg [options]
   -h, --help         show this help
   -r, --repair       write new config
 USAGE
+
+exit 0 if !$conf->{UpdateIPv6Regdns};
 
 my @current = @{ $conf->{ExternalIPs} };
 exit 0 if !@current;
