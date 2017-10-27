@@ -14,7 +14,7 @@ default         true
 
 UpdateIPv6LAN:
 name            Update LAN ranges automatically to include current IPv6 ranges
-description     If enabled a cron job will update the iservcfg option Local Network to include all current IPv6 ranges of the server.
+description     If enabled a cron job will update the iservcfg option Local IP ranges to include all current IPv6 ranges of the server.
 group           Network
 type            bool
 default         true
