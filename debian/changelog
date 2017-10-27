@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (17.10.28-1) experimental; urgency=medium
+
+  * Fixed descriptions and locales of iservcfg
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Sat, 28 Oct 2017 00:24:03 +0200
+
 stsbl-iserv-ipv6-support (17.10.27-1) experimental; urgency=medium
 
   * Added dynamic changing of regdns config
