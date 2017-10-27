@@ -1,3 +1,12 @@
+stsbl-iserv-ipv6-support (17.10.27-1) experimental; urgency=medium
+
+  * Added dynamic changing of regdns config
+  * Added option to disable dynamic updates for lan and regdns and
+    added cronjob for both.
+  * Added locales
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Fri, 27 Oct 2017 23:56:34 +0200
+
 stsbl-iserv-ipv6-support (17.10.26-2) experimental; urgency=medium
 
   * iconf: Use new wan option of netquery6
