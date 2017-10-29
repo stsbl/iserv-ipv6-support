@@ -1,1 +1,1 @@
-s/UseIPv6\s*off/UseIPv6     \s*
+s/UseIPv6\s*off/UseIPv6                 on/g
