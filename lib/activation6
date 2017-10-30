@@ -158,6 +158,15 @@ if (!defined $old or $old ne $new)
   }
 }
 
-system '/usr/lib/iserv/squid_reload' if $reloadsquid;
+if ($release eq "jessie")
+{
+  system '/usr/lib/iserv/sleep_exec_once', '10', 'squid_reload6',
+    '/usr/sbin/service', 'squid3', 'reload' if $reloadsquid;
+}
+else
+{
+  system '/usr/lib/iserv/sleep_exec_once', '10', 'squid_reload6',
+    '/usr/sbin/service', 'squid', 'reload' if $reloadsquid;
+}
 
 
