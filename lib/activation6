@@ -62,6 +62,10 @@ sub mac2ipv6($$)
 }
 
 my %active;
+# also allow current mac to allow hosts which are not using DHCPv6 and uses the
+# wrong address (e.g. Ubuntu with Network Manager)
+my %active_macs;
+
 my @prefixes = sort split "\n", qx(netquery6 --lan --global --format "prefix");
 
 for my $h (keys %host)
@@ -70,6 +74,7 @@ for my $h (keys %host)
   {
     $prefix =~ s/:$//;
     $active{mac2ipv6($h, $prefix)} = $host{$h};
+    $active_macs{$h} = mac2ipv6($h, $prefix);
   }
 }
 
@@ -80,6 +85,14 @@ $active{"0000:0000:0000:0000:0000:0000:0000:0001"} = { proxyenforce => 0 };
 # only hosts with proxyenforce='f' will be whitelisted in NAT
 my %rules = map {("-A activation_out -s $_ -j ACCEPT", 1)}
     grep { !$active{$_}{'proxyenforce'} } keys %active;
+
+# push mac checks to rules
+for my $mac (keys %active_macs)
+{
+  $rules{"-A activation_out -m mac --mac-source $mac -j ACCEPT"} = 1
+    if grep { !$active{$active_macs{$mac}}{'proxyenforce'} } keys %active;
+}
+
 run ["ip6tables-save", "-t", "filter"], ">", \$_ or die $!;
 for (split /\n/)
 {
