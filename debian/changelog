@@ -1,3 +1,12 @@
+stsbl-iserv-ipv6-support (17.11.01-1) experimental; urgency=medium
+
+  * Enable ipv6 support for protftpd
+  * Fixed proftpd sed script
+  * activation6: Whitelist also mac address source in activation_out
+  * activation6: Do not longer use squid_reload as it causes race conditions with "activation4"
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Wed, 01 Nov 2017 22:51:36 +0100
+
 stsbl-iserv-ipv6-support (17.10.28-1) experimental; urgency=medium
 
   * Fixed descriptions and locales of iservcfg
