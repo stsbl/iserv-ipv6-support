@@ -1,3 +1,10 @@
+stsbl-iserv-ipv6-support (17.11.02-1) experimental; urgency=medium
+
+  * Added custom forward chain
+  * nat6: Improved input_lan to include to link local and multicast
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Thu, 02 Nov 2017 01:14:24 +0100
+
 stsbl-iserv-ipv6-support (17.11.01-1) experimental; urgency=medium
 
   * Enable ipv6 support for protftpd
