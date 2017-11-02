@@ -35,9 +35,6 @@ ip6tables -N check_mac
 ip6tables -A FORWARD -p tcp --syn -j check_mac
 ip6tables -A FORWARD ! -p tcp -j check_mac
 
-ip6tables -N forward
-ip6tables -A FORWARD -j forward
-
 /usr/lib/iserv/newhosts &> /dev/null
 
 # Firewall für eingehende Pakete
@@ -66,37 +63,42 @@ ip6tables -A input_world -p tcp --dport nrpe -j ACCEPT # Nagios OS
 ip6tables -A input_world -p tcp --sport 1024: --dport 63000:63099 -j ACCEPT
 ip6tables -A input_world -p ipv6-icmp -j ACCEPT
 
-# Always accept DHCPv6
-ip6tables -A INPUT -p udp --dport 546 -j ACCEPT # DHCPv6
-ip6tables -A INPUT -p udp --dport 547 -j ACCEPT # DHCPv6
-
+# New chain for lan related traffic
 ip6tables -N input_lan
+
+# Treat link-local als LAN traffic
+ip6tables -A INPUT -s fe80::/64 -j input_lan
+
+# Treat multi-cast as LAN traffic
+ip6tables -A INPUT -d ff00::/8 -j input_lan
+
 # Ports, die nur im LAN erreichbar sein müssen
 if [ -n "$LAN_SPEC" ]
 then
   ip6tables -A INPUT -s $LAN_SPEC -j input_lan
-
-  ip6tables -A input_lan -p tcp --dport domain -j ACCEPT
-  ip6tables -A input_lan -p udp --dport domain -j ACCEPT
-  ip6tables -A input_lan -p udp --dport bootps -j ACCEPT
-  ip6tables -A input_lan -p udp --dport tftp -j ACCEPT
-  ip6tables -A input_lan -p udp --dport ntp -j ACCEPT
-  ip6tables -A input_lan -p udp --dport netbios-ns -j ACCEPT
-  ip6tables -A input_lan -p udp --dport netbios-dgm -j ACCEPT
-  ip6tables -A input_lan -p tcp --dport netbios-ssn -j ACCEPT
-  ip6tables -A input_lan -p tcp --dport microsoft-ds -j ACCEPT
-  ip6tables -A input_lan -p tcp --dport ipp -j ACCEPT
-  ip6tables -A input_lan -p udp --dport radius -j ACCEPT
-  # MAC-Adresse für Verbindungen zum Proxyserver prüfen
-  ip6tables -A input_lan -p tcp --syn --dport 3128 -j check_mac
-  ip6tables -A input_lan -p tcp --dport 3128 -j ACCEPT # Squid
-  ip6tables -A input_lan -p tcp --syn --dport 3129 -j check_mac
-  ip6tables -A input_lan -p tcp --dport 3129 -j ACCEPT # Squid
-  ip6tables -A input_lan -p tcp --dport 4447 -j ACCEPT # opsi
-  ip6tables -A input_lan -p tcp --dport 4448 -j ACCEPT # Linux Preseeding
-  ip6tables -A input_lan -p udp --dport mdns -j ACCEPT
-
 fi
+
+ip6tables -A input_lan -p udp --dport 546 -j ACCEPT # DHCPv6
+ip6tables -A input_lan -p udp --dport 547 -j ACCEPT # DHCPv6
+ip6tables -A input_lan -p tcp --dport domain -j ACCEPT
+ip6tables -A input_lan -p udp --dport domain -j ACCEPT
+ip6tables -A input_lan -p udp --dport bootps -j ACCEPT
+ip6tables -A input_lan -p udp --dport tftp -j ACCEPT
+ip6tables -A input_lan -p udp --dport ntp -j ACCEPT
+ip6tables -A input_lan -p udp --dport netbios-ns -j ACCEPT
+ip6tables -A input_lan -p udp --dport netbios-dgm -j ACCEPT
+ip6tables -A input_lan -p tcp --dport netbios-ssn -j ACCEPT
+ip6tables -A input_lan -p tcp --dport microsoft-ds -j ACCEPT
+ip6tables -A input_lan -p tcp --dport ipp -j ACCEPT
+ip6tables -A input_lan -p udp --dport radius -j ACCEPT
+# MAC-Adresse für Verbindungen zum Proxyserver prüfen
+ip6tables -A input_lan -p tcp --syn --dport 3128 -j check_mac
+ip6tables -A input_lan -p tcp --dport 3128 -j ACCEPT # Squid
+ip6tables -A input_lan -p tcp --syn --dport 3129 -j check_mac
+ip6tables -A input_lan -p tcp --dport 3129 -j ACCEPT # Squid
+ip6tables -A input_lan -p tcp --dport 4447 -j ACCEPT # opsi
+ip6tables -A input_lan -p tcp --dport 4448 -j ACCEPT # Linux Preseeding
+ip6tables -A input_lan -p udp --dport mdns -j ACCEPT
 
 # Ausnahmen die den transparenten Proxy umgehen (FORWARD-Regeln erforderlich)
 ip6tables -t nat -N always_direct
