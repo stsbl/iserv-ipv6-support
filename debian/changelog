@@ -1,3 +1,10 @@
+stsbl-iserv-ipv6-support (17.11.03-1) experimental; urgency=medium
+
+  * Fixed crontab
+  * Improved crontab syntax
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Fri, 03 Nov 2017 00:02:09 +0100
+
 stsbl-iserv-ipv6-support (17.11.02-1) experimental; urgency=medium
 
   * Added custom forward chain
