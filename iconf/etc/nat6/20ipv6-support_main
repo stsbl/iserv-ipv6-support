@@ -35,6 +35,9 @@ ip6tables -N check_mac
 ip6tables -A FORWARD -p tcp --syn -j check_mac
 ip6tables -A FORWARD ! -p tcp -j check_mac
 
+ip6tables -N forward
+ip6tables -A FORWARD -j forward
+
 /usr/lib/iserv/newhosts &> /dev/null
 
 # Firewall für eingehende Pakete
