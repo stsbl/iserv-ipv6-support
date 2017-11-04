@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (17.11.04-1) experimental; urgency=medium
+
+  * Moved radvd support to separate package stsbl-iserv-server-radvd
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Sat, 04 Nov 2017 01:09:18 +0100
+
 stsbl-iserv-ipv6-support (17.11.03-1) experimental; urgency=medium
 
   * Fixed crontab
