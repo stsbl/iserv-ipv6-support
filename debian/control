@@ -15,7 +15,7 @@ Depends:
   iserv-regdns,
   iserv-server-incron,
   stsbl-iserv-config-ipv6 (>= 17.10.24-2),
-  radvd,
+  stsbl-iserv-server-radvd,
   isc-dhcp-server,
   libregexp-ipv6-perl,
   libnetaddr-mac-perl,
