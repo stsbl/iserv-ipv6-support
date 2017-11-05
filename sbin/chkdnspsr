@@ -2,6 +2,8 @@
 
 . /usr/lib/iserv/cfg
 
+[ -z "$ExternalIPs" ] && exit 0
+
 ERRORS=0
 
 DEFIF="$(LC_ALL=C ip -6 route show default | awk '$1=="default" {print $5}' | 
