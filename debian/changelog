@@ -1,3 +1,10 @@
+stsbl-iserv-ipv6-support (17.11.05-2) experimental; urgency=medium
+
+  * chkdnspsr: Moved sort to end of substitution
+  * Moved dhcpd6 creation to debian/links
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Sun, 05 Nov 2017 05:36:36 +0100
+
 stsbl-iserv-ipv6-support (17.11.05-1) experimental; urgency=medium
 
   * Added support for protocol specific dns records ipv4.mein-iserv.de
