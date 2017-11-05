@@ -1,3 +1,11 @@
+stsbl-iserv-ipv6-support (17.11.05-1) experimental; urgency=medium
+
+  * Added support for protocol specific dns records ipv4.mein-iserv.de
+    and ipv6.mein-iserv.de
+  * Only setup dns psr if dns updates are enabled
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Sun, 05 Nov 2017 05:08:15 +0100
+
 stsbl-iserv-ipv6-support (17.11.04-1) experimental; urgency=medium
 
   * Moved radvd support to separate package stsbl-iserv-server-radvd
@@ -23,7 +31,8 @@ stsbl-iserv-ipv6-support (17.11.01-1) experimental; urgency=medium
   * Enable ipv6 support for protftpd
   * Fixed proftpd sed script
   * activation6: Whitelist also mac address source in activation_out
-  * activation6: Do not longer use squid_reload as it causes race conditions with "activation4"
+  * activation6: Do not longer use squid_reload as it causes race
+    conditions with "activation4"
 
  -- Felix Jacobi <felix.jacobi@stsbl.de>  Wed, 01 Nov 2017 22:51:36 +0100
 
