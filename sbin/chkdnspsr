@@ -1,0 +1,60 @@
+#!/bin/bash -e
+
+. /usr/lib/iserv/cfg
+
+ERRORS=0
+
+DEFIF="$(LC_ALL=C ip -6 route show default | awk '$1=="default" {print $5}' | 
+  sed 's/^ppp[0-9]\+/ppp+/')"
+
+IPs="$(netquery6 --global --format "ip" | sort | while read i
+do
+  perl -e 'use Net::IP; print Net::IP::ip_expand_address "'$i'", 6;'
+  echo
+done)"
+  
+CURIPs="$(dig +short ipv6.$Domain AAAA @ns.iserv.eu | sort | while read i
+do
+  perl -e 'use Net::IP; print Net::IP::ip_expand_address "'$i'", 6;'
+  echo
+done)"
+
+if ! [ -z "$IPs" ] && ! [ "$IPs" = "$CURIPs" ]
+then
+  if ! [ "$1" = "-r" ]
+  then
+    let ERRORS++
+  fi
+
+  if [ "$1" = "-r" ]
+  then
+    regdns -d "ipv6.$Domain. AAAA"
+
+    for i in ${IPs[@]}
+    do
+      regdns -a "ipv6.$Domain. 300 AAAA $i"
+    done
+  fi
+fi
+
+IP=$(myip)
+CURIP=$(dig +short ipv4.$Domain A @ns.iserv.eu)
+
+if ! [ -z "$IP" ] && ! [ "$IP" = "$CURIP" ]
+then
+  if ! [ "$1" = "-r" ]
+  then
+    let ERRORS++
+  fi
+
+  if [ "$1" = "-r" ]
+  then
+    regdns -d "ipv4.$Domain. A"
+    regdns -a "ipv4.$Domain. 300 A $IP"
+  fi
+fi
+
+if [ $ERRORS -gt 0 ]
+then
+  exit 1
+fi

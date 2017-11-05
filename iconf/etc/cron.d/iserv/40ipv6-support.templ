@@ -2,3 +2,6 @@ $([ $UpdateIPv6Regdns ] && echo -e "# Update IPv6 addresses for Regdns\n*/5 *   
 
 $([ $UpdateIPv6LAN ] && echo -e "# Update IPv6 LAN ranges\n*/5 *   * * *   root    (chklan6cfg || /usr/lib/iserv/sleep_exec_once 10 chklan6cfg chklan6cfg -r) > /dev/null\n" && echo -e "\n")
 
+# Check protocol (IPv4 and IPv6) specific dns record
+*/5 *   * * *   root    (chkdnspsr || /usr/lib/iserv/sleep_exec_once 10 chkdnspsr chkdnspsr -r) > /dev/null
+

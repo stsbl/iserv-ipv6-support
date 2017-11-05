@@ -1,0 +1,5 @@
+Test "setup protocol specific dns records"
+  chkdnspsr
+  ---
+  chkdnspsr -r
+
