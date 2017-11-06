@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (17.11.07-1) experimental; urgency=medium
+
+  * bind: Added lan internal support for psr recrods
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Tue, 07 Nov 2017 00:40:06 +0100
+
 stsbl-iserv-ipv6-support (17.11.05-6) experimental; urgency=medium
 
   * nat6: Removed wide dhcp client and radvd dependency
