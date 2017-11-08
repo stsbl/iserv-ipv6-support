@@ -78,7 +78,6 @@ sub print_time($$)
 # dhcp
 {
   my $out;
-  my %networks;
   my $moduletime = [gettimeofday];
 
   for (@{ DBH->selectall_arrayref("SELECT Name, MAC ".
@@ -100,28 +99,20 @@ sub print_time($$)
       @content = @{ $out->{$nic} } if defined $out->{$nic};
       @content = () if not @content;
 
-      push @content, "    host $name-$nic {\n";
-      push @content, "      hardware ethernet $mac;\n";
-      push @content, "      fixed-address6 $ip;\n";
-      push @content, "    }\n";
+      push @content, "host $name-$nic {\n";
+      push @content, "  hardware ethernet $mac;\n";
+      push @content, "  fixed-address6 $ip;\n";
+      push @content, "}\n";
 
       $out->{$nic} = \@content;
-      $networks{$nic} = $net;
     }
   }
 
-  my @write;
-
   for my $nic (sort keys %$out)
   {
-    push @write, "shared-network $nic {\n";
-    push @write, "  subnet6 $networks{$nic}/64 {\n";
-    push @write, @{ $out->{$nic} };
-    push @write, "  }\n";
-    push @write, "}\n"
+    write_file "/var/lib/iserv/config/dhcpd6.conf.$nic.hosts", @{ $out->{$nic} };
   }
 
-  write_file "/var/lib/iserv/config/dhcpd6.conf.hosts", @write;
   system "/etc/init.d/isc-dhcp-server6", "restart", "&>/dev/null", "&";
   print_time("update dhcp", $moduletime);
 }

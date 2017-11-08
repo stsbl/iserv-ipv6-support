@@ -37,3 +37,19 @@ msgstr ""
 "IP-Bereiche automatisch aktualisieren, damit alle aktuellen "
 "Ipv6-Adressen enthalten sind."
 
+msgid "Allow unknown clients for DHCPv6"
+msgstr "DHCPv6 für unbekannte Clients erlauben"
+
+msgid ""
+"If this option is enabled, unknown clients will assigned a IPv6 address from "
+"a dynamic range. This option is currently disabled by default as some "
+"features as NACs and computer request which work with unknown clients "
+"have no IPv6 support."
+
+msgstr ""
+"Wenn diese Option aktiviert ist, wird unbekannten Clients eine IPv6-Adresse "
+"aus einer dynamischen Range zugewiesen. Diese Option ist momentan "
+"standardmäßig deaktiviert, da einige Funktionen wie NACs und "
+"Computerbewerbungen, welche mit unbekannten Clients arbeiten, keinen "
+"IPv6-Support besitzen."
+

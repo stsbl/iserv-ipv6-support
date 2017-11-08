@@ -19,3 +19,10 @@ group           Network
 type            bool
 default         true
 
+DHCPv6AllowUnknown:
+name            Allow unknown clients for DHCPv6
+description     If this option is enabled, unknown clients will assigned a IPv6 address from a dynamic range. This option is currently disabled by default as some features as NACs and computer request which work with unknown clients have no IPv6 support.
+group           Network
+type            bool
+default         false
+

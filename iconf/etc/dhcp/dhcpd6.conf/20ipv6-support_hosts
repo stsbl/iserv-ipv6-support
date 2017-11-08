@@ -1,2 +1,0 @@
-include "/var/lib/iserv/config/dhcpd6.conf.hosts";
-
