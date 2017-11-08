@@ -1,3 +1,10 @@
+stsbl-iserv-ipv6-support (17.11.09-1) experimental; urgency=medium
+
+  * Added optional DHCPv6 support for unknown clients
+  * Adapted iservchk scripts for new DHCPv6 behaviour
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Thu, 09 Nov 2017 00:30:21 +0100
+
 stsbl-iserv-ipv6-support (17.11.07-1) experimental; urgency=medium
 
   * bind: Added lan internal support for psr recrods
