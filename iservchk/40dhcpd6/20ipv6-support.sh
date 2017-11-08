@@ -9,7 +9,10 @@ echo 'ChPerm 0755 root:root /etc/init.d/isc-dhcp-server6'
 
 if [ "$UseDHCPv6" ] && [ "$DHCP" ] && netquery6 --global --lan --quiet
 then
-  echo 'Touch /var/lib/iserv/config/dhcpd6.conf.hosts'
+  for i in $(netquery6 --global --lan --format nic)
+  do
+    echo 'Touch /var/lib/iserv/config/dhcpd6.conf.'$i'.hosts'
+  done
   echo 'Touch /etc/dhcp/dhcpd6.conf.local'
   echo 'Check /etc/dhcp/dhcpd6.conf'
   echo
