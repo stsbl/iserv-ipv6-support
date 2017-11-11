@@ -1,3 +1,11 @@
+stsbl-iserv-ipv6-support (17.11.11-1) experimental; urgency=medium
+
+  * {newshosts,activation6}: Prepared for ferm support
+  * Added support for new ferm based firewall
+  * Removed old nat service
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Sat, 11 Nov 2017 06:18:50 +0100
+
 stsbl-iserv-ipv6-support (17.11.09-1) experimental; urgency=medium
 
   * Added optional DHCPv6 support for unknown clients
