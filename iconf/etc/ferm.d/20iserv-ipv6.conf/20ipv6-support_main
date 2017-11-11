@@ -1,0 +1,95 @@
+domain (ip6) {
+  table filter {
+    chain INPUT {
+      saddr @ipfilter($LAN) jump input_lan;
+      saddr (fe80::/64 fc00::/7 ff00::/8) jump input_lan;
+    }
+    chain FORWARD {
+      jump forward_first;
+
+      proto tcp tcp-flags (SYN RST) SYN TCPMSS clamp-mss-to-pmtu;
+
+      jump forward_white;
+
+      proto tcp syn jump check_mac;
+      proto ! tcp jump check_mac;
+
+      jump forward2;
+
+      proto tcp syn dport smtp NFLOG nflog-group 1;
+      proto tcp syn dport https NFLOG nflog-group 2;
+
+      interface tun+ ACCEPT;
+      outerface tun+ ACCEPT;
+
+      outerface $DEFIF jump inet_out;
+      interface $DEFIF jump inet_in;
+    }
+    chain forward_first {
+    }
+    chain forward_white {
+      #proto tcp dport (http https) mod set set always_direct dst ACCEPT;
+      #proto tcp dport (http https) mod set set forward_white dst ACCEPT;
+      #proto icmp mod set set iserv_ns dst mod u32 u32 '0x3&0x40=0x40' ACCEPT;
+      #proto udp sport ntp dport ntp mod length length 76 ACCEPT;
+    }
+    chain check_mac {
+
+    }
+    chain forward2 {
+
+    }
+    chain input_world {
+      proto tcp dport (ftp smtp smtps submission http https pop3 pop3s imap imaps nrpe) ACCEPT;
+      proto tcp sport 1024:65535 dport 63000:63099 ACCEPT;
+    }
+    chain input_lan {
+      proto tcp dport (domain netbios-ssn microsoft-ds ipp 4447 4448) ACCEPT;
+      proto udp dport (domain dhcpv6-client dhcpv6-server tftp ntp netbios-ns netbios-dgm radius mdns) ACCEPT;
+      proto tcp syn dport (3128 3129) jump check_mac;
+      proto tcp dport (3128 3129) ACCEPT;
+    }
+    chain inet_in {
+      saddr @ipfilter($LAN) RETURN;
+    }
+    chain inet_out {
+      daddr @ipfilter($LAN) RETURN;
+      jump activation_out;
+    }
+    chain activation_out {
+      mod set set activation6 src ACCEPT;
+      mod set set mac6 src ACCEPT;
+    }
+  }
+  table nat {
+    chain PREROUTING {
+      jump prerouting_first;
+      jump always_direct;
+      jump forward2_first;
+      jump forward2;
+    }
+    chain POSTROUTING {
+      outerface $DEFIF MASQUERADE;
+    }
+    chain prerouting_first {
+
+    }
+    chain OUTPUT {
+      proto tcp daddr ::1 dport imap REDIRECT to-ports 10143;
+      proto tcp daddr ::1 dport sieve REDIRECT to-ports 14190;
+    }
+    chain forward2_first {
+
+    }
+    chain always_direct {
+      #proto tcp dport http mod set set always_direct6 dst ACCEPT;
+    }
+    chain forward2 {
+      daddr @ipfilter($IPS) RETURN;
+      interface ppp+ RETURN;
+      interface tun+ RETURN;
+
+      saddr @ipfilter($LAN) proto tcp dport http REDIRECT to-ports 3129;
+    }
+  }
+}

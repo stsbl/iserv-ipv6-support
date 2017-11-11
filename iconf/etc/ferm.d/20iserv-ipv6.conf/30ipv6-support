@@ -1,0 +1,3 @@
+@include '/var/lib/iserv/config/hosts6.ferm';
+
+

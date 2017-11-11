@@ -1,0 +1,3 @@
+@def \$DEFIF = ($(LC_ALL=C ip -6 route show default | awk '$1=="default" {print $5}' | sed 's/^ppp[0-9]\+/ppp+/'));
+@def \$IPS = ($(netquery6 --format ip | tr "\n" " "));
+@def \$LAN = (${LAN[@]});
