@@ -1,0 +1,4 @@
+Remove /etc/nat6
+Remove /etc/nat6.local
+Remove /etc/init.d/nat6
+

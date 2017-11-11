@@ -1,4 +1,0 @@
-# Load configuration
-. /usr/lib/iserv/cfg
-. /usr/lib/iserv/nat6
-
