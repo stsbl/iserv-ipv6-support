@@ -15,6 +15,21 @@ sub print_time($$)
   printf "$mod: %.0fms\n", tv_interval($time) * 1000;
 }
 
+my $run_parts_pid = getppid;
+my $newhosts_pid = qx( grep PPid /proc/$run_parts_pid/status | awk '{ print \$2 }');
+
+open my $fh, "<", sprintf "/proc/%d/cmdline", $newhosts_pid;
+
+my @lines;
+while (<$fh>)
+{
+  push @lines, $_;
+}
+
+my $cmdline = join "", @lines;
+my $noferm = 0;
+$noferm = 1 if $cmdline =~ /-f|--noferm/;
+
 # update MAC check rules
 {
   my %rules;
@@ -34,45 +49,28 @@ sub print_time($$)
       $net =~ s/:$//;
  
       my $ip = $net . as_ipv6_suffix $mac;
-      $rules{"-A check_mac -s $ip ! -i $nic -m mac ! --mac-source $row->{mac} ".
-        "-j REJECT --reject-with icmp6-port-unreachable"}++;
+      $rules{"      saddr $ip mod mac mac-source ! $row->{mac} REJECT reject-with icmp6-port-unreachable;"}++;
     }
   }
-
-  # compare this list with the current state according to iptables-save
-  open my $fp, "-|", "ip6tables-save", "-t", "filter" or die $!;
-  while (<$fp>)
-  {
-    s/\s+$//;
-    s/\/32\b//;
-    # convert MAC addresses to lowercase; a database constraint ensures that
-    # the MAC addresses we get from the query are already lowercase
-    s/--mac-source \K((?:[0-9a-f]{2}:){5}[0-9a-f]{2})\b/\L$1\E/gi;
-    if (exists $rules{$_})
-    {
-      # the rule already exists
-      delete $rules{$_};
-    }
-    elsif (s/^-A(?= check_mac\b)/-D/)
-    {
-      # a stale rule exists that has to be removed
-      $rules{$_}++;
-    }
-  }
-  close $fp;
 
   # apply changes
   if (%rules)
   {
-    printf "updating ip6tables (%d rules)...\n", scalar keys %rules;
-    open my $fp, "|-", "ip6tables-restore", "-n" or die $!;
-    print $fp "*filter\n";
-    print $fp map "$_\n", keys %rules;
-    print $fp "COMMIT\n";
-    close $fp;
+    my $rules = join "", map "$_\n", sort keys %rules;
+    print "updating ferm...\n";
+    open my $fp, ">", "/var/lib/iserv/config/hosts6.ferm" or die $!;
+    print $fp "
+domain (ip6) {
+  table filter {
+    chain check_mac {
+$rules
+    }
   }
-
-  print_time("update mac checks", $moduletime);
+}";
+    close $fp;
+    print "reloading ferm..." if not $noferm;
+    system "/usr/lib/iserv/fermuncleanreload6" if not $noferm;
+  }
 }
 
 # dhcp

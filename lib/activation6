@@ -83,36 +83,37 @@ $active{"0000:0000:0000:0000:0000:0000:0000:0001"} = { proxyenforce => 0 };
 
 # update iptables
 # only hosts with proxyenforce='f' will be whitelisted in NAT
-my %rules = map {("-A activation_out -s $_ -j ACCEPT", 1)}
+my %rules = map {("ipset add newactivation6 $_", 1)}
     grep { !$active{$_}{'proxyenforce'} } keys %active;
 
+my %mac_rules;
 # push mac checks to rules
 for my $mac (keys %active_macs)
 {
-  $rules{"-A activation_out -m mac --mac-source $mac -j ACCEPT"} = 1
-    if grep { !$active{$active_macs{$mac}}{'proxyenforce'} } keys %active;
-}
-
-run ["ip6tables-save", "-t", "filter"], ">", \$_ or die $!;
-for (split /\n/)
-{
-  s/\s+$//;
-  s/\/32\b//;
-  if (exists $rules{$_})
-  {
-    delete $rules{$_};
-  }
-  elsif (s/^-A(?= activation_)/-D/)
-  {
-    $rules{$_}++;
-  }
+  $mac_rules{"ipset add newmac6 $mac"} = 1
+   if grep { !$active{$active_macs{$mac}}{'proxyenforce'} } keys %active;
 }
 
 if (%rules)
 {
-  my $upd = join "", map "$_\n", "*filter", keys %rules, "COMMIT";
-  printf "update iptables (%d rules)\n", scalar keys %rules;
-  run ["ip6tables-restore", "-n"], "<", \$upd or die $!;
+  my $upd = join "", map "$_\n", keys %rules;
+  printf "updating ipsets\n";
+  system "ipset -exist create activation6 hash:ip family inet6";
+  system "ipset -exist create newactivation6 hash:ip family inet6";
+  system "ipset swap activation6 newactivation6";
+  system "ipset flush newactivation6";
+  system $upd;
+}
+
+if (%mac_rules)
+{
+  my $upd = join "", map "$_\n", keys %mac_rules;
+  printf "updating mac ipsets\n";
+  system "ipset -exist create mac6 hash:mac";
+  system "ipset -exist create newmac6 hash:mac";
+  system "ipset swap mac6 newmac6";
+  system "ipset flush newmac6";
+  system $upd;
 }
 
 my $reloadsquid = 0;
