@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (17.11.11-3) experimental; urgency=medium
+
+  * Fixed hosts include location
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Sat, 11 Nov 2017 06:49:11 +0100
+
 stsbl-iserv-ipv6-support (17.11.11-2) experimental; urgency=medium
 
   * Added missing hook script
