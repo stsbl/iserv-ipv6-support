@@ -1,0 +1,15 @@
+#!/bin/bash
+
+. /usr/lib/iserv/cfg
+
+DEFIF=$(LC_ALL=C ip -6 route show default | awk '$1=="default" {print $5}' | sed 's/^ppp[0-9]\+/ppp+/')
+
+if [ "$DEFIF" ]
+then
+  if [ "$Activation" ] && netquery6 --quiet --global --lan
+  then
+    echo "Generating ipsets for users and devices with internet access (ipv6) ..."
+    /usr/lib/iserv/activation6 >/dev/null
+  fi
+fi
+
