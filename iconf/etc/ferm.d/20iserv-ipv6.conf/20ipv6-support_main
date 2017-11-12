@@ -51,6 +51,8 @@ domain (ip6) {
     }
     chain inet_in {
       saddr @ipfilter($LAN) RETURN;
+      mod state state NEW REJECT reject-with icmp6-port-unreachable;
+      ACCEPT;
     }
     chain inet_out {
       daddr @ipfilter($LAN) RETURN;
