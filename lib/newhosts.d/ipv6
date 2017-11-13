@@ -54,11 +54,12 @@ $noferm = 1 if $cmdline =~ /-f|--noferm/;
   }
 
   # apply changes
+  open my $fp, ">", "/var/lib/iserv/config/hosts6.ferm" or die $!;
+  print $fp "";
   if (%rules)
   {
     my $rules = join "", map "$_\n", sort keys %rules;
     print "updating ferm...\n";
-    open my $fp, ">", "/var/lib/iserv/config/hosts6.ferm" or die $!;
     print $fp "
 domain (ip6) {
   table filter {
@@ -67,10 +68,10 @@ $rules
     }
   }
 }";
-    close $fp;
-    print "reloading ferm..." if not $noferm;
-    system "/usr/lib/iserv/fermuncleanreload6" if not $noferm;
   }
+  close $fp;
+  print "reloading ferm..." if not $noferm;
+  system "/usr/lib/iserv/fermuncleanreload6" if not $noferm;
 }
 
 # dhcp
