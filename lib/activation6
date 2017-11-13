@@ -10,6 +10,9 @@ undef %ENV;
 
 $ENV{PATH} = '/usr/sbin:/usr/bin:/sbin:/bin';
 
+system "ipset -exist create mac6 hash:mac";
+system "ipset -exist create activation6 hash:ip family inet6";
+
 exit 0 if !$conf->{Activation};
 
 IServ::DB::Do "DELETE FROM nacs WHERE timer IS NOT NULL AND timer <= now()";
@@ -98,18 +101,18 @@ if (%rules)
 {
   my $upd = join "", map "$_\n", keys %rules;
   printf "updating ipsets\n";
-  system "ipset -exist create activation6 hash:ip family inet6";
   system "ipset -exist create newactivation6 hash:ip family inet6";
   system "ipset swap activation6 newactivation6";
   system "ipset flush newactivation6";
   system $upd;
 }
 
+system "ipset -exist create mac6 hash:mac";
+
 if (%mac_rules)
 {
   my $upd = join "", map "$_\n", keys %mac_rules;
   printf "updating mac ipsets\n";
-  system "ipset -exist create mac6 hash:mac";
   system "ipset -exist create newmac6 hash:mac";
   system "ipset swap mac6 newmac6";
   system "ipset flush newmac6";
