@@ -2,7 +2,7 @@ Source: stsbl-iserv-ipv6-support
 Section: misc
 Priority: extra
 Maintainer: Stadtteilschule Blankenese <repository@stsbl.de>
-Build-Depends: debhelper (>= 9)
+Build-Depends: debhelper (>= 9), dh-systemd, dh-python
 Standards-Version: 3.9.8
 Homepage: https://it.stsbl.de
 
@@ -11,6 +11,7 @@ Architecture: all
 Depends:
   ${misc:Depends},
   ${perl:Depends},
+  ${python3:Depends},
   iserv-portal,
   iserv-regdns,
   iserv-server-incron,

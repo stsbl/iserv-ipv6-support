@@ -21,6 +21,7 @@ binary-indep:
 	dh_link
 	dh_installdeb
 	dh_perl
+	dh_python3
 	dh_gencontrol
 	dh_md5sums
 	dh_builddeb

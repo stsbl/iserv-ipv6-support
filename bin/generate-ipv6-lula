@@ -1,0 +1,142 @@
+#!/usr/bin/python
+# -*- mode: python ; ispell-local-dictionary: "american" -*-
+"""
+Generate 'Locally Assigned Global IDs' according to RFC 4193
+
+The Algorithm as described in the RFC:
+
+     1) Obtain the current time of day in 64-bit NTP format [NTP].
+     2) Obtain an EUI-64 identifier from the system running this
+        algorithm.  If an EUI-64 does not exist, one can be created from
+        a 48-bit MAC address as specified in [ADDARCH].  If an EUI-64
+        cannot be obtained or created, a suitably unique identifier,
+        local to the node, should be used (e.g. system serial number).
+     3) Concatenate the time of day with the system-specific identifier
+        creating a key.
+     4) Compute an SHA-1 digest on the key as specified in [FIPS, SHA1];
+        the resulting value is 160 bits.
+     5) Use the least significant 40 bits as the Global ID.
+     6) Concatenate FC00::/7, the L bit set to 1, and the 40 bit Global
+        ID to create a Local IPv6 address prefix.
+"""
+
+# Required Python 2.4 (or better)
+#
+# History:
+# 2012-02-09:
+#    - Bugfix: import error.
+# 2010-12-22: 
+#    - Bugfix: calculation of NTP format was wrong (Thanks to Sergei
+#      Zhirikov for pointing this out)
+#    - Bugfix: "Encapsulated MAC-48 values" use FFFF, not FFFE (again
+#      thanks to Sergei Zhirikov for pointing this out)
+#    - Enhancement: Use Python module ``uuid`` (new in Python 2.4) to
+#      get the MAC address platform independent
+# 2005-07-08:
+#    - Initial Release
+#
+
+__author__ = "Hartmut Goebel <h.goebel@goebel-consult.de>"
+__copyright__ = "(C) Copyright 2005-2012 by Hartmut Goebel"
+__licence__ = "GNU Public Licence (GPL), Version 3 or later"
+__version__ = "0.3.2"
+
+import time
+import struct
+import commands
+import re
+import socket
+import sha
+import uuid
+
+# from http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/117211
+TIME1970 = 2208988800L      # Thanks to F.Lundh
+
+def _get_time_ntpformat():
+    """
+    Get current time of day in 64-bit NTP format.
+    """
+    # Calculation of fractal part adopted from
+    # <http://pypi.python.org/pypi/ntplib/>, thanks to
+    # Charles-Francois Natali and the NTP FAQ
+    # <http://www.ntp.org/ntpfaq/NTP-s-algo.htm#AEN1895>
+    t = time.time() + TIME1970
+    int_part = long(t)
+    frac_part = long( (t-int_part) * 2**32 )
+    t = struct.pack('>LL', int_part, frac_part)
+    return t
+
+def _get_EUI64():
+    '''
+    Create an EUI-64 identifier from the MAC address
+    according to "Encapsulated MAC-48 values" in
+    http://standards.ieee.org/regauth/oui/tutorials/EUI64.html
+    '''
+    # get the MAC of some interface
+    mac = '%012x' % uuid.getnode()
+    mac = [mac[i:i+2] for i in range(0, len(mac), 2)]
+    # insert 'ffff'
+    mac[3:3] = ['ff', 'ff']
+    mac = map(lambda x: chr(int(x, 16)), mac)
+    return ''.join(mac)
+
+
+def calc_LAGID():
+    """
+    Calculate a single 'Locally Assigned Global ID' according to
+    the algorithm described above.
+    """
+    # 1) current time of day in 64-bit NTP format
+    t = _get_time_ntpformat();   assert len(t        ) * 8 == 64
+    # 2) an EUI-64 identifier from the system running this algorithm
+    eui64 = _get_EUI64();        assert len(eui64    ) * 8 == 64
+    # 3) Concatenate
+    key = t + eui64;             assert len(key      ) * 8 == 128
+    # 4) Compute an SHA-1 digest on the key
+    digest = sha.sha(key).digest()
+    # 5) least significant 40 bits
+    global_id = digest[-5:];     assert len(global_id) * 8 == 40
+    # 6) Concatenate FC00::/7, the L bit set to 1, and global_id
+    # fc00::/7 plus L bit set -> fd00::
+    prefix = '\xfd' + global_id; assert len(prefix   ) * 8 == 48
+    packed = prefix + '\0'* 10;  assert len(packed   ) * 8 == 128
+    return packed
+
+
+def calc_multiple_LAGIDs(num=10):
+    """
+    Calculate several 'Locally Assigned Global IDs' at once. A ramdom
+    delay (up to 1 second) is put between calculations to decrease
+    depentences between the generated values.
+
+    This is usefull for getting severl LAG-IDs to select a 'nice' one.
+    (Well, this may not be in the sence of the RFC ;-)
+
+    num : Number of LAG-IDs to generate
+    """
+    import random
+    ps = []
+    for i in range(num):
+        prefix = calc_LAGID()
+        ps.append(prefix)
+        time.sleep(random.random())
+    return ps
+
+def asString(prefix):
+    """
+    Convert a LAG-ID into a string representation (IPv6 address
+    format).
+    """
+    if hasattr(socket, 'inet_ntop'):
+        return socket.inet_ntop(socket.AF_INET6, prefix)
+    else:
+        import IPy
+        prefix = '0x' + ''.join(['%02x' % ord(i) for i in  prefix ])
+        return IPy.IP(prefix).strCompressed()
+
+def _main():
+    for prefix in calc_multiple_LAGIDs(1):
+        print "%s/48" % asString(prefix)
+
+if __name__ == '__main__':
+    _main()
