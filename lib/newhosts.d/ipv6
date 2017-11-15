@@ -8,6 +8,7 @@ use NetAddr::MAC;
 use Time::HiRes qw(gettimeofday tv_interval);
 
 my @prefixes = sort split "\n", qx(netquery6 --lan --global --format "nic prefix");
+my @uniquelocal_prefixes = sort split "\n", qx(netquery6 --uniquelocal --format "nic prefix");
 
 sub print_time($$)
 {
@@ -84,7 +85,7 @@ $rules
   {
     my ($name, $mac) = @$_;
 
-    for my $prefix (sort @prefixes)
+    for my $prefix (sort @uniquelocal_prefixes)
     {
       my ($nic, $net) = split " ", $prefix;
 

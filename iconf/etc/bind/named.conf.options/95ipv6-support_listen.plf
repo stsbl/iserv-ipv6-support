@@ -1,6 +1,6 @@
 #!/usr/bin/perl -p -CSDAL
 
-my @ips = sort split "\n", qx(netquery6 --global --lan --format "ip/length;");
+my @ips = sort split "\n", qx(sh -c 'netquery6 --global --lan --format "ip/length;"; netquery6 --uniquelocal --format "ip/length;";');
 push @ips, "::1/128;";
 my $out = join " ", @ips;
 

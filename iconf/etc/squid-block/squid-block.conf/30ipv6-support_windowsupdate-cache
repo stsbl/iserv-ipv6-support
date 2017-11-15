@@ -1,0 +1,7 @@
+# Use nginx as proxy for Windows Update
+  acl windowsupdate dstdomain .windowsupdate.com
+  never_direct allow windowsupdate
+  cache deny windowsupdate
+  cache_peer localhost parent 3130 0 name=windowsupdate originserver no-digest no-netdb-exchange
+  cache_peer_access windowsupdate allow windowsupdate
+

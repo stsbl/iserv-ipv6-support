@@ -1,0 +1,7 @@
+if [ "${PHASE}" = "post-up" ] && [ -f "/var/lib/iserv/config/${IFACE}.uln" ]
+then
+   suffix=$(netquery6 -p -f "nic ip" | grep "^${IFACE}" | awk '{ print $2 }' | sed 's/fe80:0000:0000:0000://g')
+   ip -6 addr delete "$(cat "/var/lib/iserv/config/${IFACE}.uln" | sed 's/::$//g'):${suffix}/64" dev "${IFACE}" || true
+   ip -6 addr add "$(cat "/var/lib/iserv/config/${IFACE}.uln" | sed 's/::$//g'):${suffix}/64" dev "${IFACE}" || true
+fi
+

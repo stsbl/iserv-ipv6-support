@@ -1,0 +1,6 @@
+# Allow all IPv6 clients (blocked clients are redirected to special proxy
+# which denies every access
+  acl active6 src ipv6
+  http_access allow active6
+  icp_access allow active6
+

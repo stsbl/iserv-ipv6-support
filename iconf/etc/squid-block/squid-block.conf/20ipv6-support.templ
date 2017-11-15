@@ -1,0 +1,140 @@
+# Squid block configuration for IServ
+#
+# This file is generated automatically by iservchk.
+# It is not recommended to make any changes to this file.
+# If really necessary you can save changes permanently using:
+#   iconf save /etc/squid-block/squid-block.conf
+
+# Set pidfile
+pid_filename /run/squid-block.pid
+
+# Allow access only from the local network
+$(netquery6 --global --lan --format "  http_port [ip]:13129 intercept")
+$(netquery6 --uniquelocal --format "  http_port [ip]:13129 intercept")
+$(netquery6 --global --lan --format "  http_port [ip]:13128")
+$(netquery6 --uniquelocal --format "  http_port [ip]:13128")
+  http_port [::1]:13128
+
+# Cache Replacement Policy
+# Optimize byte hit rate at the expense of object hit rate
+  cache_replacement_policy heap LFUDA
+
+# Cache size
+  cache_mem $( LC_ALL=C free -m |
+    awk '/^Mem:/ { min=256; max=2048; x=int(0.0626*$2); \
+         print (x>max? max: x<min? min: x) }') MB
+  maximum_object_size 10 GB
+  cache_dir ufs /var/spool/squid $( LC_ALL=C df -m /var/spool/squid |
+    awk '$2 ~ /^[0-9]+$/ { x=int(.01*$2); max=10000; print (x>max? max: x); }'
+  ) 16 256
+
+# Hostname
+# Squid defaults to localhost when no hostname is set. This causes spurious
+# "Forwarding loop detected" errors when multiple localhost Squids are chained.
+  visible_hostname $Hostname
+
+# Don't wait 30 seconds when shutting down
+  shutdown_lifetime 0 seconds
+
+# Customized error pages
+  error_directory /etc/squid/errors
+
+# Raise forward_max_tries to 25 as recommended by Amos Jeffries. This resolves
+# issues where URLs with many IPv6 addresses (e.g. autodiscover.outlook.com)
+# always return "101 Network is unreachable" because Squid only tries to access
+# them via IPv6 when the server doesn't even have an IPv6 address.
+# http://www.squid-cache.org/mail-archive/squid-users/201403/0001.html
+# Can be removed after upgrading to Squid > 3.4.
+  forward_max_tries 25
+
+# Filter URLs with SquidGuard
+  url_rewrite_program /usr/bin/squidGuard
+  url_rewrite_children 10 startup=1
+# Don't crash when SquidGuard is busy
+  url_rewrite_bypass on
+
+# Exclude local domains from URL filtering
+  acl noredir dstdomain $(for d in $Domain ${AliasDomains[*]}; do echo ".$d"; done | paste -sd' ')
+
+# Exclude CDN domains from URL filtering for increased performance
+  acl noredir dstdomain .images-amazon.com                # Amazon
+  acl noredir dstdomain .fbcdn.net                        # Facebook CDN
+  acl noredir dstdomain .gstatic.com                      # Google Static
+  acl noredir dstdomain .kh.google.com                    # Google Maps/Earth
+  acl noredir dstdomain .khm0.google.de .khm1.google.de   # Google Maps/Earth
+  acl noredir dstdomain .khm0.google.com .khm1.google.com # Google Maps/Earth
+  acl noredir dstdomain .mt0.google.com .mt1.google.com   # Google Maps/Earth
+  acl noredir dstdomain .mt2.google.com .mt3.google.com   # Google Maps/Earth
+  acl noredir dstdomain .mw1.google.com .mw2.google.com   # Google Maps/Earth
+  acl noredir dstdomain .safebrowsing-cache.google.com    # Google SafeBrowsing
+  acl noredir dstdomain .safebrowsing.clients.google.com  # Google SafeBrowsing
+  acl noredir dstdomain .clients1.google.de               # Google AutoComplete
+  acl noredir dstdomain .clients1.google.com              # Google AutoComplete
+  acl noredir dstdomain .suggestqueries.google.com        # Google Suggest
+  acl noredir dstdomain .google-analytics.com             # Google Analytics
+  acl noredir dstdomain .sophosupdate.mzbs.de             # Stadt Braunschweig
+  acl noredir dstdomain .upload.wikimedia.org             # Wikimedia
+  acl noredir dstdomain .download.windowsupdate.com       # Windows Update
+  acl noredir dstdomain .ytimg.com                        # YouTube CDN
+  redirector_access deny noredir
+
+# Optimize Windows Update caching
+# http://wiki.squid-cache.org/SquidFaq/WindowsUpdate
+  acl windowsupdate dstdomain .windowsupdate.com
+  range_offset_limit -1 windowsupdate
+  refresh_pattern -i windowsupdate.com/.*\.(cab|exe|ms[i|u|f]|[ap]sf|wm[v|a]|dat|zip) 4320 80% 43200 reload-into-ims
+
+# Format the log like Apache, do not strip GET parameters
+# The docs claim that "combined" is builtin, but actually it's not
+  logformat combined %>a %ui %un [%tl] "%rm %ru HTTP/%rv" %>Hs %<st "%{Referer}>h" "%{User-Agent}>h" %Ss:%Sh
+  access_log stdio:/var/log/squid/access.log combined
+  strip_query_terms off
+
+# Do not cache dynamic content
+  refresh_pattern -i (/cgi-bin/|\?) 0 0% 0
+  refresh_pattern . 0 20% 4320
+
+# Don't cache local sites
+  acl nocache dstdomain $(for d in $Domain ${AliasDomains[*]}; do echo ".$d"; done | paste -sd' ')
+  cache deny nocache
+
+# Allow cache management only from localhost
+  http_access allow manager localhost
+  http_access deny manager
+
+# Allow HTTP access only to safe ports
+  acl Safe_ports port 80		# http
+  acl Safe_ports port 21		# ftp
+  acl Safe_ports port 443		# https
+  acl Safe_ports port 70		# gopher
+  acl Safe_ports port 210		# wais
+  acl Safe_ports port 1025-65535	# unregistered ports
+  acl Safe_ports port 280		# http-mgmt
+  acl Safe_ports port 488		# gss-http
+  acl Safe_ports port 591		# filemaker
+  acl Safe_ports port 777		# multiling http
+  http_access deny !Safe_ports
+
+# Allow CONNECT access only to safe ports
+  acl CONNECT method CONNECT
+  acl SSL_ports port 443		# https
+  http_access deny CONNECT !SSL_ports
+
+# Whitelist IServ update sites (this whitelist even works for intercepted proxyonly clients)
+  acl whitelist dstdomain .iserv.eu
+  acl whitelist dstdomain .debian.org
+  http_access allow whitelist
+  redirector_access deny whitelist
+
+# Allow HTTP access to IServ itself
+$(netquery6 --format "  acl to_iserv dst ip")
+  http_access allow to_iserv
+
+# Deny access to the remaining LAN
+  acl to_lan dst ::1
+  acl to_lan dst 127.0.0.0/8
+$(for net in ${LAN[*]}; do echo "  acl to_lan dst $net"; done)
+  http_access deny to_lan
+
+# Prevent malicious clients from spoofing hostnames to circumvent blocked internet access
+  host_verify_strict on

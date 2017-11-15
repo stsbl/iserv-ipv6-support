@@ -1,0 +1,5 @@
+# Block everything
+  http_access deny all
+  icp_access deny all
+  deny_info ERR_ISERV_COMPUTER_BLOCKED all
+

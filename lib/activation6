@@ -11,7 +11,7 @@ undef %ENV;
 $ENV{PATH} = '/usr/sbin:/usr/bin:/sbin:/bin';
 
 system "ipset -exist create mac6 hash:mac";
-system "ipset -exist create activation6 hash:ip family inet6";
+system "ipset -exist create proxy6 hash:mac";
 
 exit 0 if !$conf->{Activation};
 
@@ -21,7 +21,7 @@ IServ::DB::Do "UPDATE hosts SET override_route = NULL, override_until = NULL, ".
 IServ::DB::Do "UPDATE hosts SET deploy_until = NULL ".
   "WHERE deploy_until <= now()";
 
-my %host = IServ::DB::SelectAll_Hash "
+my %active = IServ::DB::SelectAll_Hash "
   -- add whitelisted hosts
   SELECT mac, proxyenforce FROM hosts
     WHERE
@@ -51,126 +51,39 @@ my %host = IServ::DB::SelectAll_Hash "
   ORDER BY 1
   ";
 
-sub mac2ipv6($$)
-{
-  my ($mac, $prefix) = @_;
-  $mac = new NetAddr::MAC shift;
- 
-  return if not defined $mac or not defined $prefix;
-  
-  my $ipv6 = $prefix . ":" . as_ipv6_suffix $mac;
-  $ipv6 =~ s/::/:/;
-  
-  $ipv6;
-}
-
-my %active;
-# also allow current mac to allow hosts which are not using DHCPv6 and uses the
-# wrong address (e.g. Ubuntu with Network Manager)
-my %active_macs;
-
-my @prefixes = sort split "\n", qx(netquery6 --lan --global --format "prefix");
-
-for my $h (keys %host)
-{
-  for my $prefix (@prefixes)
-  {
-    $prefix =~ s/:$//;
-    $active{mac2ipv6($h, $prefix)} = $host{$h};
-    $active_macs{$h} = mac2ipv6($h, $prefix);
-  }
-}
-
-# always allow localhost for testing purposes
-$active{"0000:0000:0000:0000:0000:0000:0000:0001"} = { proxyenforce => 0 };
-
 # update iptables
 # only hosts with proxyenforce='f' will be whitelisted in NAT
-my %rules = map {("ipset add newactivation6 $_", 1)}
+my %rules = map {("ipset add mac6 $_", 1)}
     grep { !$active{$_}{'proxyenforce'} } keys %active;
 
-my %mac_rules;
-# push mac checks to rules
-for my $mac (keys %active_macs)
-{
-  $mac_rules{"ipset add newmac6 $mac"} = 1
-   if grep { !$active{$active_macs{$mac}}{'proxyenforce'} } keys %active;
-}
+my %proxy_only = map {("ipset add proxy6 $_", 1)}
+    grep { $active{$_}{'proxyenforce'} } keys %active;
 
 if (%rules)
 {
   my $upd = join "", map "$_\n", keys %rules;
-  printf "updating ipsets\n";
-  system "ipset -exist create newactivation6 hash:ip family inet6";
-  system "ipset swap activation6 newactivation6";
-  system "ipset flush newactivation6";
-  system $upd;
-}
-
-system "ipset -exist create mac6 hash:mac";
-
-if (%mac_rules)
-{
-  my $upd = join "", map "$_\n", keys %mac_rules;
   printf "updating mac ipsets\n";
   system "ipset -exist create newmac6 hash:mac";
   system "ipset swap mac6 newmac6";
   system "ipset flush newmac6";
   system $upd;
-}
-
-my $reloadsquid = 0;
-
-# update Squid
-# hosts will be whitelisted in Squid regardless of their proxyenforce setting
-my $fn = "/etc/squidguard/active_ips6";
-my $old = read_file $fn, err_mode => "quiet";
-my $new = join "", map "$_\n", sort keys %active;
-if (!defined $old or $old ne $new)
+} 
+else
 {
-  print "update $fn\n";
-  write_file $fn, {atomic => 1}, $new;
-  $reloadsquid = 1;
+  system "ipset flush mac6";
 }
 
-# update squid proxyonly
-# only hosts with proxyenforce='t' will be whitelisted in proxyonly_ips
-
-my $release = qx{bash -c '. /usr/lib/iserv/sh-functions.d/get_debian_release ; echo "\$(get_debian_release)";'};
-chomp($release);
-
-if ($release eq "jessie") {
-  $fn = "/etc/squid3/proxyonly_ips6";
-} else {
-  $fn = "/etc/squid/proxyonly_ips6";
-}
-$old = read_file($fn, err_mode => "quiet");
-$new = join "", map "$_\n", grep { $active{$_}{'proxyenforce'} }
-    keys %active;
-if (!defined $old or $old ne $new)
+if (%proxy_only)
 {
-  print "update $fn\n";
-  write_file $fn, {atomic => 1}, $new;
-  $reloadsquid = 1;
-  if (!$old != !$new)
-  {
-    if ($release eq "jessie") {
-      system "iconf repair /etc/squid3/squid.conf >/dev/null";
-    } else {
-      system "iconf repair /etc/squid/squid.conf >/dev/null";
-    }
-  }
-}
-
-if ($release eq "jessie")
-{
-  system '/usr/lib/iserv/sleep_exec_once', '10', 'squid_reload6',
-    '/usr/sbin/service', 'squid3', 'reload' if $reloadsquid;
+  my $upd = join "", map "$_\n", keys %proxy_only;
+  printf "updating mac proxyonly ipsets\n";
+  system "ipset -exist create newproxy6 hash:mac";
+  system "ipset swap proxy6 newproxy6";
+  system "ipset flush newproxy6";
+  system $upd;
 }
 else
 {
-  system '/usr/lib/iserv/sleep_exec_once', '10', 'squid_reload6',
-    '/usr/sbin/service', 'squid', 'reload' if $reloadsquid;
+  system "ipset flush proxy6";
 }
-
 

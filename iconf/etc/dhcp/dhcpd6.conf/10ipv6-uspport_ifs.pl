@@ -4,7 +4,7 @@ use strict;
 use IServ::Conf;
 
 my %r;
-for (split /\n/, qx(netquery6 --global --lan --format "ip prefix length nic"))
+for (split /\n/, qx(netquery6 --uniquelocal --lan --format "ip prefix length nic"))
 {
   my ($ip, $prefix, $length, $nic) = split;
   $r{$nic} .= "  subnet6 $prefix/$length {\n";
