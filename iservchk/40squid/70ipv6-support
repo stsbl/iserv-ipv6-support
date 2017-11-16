@@ -1,9 +1,9 @@
+MkDir 0750 proxy:proxy /var/spool/squid-block
 MkDir 0755 root:root /etc/squid-block
 Check /etc/squid-block/squid-block.conf
 Check /etc/init.d/squid-block
 ChPerm 0755 root:root /etc/init.d/squid-block
 
-MkDir 0750 proxy:proxy /var/spool/squid-block
 Test 'squid block cache directory'
   [ -d /var/spool/squid-block/00 ]
   ---
