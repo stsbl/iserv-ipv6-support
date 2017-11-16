@@ -24,7 +24,7 @@ $(netquery6 --uniquelocal --format "  http_port [ip]:13128")
     awk '/^Mem:/ { min=256; max=2048; x=int(0.0626*$2); \
          print (x>max? max: x<min? min: x) }') MB
   maximum_object_size 10 GB
-  cache_dir ufs /var/spool/squid $( LC_ALL=C df -m /var/spool/squid |
+  cache_dir ufs /var/spool/squid-block $( LC_ALL=C df -m /var/spool/squid-block |
     awk '$2 ~ /^[0-9]+$/ { x=int(.01*$2); max=10000; print (x>max? max: x); }'
   ) 16 256
 
