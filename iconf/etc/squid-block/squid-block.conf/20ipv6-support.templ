@@ -87,7 +87,7 @@ $(netquery6 --uniquelocal --format "  http_port [ip]:13128")
 # Format the log like Apache, do not strip GET parameters
 # The docs claim that "combined" is builtin, but actually it's not
   logformat combined %>a %ui %un [%tl] "%rm %ru HTTP/%rv" %>Hs %<st "%{Referer}>h" "%{User-Agent}>h" %Ss:%Sh
-  access_log stdio:/var/log/squid/access.log combined
+  access_log stdio:/var/log/squid/access-block.log combined
   strip_query_terms off
 
 # Do not cache dynamic content
