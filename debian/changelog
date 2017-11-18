@@ -1,3 +1,22 @@
+stsbl-iserv-ipv6-support (17.11.18-1) experimental; urgency=medium
+
+  * activation6: Always create ipsets to circumvent ferm errors
+  * newshosts: Always create ferm config
+  * Complete restructure:
+  * Added generate-ipv6-lula command
+  * Do not add unique local address on dhcp interfaces
+  * Remove old hosts ferm configuration
+  * Respect dhcp behaviour for ula addresses also on ifup
+  * squid-block: Fixed log path
+  * Fixed wrong squid-block config path
+  * Moved ipv6 firewall to own service
+  * Fixed spool path for squid-block
+  * Fixed sppol directory creation for block squid
+  * iservchk: Fixed squid-block order
+  * Remove old ferm configuration
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Sat, 18 Nov 2017 02:40:00 +0100
+
 stsbl-iserv-ipv6-support (17.11.12-1) experimental; urgency=medium
 
   * Added missing forwarding rules
