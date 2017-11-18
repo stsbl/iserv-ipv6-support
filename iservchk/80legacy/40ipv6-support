@@ -1,3 +1,5 @@
 Remove /var/lib/iserv/config/dhcpd6.conf.hosts
 Remove /var/lib/iserv/config/hosts6.ferm
+Remove /etc/ferm.d/20iserv-ipv6.conf
+
 
