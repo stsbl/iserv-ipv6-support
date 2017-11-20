@@ -1,0 +1,55 @@
+#!/usr/bin/perl -CSDAL
+
+use Net::IP;
+use Regexp::IPv6;
+
+my $client;
+my $skip;
+my @out;
+
+sub ip_in_net($$)
+{
+  my ($net, $ip) = @_;
+
+  $net = new Net::IP($net);
+  $ip = new Net::IP($ip);
+
+  $net->overlaps($ip, $net) eq $Net::IP::IP_B_IN_A_OVERLAP;
+}
+
+sub print_out {
+  my @print = @out;
+  undef @out;
+  return if $skip;
+  print join "", @print;
+}
+
+while (my $line = <STDIN>)
+{
+  $line =~ /^client (.*) \{/ and $client = 1;
+
+  if ($line =~ /\}/)
+  {
+    print_out;
+    print $line if not $skip;
+    $client = 0;
+    $skip = 0;
+    next;
+  }
+
+  if (my (undef, $ip) = $line =~ /^(|\s*)ipaddr\s=\s($Regexp::IPv6::IPv6_re(.*))/)
+  {
+    if (ip_in_net("fc00::/7", "$ip"))
+    {
+      $skip = 1;
+    }
+  }
+
+  if ($client eq 1)
+  {
+    push @out, $line;
+    next;
+  }
+
+  print $line;
+}
