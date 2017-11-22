@@ -7,72 +7,12 @@ use IServ::DB;
 use NetAddr::MAC;
 use Time::HiRes qw(gettimeofday tv_interval);
 
-my @prefixes = sort split "\n", qx(netquery6 --lan --global --format "nic prefix");
 my @uniquelocal_prefixes = sort split "\n", qx(netquery6 --uniquelocal --format "nic prefix");
 
 sub print_time($$)
 {
   my ($mod, $time) = @_;
   printf "$mod: %.0fms\n", tv_interval($time) * 1000;
-}
-
-my $run_parts_pid = getppid;
-my $newhosts_pid = qx( grep PPid /proc/$run_parts_pid/status | awk '{ print \$2 }');
-
-open my $fh, "<", sprintf "/proc/%d/cmdline", $newhosts_pid;
-
-my @lines;
-while (<$fh>)
-{
-  push @lines, $_;
-}
-
-my $cmdline = join "", @lines;
-my $noferm = 0;
-$noferm = 1 if $cmdline =~ /-f|--noferm/;
-
-# update MAC check rules
-{
-  my %rules;
-  my $moduletime = [gettimeofday];
-
-  # create a list of rules that should exist according to the database
-  for my $row (IServ::DB::SelectAll("SELECT mac FROM hosts ".
-      "WHERE mac IS NOT NULL"))
-  {
-    my $mac = new NetAddr::MAC $row->{mac};
-
-    for my $prefix (@prefixes)
-    {
-      my ($nic, $net) = split " ", $prefix;
-
-      # strip double : at end
-      $net =~ s/:$//;
- 
-      my $ip = $net . as_ipv6_suffix $mac;
-      $rules{"      saddr $ip mod mac mac-source ! $row->{mac} REJECT reject-with icmp6-port-unreachable;"}++;
-    }
-  }
-
-  # apply changes
-  open my $fp, ">", "/var/lib/iserv/config/hosts6.ferm" or die $!;
-  print $fp "";
-  if (%rules)
-  {
-    my $rules = join "", map "$_\n", sort keys %rules;
-    print "updating ferm...\n";
-    print $fp "
-domain (ip6) {
-  table filter {
-    chain check_mac {
-$rules
-    }
-  }
-}";
-  }
-  close $fp;
-  print "reloading ferm..." if not $noferm;
-  system "/usr/lib/iserv/fermuncleanreload6" if not $noferm;
 }
 
 # dhcp
