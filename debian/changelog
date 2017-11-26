@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (17.11.26-4) experimental; urgency=medium
+
+  * squid: Moved jessie fix to correct location
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Sun, 26 Nov 2017 05:04:53 +0100
+
 stsbl-iserv-ipv6-support (17.11.26-3) experimental; urgency=medium
 
   * bind: Added ipv6 support for db.iserv
