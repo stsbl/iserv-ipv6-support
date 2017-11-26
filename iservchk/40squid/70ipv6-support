@@ -1,3 +1,4 @@
+MkDir 0755 proxy:proxy /var/log/squid
 MkDir 0750 proxy:proxy /var/spool/squid-block
 MkDir 0755 root:root /etc/squid-block
 Check /etc/squid-block/squid-block.conf
@@ -7,7 +8,7 @@ ChPerm 0755 root:root /etc/init.d/squid-block
 Test 'squid block cache directory'
   [ -d /var/spool/squid-block/00 ]
   ---
-  service squid stop; /usr/sbin/squid -f /etc/squid-block/squid-block.conf -z
+  service squid-block stop; /usr/sbin/squid -f /etc/squid-block/squid-block.conf -z
 
 # Ensure that /run/squid-block.pid corresponds to the PID of the (squid-1) process.
 # This can break if two iservchk instances restart squid at the same time. Only
