@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (17.11.26-3) experimental; urgency=medium
+
+  * bind: Added ipv6 support for db.iserv
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Sun, 26 Nov 2017 04:51:10 +0100
+
 stsbl-iserv-ipv6-support (17.11.26-2) experimental; urgency=medium
 
   * samba: listen to unique local ip addresses
