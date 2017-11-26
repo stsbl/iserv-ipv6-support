@@ -1,3 +1,9 @@
+Test "fix squid command on jessie"
+  [ "$(iservdebianrelease)" = "jessie" ] || exit 0
+  [ -f "/usr/sbin/squid" ] || exit
+  ---
+  ln -s squid3 /usr/sbin/squid
+
 MkDir 0755 proxy:proxy /var/log/squid
 MkDir 0750 proxy:proxy /var/spool/squid-block
 MkDir 0755 root:root /etc/squid-block
