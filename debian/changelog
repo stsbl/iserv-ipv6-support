@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (17.11.26-1) experimental; urgency=medium
+
+  * squid-block: Fixed jessie compatibility
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Sun, 26 Nov 2017 03:58:57 +0100
+
 stsbl-iserv-ipv6-support (17.11.22-1) experimental; urgency=medium
 
   * newhosts.d/ipv6: removed check_mac support (no longer used)
