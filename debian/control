@@ -12,16 +12,16 @@ Depends:
   ${misc:Depends},
   ${perl:Depends},
   ${python3:Depends},
+  isc-dhcp-server,
   iserv-portal,
   iserv-regdns,
-  iserv-server-incron,
-  stsbl-iserv-config-ipv6 (>= 17.10.24-2),
-  stsbl-iserv-server-radvd,
-  isc-dhcp-server,
-  libregexp-ipv6-perl,
-  libnetaddr-mac-perl,
-  stsbl-iserv-server-ferm-ipv6,
   iserv-server-ferm,
+  iserv-server-incron,
+  libnetaddr-mac-perl,
+  libregexp-ipv6-perl,
+  stsbl-iserv-config-ipv6 (>= 17.10.24-2),
+  stsbl-iserv-server-ferm-ipv6 (>= 17.11.27),
+  stsbl-iserv-server-radvd,
 Description: IPv6 Support für IServ
  Bringt experimentellen IPv6-Support für IServ mit.
 Tag: suite::iserv

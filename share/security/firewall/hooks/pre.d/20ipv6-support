@@ -4,6 +4,9 @@
 
 DEFIF=$(LC_ALL=C ip -6 route show default | awk '$1=="default" {print $5}' | sed 's/^ppp[0-9]\+/ppp+/')
 
+ipset -q create proxy6 hash:mac
+ipset -q create mac6 hash:mac
+
 if [ "$DEFIF" ]
 then
   if [ "$Activation" ] && netquery6 --quiet --global --lan
