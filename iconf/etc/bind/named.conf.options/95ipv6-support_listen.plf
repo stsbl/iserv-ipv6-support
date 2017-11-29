@@ -1,7 +1,17 @@
-#!/usr/bin/perl -p -CSDAL
+#!/usr/bin/perl -CSDAL
 
 my @ips = sort split "\n", qx(sh -c 'netquery6 --global --lan --format "ip/length;"; netquery6 --uniquelocal --format "ip/length;";');
 push @ips, "::1/128;";
 my $out = join " ", @ips;
 
-s/listen-on-v6 \{ \}\;/listen-on-v6 \{ $out \}\;/g;
+while (my $line = <STDIN>)
+{
+  if ($line =~ /\s*listen-on-v6 \{ \}\;/)
+  {
+    print "        listen-on-v6 { $out };\n";
+  }
+  else
+  {
+    print $line;
+  }
+}

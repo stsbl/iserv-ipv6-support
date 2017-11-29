@@ -1,7 +1,18 @@
-#!/usr/bin/perl -p -CSDAL
+#!/usr/bin/perl -CSDAL
 
 my @ips = sort split "\n", qx(sh -c 'netquery6 --global --lan --format "ip"; netquery6 --uniquelocal --lan --format "ip"');
 push @ips, "::1";
 my $out = join " ", @ips;
 
-s/interfaces = (.*)$/interfaces = $1 $out/g;
+while (my $line = <STDIN>)
+{
+  if ($line =~ /^\s*interfaces\s=\s/)
+  {
+    chomp $line;
+    print "$line $out\n";
+  }
+  else
+  {
+    print $line;
+  }
+}
