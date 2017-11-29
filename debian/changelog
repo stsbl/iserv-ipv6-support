@@ -1,3 +1,10 @@
+stsbl-iserv-ipv6-support (17.11.29-1) experimental; urgency=medium
+
+  * squid: Allow to access IServ via IPv6 and improved filter speed
+  * samba/bind: Improved filter speed
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Wed, 29 Nov 2017 05:16:59 +0100
+
 stsbl-iserv-ipv6-support (17.11.27-1) experimental; urgency=medium
 
   * Improved startup
