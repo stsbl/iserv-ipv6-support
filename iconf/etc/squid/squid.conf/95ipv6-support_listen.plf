@@ -1,14 +1,17 @@
-#!/usr/bin/perl -p -CSDAL
+#!/usr/bin/perl -CSDAL
 
-my @ips = sort split "\n", qx(sh -c 'netquery6 --global --lan --format "ip"; netquery6 --uniquelocal --format "ip";');
-push @ips, "::1";
-my $out = "";
-
-for (@ips)
-{
-  $out .= "  http_port [$_]:3128\n";
-  next if $_ eq "::1";
-  $out .= "  http_port [$_]:3129 intercept\n";
+# remove duplicate values from array
+sub uniq(@) {
+  my %seen;
+  grep !$seen{$_}++, @_;
 }
 
-s/(?:(# Allow access only from the local network))$/$1\n$out/;
+my $out = join("\n", sort(uniq(split("\n", qx(sh -c 'netquery6 --global --lan --format "  http_port [ip]:3128\n  http_port [ip]:3129 intercept"; netquery6 --uniquelocal --format "  http_port [ip]:3128\n  http_port [ip]:3129 intercept";')))));
+my $out_acl = join("\n", sort(uniq(split("\n", qx(sh -c 'netquery6 --global --lan --format "  acl to_iserv dst ip"; netquery6 --uniquelocal --format "  acl to_iserv dst ip";')))));
+
+while (my $line = <STDIN>)
+{
+  print $line;
+  print "$out\n" if $line =~ /^# Allow access only from the local network/;
+  print "$out_acl\n" if $line =~ /^# Allow HTTP access to IServ itself/;
+}
