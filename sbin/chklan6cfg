@@ -46,6 +46,7 @@ for (keys %old_ipv6)
   unless (defined $new_ipv6{$_})
   {
     print "ip range $_ obsolete.\n";
+    $repaired++;
   }
 }
 
@@ -57,7 +58,7 @@ delete $seen{$_} for keys %old_ipv6;
 # fill new ips
 $seen{$_} = 1 for keys %new_ipv6;
 
-exit 0 if !keys %seen;
+exit 0 if !keys %seen and !keys %old_ipv6;
 
 if ($opt{repair})
 {
@@ -65,7 +66,7 @@ if ($opt{repair})
   my $arg = '("'.join('" "', sort keys %seen).'")';
   system "store_cfg_array", "/etc/iserv/config", "LAN", $arg
     and die "failed to write new config: $!\n";
-  system "iservchk", "-a";
+  system "/usr/lib/iserv/newconf";
 } 
 else
 {
