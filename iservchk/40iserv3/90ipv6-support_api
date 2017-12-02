@@ -1,0 +1,14 @@
+Touch /var/lib/iserv/pwd/ipv6sso.pwd
+ChPerm 0600 root:root /var/lib/iserv/pwd/ipv6sso.pwd
+
+Test "ipv6 api user for sso"
+  iservapiuser | grep -qE "ipv6sso\s*127.0.0.1"
+  ---
+  iservapiuser add ipv6sso 127.0.0.1 > /var/lib/iserv/pwd/ipv6sso.pwd
+
+Test "ipv6 api password stored"
+  [ -s /var/lib/iserv/pwd/ipv6sso.pwd ]
+  ---
+  echo "api password for ipv6sso is missing. This will may cause unexpected "\
+   "errors." 1>&2
+

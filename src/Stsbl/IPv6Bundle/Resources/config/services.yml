@@ -1,0 +1,4 @@
+services:
+#    stsbl_i_pv6.example:
+#        class: Stsbl\IPv6Bundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]

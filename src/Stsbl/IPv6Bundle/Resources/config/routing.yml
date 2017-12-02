@@ -1,0 +1,3 @@
+stsbl_i_pv6_homepage:
+    path:     /
+    defaults: { _controller: StsblIPv6Bundle:Default:index }
