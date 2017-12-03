@@ -1,7 +1,7 @@
 domain (ip6) {
   table filter {
     chain INPUT {
-      saddr @ipfilter(\$LAN) jump input_lan;
+      saddr @ipfilter($LAN) jump input_lan;
       saddr (fe80::/64 fc00::/7 ff00::/8) jump input_lan;
     }
     chain FORWARD {
@@ -19,8 +19,8 @@ domain (ip6) {
       interface tun+ ACCEPT;
       outerface tun+ ACCEPT;
 
-      outerface \$DEFIF jump inet_out;
-      interface \$DEFIF jump inet_in;
+      outerface $DEFIF jump inet_out;
+      interface $DEFIF jump inet_in;
     }
     chain forward_first {
     }
@@ -28,7 +28,7 @@ domain (ip6) {
       #proto tcp dport (http https) mod set set always_direct dst ACCEPT;
       #proto tcp dport (http https) mod set set forward_white dst ACCEPT;
       #proto icmp mod set set iserv_ns dst mod u32 u32 '0x3&0x40=0x40' ACCEPT;
-      #proto udp sport ntp dport ntp mod length length 76 ACCEPT;
+      proto udp sport ntp dport ntp mod length length 76 ACCEPT;
     }
     chain forward2 {
 
@@ -43,18 +43,22 @@ domain (ip6) {
       proto tcp dport (3128 3129 13128 13129) ACCEPT;
     }
     chain inet_in {
-      saddr @ipfilter(\$LAN) RETURN;
+      saddr @ipfilter($LAN) RETURN;
       saddr fd00::/8 RETURN;
       mod state state NEW REJECT reject-with icmp6-port-unreachable;
       ACCEPT;
     }
     chain inet_out {
-      daddr @ipfilter(\$LAN) RETURN;
-      saddr fd00::/8 RETURN;
+      daddr @ipfilter($LAN) RETURN;
+      daddr fd00::/8 RETURN;
       jump activation_out;
     }
     chain activation_out {
-      $(([ $Activation ] && echo "mod set set mac6 src ACCEPT") || echo "ACCEPT");
+      @if $activation {
+         mod set set mac6 src ACCEPT;
+      } @else {
+        ACCEPT;
+      }
     }
   }
   table nat {
@@ -63,7 +67,9 @@ domain (ip6) {
       jump always_direct;
       jump forward2_first;
       jump forward2;
-      $([ $Activation ] && echo "daddr @ipfilter(\$IPS) jump forward_squid;")
+      @if $activation {
+        daddr @ipfilter(\$IPS) jump forward_squid;
+      }
     }
     chain prerouting_first {
 
@@ -84,11 +90,12 @@ domain (ip6) {
       interface ppp+ RETURN;
       interface tun+ RETURN;
 
-      $(([ $Activation ] && echo "mod set set proxy6 src proto tcp dport http REDIRECT to-ports 3129") ||
-	  echo "proto tcp dport http REDIRECT to-ports 3129");
-      $([ $Activation ] && echo "mod set set mac6 src proto tcp dport http REDIRECT to-ports 3129;")
-
-      proto tcp dport http REDIRECT to-ports 13129;
+      #@if $activation {
+        mod set set proxy6 src proto tcp dport http REDIRECT to-ports 3129;
+        proto tcp dport http REDIRECT to-ports 13129;
+      } @else {
+        proto tcp dport http REDIRECT to-ports 3129;
+      }
     }
     chain forward_squid {
       interface ppp+ RETURN;
