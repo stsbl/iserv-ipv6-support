@@ -19,7 +19,7 @@ Depends:
   iserv-server-incron,
   libnetaddr-mac-perl,
   libregexp-ipv6-perl,
-  stsbl-iserv-config-ipv6 (>= 17.10.24-2),
+  stsbl-iserv-config-ipv6 (>= 17.12.03),
   stsbl-iserv-server-ferm-ipv6 (>= 17.11.27),
   stsbl-iserv-server-radvd,
 Description: IPv6 Support für IServ
