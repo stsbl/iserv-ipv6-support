@@ -1,8 +1,9 @@
 Test "kill temporary ipv6 address on lan interfaces"
   for i in $(netquery6 -gl -f "nic")
   do
-    ip -6 addr show $i | grep -q temporary && exit 1
+    ip -6 addr show $i | grep temporary && exit 1
   done
+  exit 0
   ---
   for i in $(netquery6 -gl -f "nic")
   do
