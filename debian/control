@@ -12,6 +12,7 @@ Depends:
   ${misc:Depends},
   ${perl:Depends},
   ${python3:Depends},
+  ipv6ndpwatchd,
   isc-dhcp-server,
   iserv-portal,
   iserv-regdns,
