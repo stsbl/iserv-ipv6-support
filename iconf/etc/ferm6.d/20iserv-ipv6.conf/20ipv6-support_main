@@ -90,7 +90,7 @@ domain (ip6) {
       interface ppp+ RETURN;
       interface tun+ RETURN;
 
-      #@if $activation {
+      @if $activation {
         mod set set proxy6 src proto tcp dport http REDIRECT to-ports 3129;
         proto tcp dport http REDIRECT to-ports 13129;
       } @else {
