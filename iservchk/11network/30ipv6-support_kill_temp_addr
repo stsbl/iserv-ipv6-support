@@ -6,7 +6,7 @@ Test "kill temporary ipv6 address on lan interfaces"
   ---
   for i in $(netquery6 -gl -f "nic")
   do
-    echo 0 > "/proc/sys/net/ipv6/conf/$i/use_temp_addr"
+    echo 0 > "/proc/sys/net/ipv6/conf/$i/use_tempaddr"
     echo 0 > "/proc/sys/net/ipv6/conf/$i/temp_valid_lft"
     echo 0 > "/proc/sys/net/ipv6/conf/$i/temp_prefered_lft"
   done
