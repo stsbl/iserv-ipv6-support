@@ -68,7 +68,7 @@ domain (ip6) {
       jump forward2_first;
       jump forward2;
       @if $activation {
-        daddr @ipfilter(\$IPS) jump forward_squid;
+        daddr @ipfilter($IPS) jump forward_squid;
       }
     }
     chain prerouting_first {
@@ -85,12 +85,13 @@ domain (ip6) {
       #proto tcp dport http mod set set always_direct6 dst ACCEPT;
     }
     chain forward2 {
-      daddr @ipfilter(\$IPS) RETURN;
+      daddr @ipfilter($IPS) RETURN;
 
       interface ppp+ RETURN;
       interface tun+ RETURN;
 
       @if $activation {
+	mod set set mac6 src proto tcp dport http REDIRECT to-ports 3129;
         mod set set proxy6 src proto tcp dport http REDIRECT to-ports 3129;
         proto tcp dport http REDIRECT to-ports 13129;
       } @else {
