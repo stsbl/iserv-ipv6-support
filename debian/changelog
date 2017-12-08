@@ -1,3 +1,24 @@
+stsbl-iserv-ipv6-support (17.12.08-1) experimental; urgency=medium
+
+  * chklan6cfg: Fixed repaired for range deletion
+  * Moved ipv6 config update to 00config to reduce required iservchk runs to one
+  * Added base structure for computer request support
+  * Rewrote ferm iconf templates to use ferm variables instead of shell code and enabled whitelisting for ntp
+  * Updated depdencies
+  * Enabled if condition
+  * activation: Only count global addresses
+  * Added ipv6ndpwatchd dependency
+  * Added license
+  * chkregdns6cfg: Fixed regex and repaired counter
+  * Added iservchk script to kill temporary ipv6 address on lan interfaces
+  * Fixed wrong parameter name
+  * Fixed temporary ip test returning wrong exit code
+  * Improved iservchk order
+  * Fixed wrong namespace, improved bundle and removed unused template code
+  * Fixed bundle permissions
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Fri, 08 Dec 2017 02:03:36 +0100
+
 stsbl-iserv-ipv6-support (17.11.29-1) experimental; urgency=medium
 
   * squid: Allow to access IServ via IPv6 and improved filter speed
