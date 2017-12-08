@@ -4,7 +4,7 @@ stsbl-iserv-ipv6-support (17.12.08-1) experimental; urgency=medium
   * Moved ipv6 config update to 00config to reduce required iservchk runs to one
   * Added base structure for computer request support
   * Rewrote ferm iconf templates to use ferm variables instead of shell code and enabled whitelisting for ntp
-  * Updated depdencies
+  * Updated dependencies
   * Enabled if condition
   * activation: Only count global addresses
   * Added ipv6ndpwatchd dependency
