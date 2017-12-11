@@ -1,0 +1,4 @@
+$(for nic in $(netquery6 --format nic | uniq)
+  do
+    grep -q "iface $nic inet6 static" /etc/network/interfaces.d/ipv6 && echo -e "net.ipv6.conf.$nic.accept_ra = 0\n"
+  done)
