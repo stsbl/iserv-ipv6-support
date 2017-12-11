@@ -1,0 +1,23 @@
+# Squid Block logrotate configuration for IServ
+#
+# This file is generated automatically by iservchk.
+# It is not recommended to make any changes to this file.
+# If really necessary you can save changes permanently using:
+#   iconf save /etc/logrotate.d/squid-block
+
+/var/log/squid/access-block.log {
+	daily
+	dateext
+	dateyesterday
+	compress
+	delaycompress
+	rotate 7
+	missingok
+	create 640 proxy proxy
+	sharedscripts
+	postrotate
+		test ! -e /run/squid-block.pid || /usr/sbin/squid-block -k rotate -f /etc/squid-block/squid-block.conf 2>/dev/null
+		/usr/lib/iserv/logrotate_create_symlink --copy --suffix ".(nobackup)" "/var/log/squid/access-block.log"
+		/usr/lib/iserv/logrotate_create_symlink "/var/log/squid/access-block.log"
+	endscript
+}
