@@ -1,0 +1,6 @@
+#!/bin/bash
+
+. /usr/lib/iserv/cfg
+
+sed -E "s/$(hostname -s).$Workgroup IN     CNAME   $Servername./$(hostname -s).$Workgroup IN     CNAME   ipv4.$Domain./"
+
