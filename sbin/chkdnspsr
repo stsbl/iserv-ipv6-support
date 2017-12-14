@@ -11,13 +11,13 @@ DEFIF="$(LC_ALL=C ip -6 route show default | awk '$1=="default" {print $5}' |
 
 IPs="$(netquery6 --global --format "ip" | while read i
 do
-  perl -e 'use Net::IP; print Net::IP::ip_expand_address "'$i'", 6;'
+  perl -e 'use Net::IP; print Net::IP::ip_expand_address "$ARGV[0]", 6;' "$i"
   echo
 done | sort)"
   
-CURIPs="$(dig +short ipv6.$Domain AAAA @ns.iserv.eu | while read i
+CURIPs="$(dig +short ipv6.$Domain AAAA @ns.iserv.eu 2> /dev/null | while read i
 do
-  perl -e 'use Net::IP; print Net::IP::ip_expand_address "'$i'", 6;'
+  perl -e 'use Net::IP; print Net::IP::ip_expand_address "$ARGV[0]", 6;' "$i"
   echo
 done | sort)"
 
@@ -40,7 +40,7 @@ then
 fi
 
 IP=$(myip)
-CURIP=$(dig +short ipv4.$Domain A @ns.iserv.eu)
+CURIP=$(dig +short ipv4.$Domain A @ns.iserv.eu 2> /dev/null)
 
 if ! [ -z "$IP" ] && ! [ "$IP" = "$CURIP" ]
 then
