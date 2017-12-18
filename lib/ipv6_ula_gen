@@ -13,7 +13,7 @@ get_unused_unique_local_address()
     if [[ -f /var/lib/iserv/config/*.uln ]]
     then
       # validate if net is taken
-      grep -q "^${NET}$" /var/lib/iserv/config/*.unl && continue
+      grep -q "^${NET}$" /var/lib/iserv/config/*.uln && continue
     fi
 
     echo -n ${NET}
