@@ -1,3 +1,15 @@
+stsbl-iserv-ipv6-support (17.12.19-1) experimental; urgency=medium
+
+  * Kill route advertisements on statically configured interfaces to
+    workaround stupid rdnssd behaviour
+  * Added logrotate config for squid-block
+  * Limit samba dns alias to IPv4 for now
+  * Disable accept_ra for manually configured interfaces also on ifup
+  * Hide dig error output and improved perl inline script
+  * ipv6_ula_gen: Fixed typo
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Tue, 19 Dec 2017 08:34:59 +0100
+
 stsbl-iserv-ipv6-support (17.12.08-3) experimental; urgency=medium
 
   * Added missing redirect rule
@@ -15,7 +27,8 @@ stsbl-iserv-ipv6-support (17.12.08-1) experimental; urgency=medium
   * chklan6cfg: Fixed repaired for range deletion
   * Moved ipv6 config update to 00config to reduce required iservchk runs to one
   * Added base structure for computer request support
-  * Rewrote ferm iconf templates to use ferm variables instead of shell code and enabled whitelisting for ntp
+  * Rewrote ferm iconf templates to use ferm variables instead of shell code
+    and enabled whitelisting for ntp
   * Updated dependencies
   * Enabled if condition
   * activation: Only count global addresses
