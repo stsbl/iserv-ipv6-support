@@ -51,8 +51,8 @@ then
 
   if [ "$1" = "-r" ]
   then
-    regdns -d "ipv4.$Domain. A"
-    regdns -a "ipv4.$Domain. 300 A $IP"
+    regdns -d "ipv4.$Domain. A" 2> /dev/null
+    regdns -a "ipv4.$Domain. 300 A $IP" 2> /dev/null
   fi
 fi
 
