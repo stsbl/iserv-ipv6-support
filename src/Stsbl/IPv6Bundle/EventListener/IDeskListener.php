@@ -6,8 +6,11 @@ use Doctrine\Bundle\DoctrineBundle\Registry as Doctrine;
 use IServ\CoreBundle\Event\IDeskEvent;
 use IServ\CoreBundle\EventListener\IDeskListenerInterface;
 use IServ\CoreBundle\Service\Config;
+use IServ\CoreBundle\Service\Shell;
+use IServ\CoreBundle\Util\Sudo;
 use IServ\HostBundle\Entity\Host;
 use IServ\HostBundle\Util\Network;
+use Stsbl\IPv6Bundle\Util\Network6;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -60,6 +63,16 @@ class IDeskListener implements ContainerAwareInterface, IDeskListenerInterface
     private $config;
 
     /**
+     * @var Network6
+     */
+    private $network6;
+
+    /**
+     * @var Shell
+     */
+    private $shell;
+
+    /**
      * Checks if bundle is installed
      *
      * @param $name
@@ -71,19 +84,36 @@ class IDeskListener implements ContainerAwareInterface, IDeskListenerInterface
     }
 
     /**
+     * Creates sso link to ipv4.mein-iserv.de
+     *
+     * @return string
+     */
+    public function generateSsoLink()
+    {
+        $this->container->get('iserv.sudo');
+        $link = trim(Sudo::shell_exec('sudo /usr/lib/iserv/ipv6_generate_sso_link'));
+
+        return $link;
+    }
+    /**
      * @param Doctrine $doctrine
      * @param Config $config
      * @param RequestStack $requestStack
+     * @param Network6 $network6
+     * @param Shell $shell
      */
-    public function __construct(Doctrine $doctrine, Config $config, RequestStack $requestStack)
+    public function __construct(Doctrine $doctrine, Config $config, RequestStack $requestStack, Network6 $network6, Shell $shell)
     {
         $this->doctrine = $doctrine->getManager();
         $this->request = $requestStack->getCurrentRequest();
         $this->config = $config;
+        $this->network6 = $network6;
+        $this->shell = $shell;
     }
 
     /**
      * @param \IServ\CoreBundle\Event\IDeskEvent $event
+     * @throws \IServ\CoreBundle\Exception\ShellExecException
      */
     public function onBuildIDesk(IDeskEvent $event)
     {
@@ -96,7 +126,12 @@ class IDeskListener implements ContainerAwareInterface, IDeskListenerInterface
         }
 
         // Get the MAC for the ip address
-        $mac = Network::query_mac($ip);
+        $mac = $this->network6->queryMac($ip);
+
+        // exit if mac is not available
+        if (!$mac) {
+            return;
+        }
 
         // Check if computer is already registered
         /* @var $host Host */
@@ -111,8 +146,8 @@ class IDeskListener implements ContainerAwareInterface, IDeskListenerInterface
         $computerRequest = $this->doctrine->getRepository('IServComputerRequestBundle:ComputerRequest')->findOneBy(['mac' => $mac]);
         $event->addContent(
             'computer-request',
-            'IServComputerRequestBundle::idesk.html.twig',
-            array('action' => $computerRequest !== null ? 'pending' : 'request'),
+            'StsblIPv6Bundle::idesk.html.twig',
+            array('action' => $computerRequest !== null ? 'pending' : 'request', 'link' => $this->generateSsoLink()),
             -10
         );
     }

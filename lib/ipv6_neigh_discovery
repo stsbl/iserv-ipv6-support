@@ -1,0 +1,7 @@
+#!/bin/sh -e
+
+
+if [ ! -z "$1" ]
+then
+  ip -6 neigh show "$1"
+fi
