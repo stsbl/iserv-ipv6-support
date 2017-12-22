@@ -18,6 +18,7 @@ Depends:
   iserv-regdns,
   iserv-server-ferm,
   iserv-server-incron,
+  iserv3-sso,
   libnetaddr-mac-perl,
   libregexp-ipv6-perl,
   stsbl-iserv-config-ipv6 (>= 17.12.03),
