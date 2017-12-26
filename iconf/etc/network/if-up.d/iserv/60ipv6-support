@@ -8,6 +8,3 @@ then
      )
 fi
 
-# disable accept_ra on manually configured interfaces
-grep -q "iface ${IFACE} inet6 static" /etc/network/interfaces.d/ipv6 && echo 0 > "/proc/sys/net/ipv6/conf/${IFACE}/accept_ra"
-
