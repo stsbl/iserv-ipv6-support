@@ -1,14 +1,14 @@
 # TRANSLATION CATALOG OF STSBL-ISERV-IPV6-SUPPORT.
-# Copyright (C) 2017 Stadtteilschule Blankenese
+# Copyright (C) 2018 Stadtteilschule Blankenese
 # This file is distributed under the same license as the stsbl-iserv-ipv6-support package.
-# Stadtteilschule Blankenese <repository@stsbl.de>, 2017.
+# Stadtteilschule Blankenese <repository@stsbl.de>, 2018.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: stsbl-iserv-ipv6-support\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-22 02:45+0100\n"
-"PO-Revision-Date: 2017-05-07 14:52+0200\n"
+"POT-Creation-Date: 2018-12-22 02:45+0100\n"
+"PO-Revision-Date: 2018-05-07 14:52+0200\n"
 "Last-Translator: root <repository@stsbl.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
