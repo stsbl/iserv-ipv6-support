@@ -1,3 +1,12 @@
+stsbl-iserv-ipv6-support (18.01.01-1) experimental; urgency=medium
+
+  * Revert "Kill route advertisements on statically configured interfaces
+    to workaround stupid rdnssd behaviour"
+  * Revert "Disable accept_ra for manually configured interfaces also on ifup"
+  * Updated copyright
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Mon, 01 Jan 2018 20:40:31 +0100
+
 stsbl-iserv-ipv6-support (17.12.22-1) experimental; urgency=medium
 
   * chkdnspsr: Hide more error output
