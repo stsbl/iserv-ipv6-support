@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (18.01.03-1) experimental; urgency=medium
+
+  * Added defaults
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Wed, 03 Jan 2018 00:15:04 +0100
+
 stsbl-iserv-ipv6-support (18.01.01-1) experimental; urgency=medium
 
   * Revert "Kill route advertisements on statically configured interfaces
