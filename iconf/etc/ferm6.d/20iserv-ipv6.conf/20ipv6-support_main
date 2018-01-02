@@ -56,8 +56,6 @@ domain (ip6) {
     chain activation_out {
       @if $activation {
          mod set set mac6 src ACCEPT;
-      } @else {
-        ACCEPT;
       }
     }
   }
@@ -68,7 +66,7 @@ domain (ip6) {
       jump forward2_first;
       jump forward2;
       @if $activation {
-        daddr @ipfilter($IPS) jump forward_squid;
+        daddr @ipfilter($IPS) jump filter_squid;
       }
     }
     chain prerouting_first {
@@ -98,7 +96,7 @@ domain (ip6) {
         proto tcp dport http REDIRECT to-ports 3129;
       }
     }
-    chain forward_squid {
+    chain filter_squid {
       interface ppp+ RETURN;
       interface tun+ RETURN;
 

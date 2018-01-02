@@ -1,0 +1,18 @@
+@def $activation = `bash -c '. /usr/lib/iserv/cfg; [ "$Activation" ] && netquery6 -glq && echo "1" || echo "0"'`;
+
+domain (ip6) {
+      table filter {
+            chain inet_out {
+                  @if @not($activation) {
+                        ACCEPT;
+                  } @else {
+                        RETURN;
+                  }
+            }
+      }
+      table nat {
+            chain forward2 {
+                  ACCEPT;
+            }
+      }
+}
