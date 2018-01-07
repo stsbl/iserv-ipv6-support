@@ -1,3 +1,10 @@
+stsbl-iserv-ipv6-support (18.01.08-1) experimental; urgency=medium
+
+  * Added lintian overrides
+  * Ensure iservfg -> LAN update on wide-dhcp-client repairs
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Mon, 08 Jan 2018 00:48:55 +0100
+
 stsbl-iserv-ipv6-support (18.01.03-1) experimental; urgency=medium
 
   * Added defaults
