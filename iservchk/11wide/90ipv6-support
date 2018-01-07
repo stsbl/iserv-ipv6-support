@@ -1,0 +1,9 @@
+Test "update iservcfg -> LAN for IPv6"
+  ! [ "$REPAIRED" ] || chklan6cfg
+  ---
+  chklan6cfg -r
+
+Test "update iservcfg -> ExternalIPs for IPv6"
+  ! [ "$REPAIRED" ] || chkregdns6cfg
+  ---
+  chkregdns6cfg -r

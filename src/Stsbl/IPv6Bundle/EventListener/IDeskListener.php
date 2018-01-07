@@ -48,7 +48,7 @@ class IDeskListener implements ContainerAwareInterface, IDeskListenerInterface
     use ContainerAwareTrait;
 
     /**
-     * @var \Doctrine\Common\Persistence\ObjectManager
+     * @var Doctrine
      */
     private $doctrine;
 
