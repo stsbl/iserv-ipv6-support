@@ -1,6 +1,6 @@
 Test "fix squid command on jessie"
   [ "$(iservdebianrelease)" = "jessie" ] || exit 0
-  [ -f "/usr/sbin/squid" ] || exit
+  [ -f "/usr/sbin/squid" ] || exit 1
   ---
   ln -s squid3 /usr/sbin/squid
 
@@ -42,8 +42,6 @@ Test "pidfile corresponds to the correct squid instance"
     exit 1
   fi
   rm -f /run/squid-block.pid
-
-Start squid-block squid-block
 
 Test "squid-block swap.state too big"
   ! [ -e /var/spool/squid-block/swap.state ] ||

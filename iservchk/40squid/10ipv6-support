@@ -1,0 +1,5 @@
+Test "squid-block service"
+  systemctl is-enabled -q squid-block.service
+  ---
+  systemctl enable squid-block.service
+

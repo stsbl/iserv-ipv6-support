@@ -11,6 +11,7 @@ use IServ\CoreBundle\Util\Sudo;
 use IServ\HostBundle\Entity\Host;
 use IServ\HostBundle\Util\Network;
 use Stsbl\IPv6Bundle\Util\Network6;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -46,6 +47,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class IDeskListener implements ContainerAwareInterface, IDeskListenerInterface
 {
     use ContainerAwareTrait;
+
+    /**
+     * @var Container
+     */
+    protected $container;
 
     /**
      * @var Doctrine
@@ -135,7 +141,7 @@ class IDeskListener implements ContainerAwareInterface, IDeskListenerInterface
 
         // Check if computer is already registered
         /* @var $host Host */
-        $host = $this->doctrine->getRepository('IServHostBundle:Host')->findOneBy(array('mac' => $mac));
+        $host = $this->doctrine->getRepository(Host::class)->findOneBy(array('mac' => $mac));
 
         // Nothing else to do if computer is already registered
         if ($host !== null) {
@@ -143,7 +149,8 @@ class IDeskListener implements ContainerAwareInterface, IDeskListenerInterface
         }
 
         // Check if there is already a pending request
-        $computerRequest = $this->doctrine->getRepository('IServComputerRequestBundle:ComputerRequest')->findOneBy(['mac' => $mac]);
+        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
+        $computerRequest = $this->doctrine->getRepository(\IServ\ComputerRequestBundle\Entity\ComputerRequest::class)->findOneBy(['mac' => $mac]);
         $event->addContent(
             'computer-request',
             'StsblIPv6Bundle::idesk.html.twig',
