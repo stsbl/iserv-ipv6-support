@@ -1,3 +1,12 @@
+stsbl-iserv-ipv6-support (18.02.02-1) UNRELEASED; urgency=medium
+
+  * Integrate squid block service into squid service
+  * Also propagate start, restart and stop from squid.service
+  * Fixed iservchk order for squid
+  * Adapted package for new IPv6 support in iserv-server-ferm
+
+ -- Felix Jacobi <felix.jacobi@iserv.eu>  Fri, 02 Feb 2018 00:55:01 +0100
+
 stsbl-iserv-ipv6-support (18.01.09-1) experimental; urgency=medium
 
   * Added assigned check for ula ipv6 addresses to iservchk
