@@ -1,7 +1,6 @@
 domain (ip6) {
   table filter {
     chain INPUT {
-      saddr @ipfilter($LAN) jump input_lan;
       saddr (fe80::/64 fc00::/7 ff00::/8) jump input_lan;
     }
     chain FORWARD {
@@ -19,8 +18,8 @@ domain (ip6) {
       interface tun+ ACCEPT;
       outerface tun+ ACCEPT;
 
-      outerface $DEFIF jump inet_out;
-      interface $DEFIF jump inet_in;
+      outerface $DEFIF6 jump inet_out;
+      interface $DEFIF6 jump inet_in;
     }
     chain forward_first {
     }
@@ -32,10 +31,6 @@ domain (ip6) {
     }
     chain forward2 {
 
-    }
-    chain input_world {
-      proto tcp dport (ftp smtp smtps submission http https pop3 pop3s imap imaps nrpe) ACCEPT;
-      proto tcp sport 1024:65535 dport 63000:63099 ACCEPT;
     }
     chain input_lan {
       proto tcp dport (domain netbios-ssn microsoft-ds ipp 4447 4448) ACCEPT;
@@ -66,7 +61,7 @@ domain (ip6) {
       jump forward2_first;
       jump forward2;
       @if $activation {
-        daddr @ipfilter($IPS) jump filter_squid;
+        daddr @ipfilter($IPS6) jump filter_squid;
       }
     }
     chain prerouting_first {
@@ -83,7 +78,7 @@ domain (ip6) {
       #proto tcp dport http mod set set always_direct6 dst ACCEPT;
     }
     chain forward2 {
-      daddr @ipfilter($IPS) RETURN;
+      daddr @ipfilter($IPS6) RETURN;
 
       interface ppp+ RETURN;
       interface tun+ RETURN;
