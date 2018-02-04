@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if ! [ "$(iservdebianrelease)" = "jessie" ]
+then
+  sed -e "/test ! -e \/run\/squid.pid || \/usr\/sbin\/squid -k rotate 2>\/dev\/null/a \
+$(echo -e "\t\t")test ! -e \/run\/squid-block.pid || \/usr\/sbin\/squid-block -k rotate -f \/etc\/squid-block\/squid-block.conf 2>/dev/null\
+"
+else
+  cat -
+fi
+
