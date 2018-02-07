@@ -1,3 +1,12 @@
+stsbl-iserv-ipv6-support (18.02.05-1) experimental; urgency=medium
+
+  * Integrate squid block service into squid service
+  * Also propagate start, restart and stop from squid.service
+  * Fixed iservchk order for squid
+  * Fixed duplicate logrotate configuration on Debian Stretch
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Mon, 05 Feb 2018 02:49:51 +0100
+
 stsbl-iserv-ipv6-support (18.01.09-1) experimental; urgency=medium
 
   * Added assigned check for ula ipv6 addresses to iservchk
