@@ -4,10 +4,10 @@ namespace Stsbl\IPv6Bundle\EventListener;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\ControllerResolver;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -48,7 +48,7 @@ class KernelControllerSubscriber implements ContainerAwareInterface, EventSubscr
     use ContainerAwareTrait;
 
     /**
-     * @var ControllerResolver
+     * @var ControllerResolverInterface
      */
     private $resolver;
 
@@ -60,10 +60,10 @@ class KernelControllerSubscriber implements ContainerAwareInterface, EventSubscr
     /**
      * The constructor.
      *
-     * @param ControllerResolver $resolver
+     * @param ControllerResolverInterface $resolver
      * @param RouterInterface $router
      */
-    public function __construct(ControllerResolver $resolver, RouterInterface $router)
+    public function __construct(ControllerResolverInterface $resolver, RouterInterface $router)
     {
         $this->resolver = $resolver;
         $this->router = $router;
