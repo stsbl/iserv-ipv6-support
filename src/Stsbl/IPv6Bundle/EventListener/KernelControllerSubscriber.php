@@ -94,6 +94,11 @@ class KernelControllerSubscriber implements ContainerAwareInterface, EventSubscr
         $originalRequest = $event->getRequest();
         $pathInfo = $originalRequest->getPathInfo();
 
+        // do nothing if we are on IPv4
+        if (false !== filter_var($originalRequest->getClientIp(), FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            return;
+        }
+
         // prefilter requests by pathinfo to improve speed:
         // 1100ms => 616ms
         if (!preg_match('#^/public/mdm#', $pathInfo)) {
