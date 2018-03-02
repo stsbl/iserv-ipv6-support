@@ -8,6 +8,7 @@ Homepage: https://it.stsbl.de
 
 Package: stsbl-iserv-ipv6-support
 Architecture: all
+Xb-Private-IServ-Revision: ${iserv:Revision}
 Depends:
   ${misc:Depends},
   ${perl:Depends},
