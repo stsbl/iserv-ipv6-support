@@ -4,16 +4,16 @@ namespace Stsbl\IPv6Bundle\EventListener;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\ControllerResolver;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\Routing\Router;
+use Symfony\Component\Routing\RouterInterface;
 
 /*
  * The MIT License
@@ -48,22 +48,22 @@ class KernelControllerSubscriber implements ContainerAwareInterface, EventSubscr
     use ContainerAwareTrait;
 
     /**
-     * @var ControllerResolver
+     * @var ControllerResolverInterface
      */
     private $resolver;
 
     /**
-     * @var Router;
+     * @var RouterInterface;
      */
     private $router;
 
     /**
      * The constructor.
      *
-     * @param ControllerResolver $resolver
-     * @param Router $router
+     * @param ControllerResolverInterface $resolver
+     * @param RouterInterface $router
      */
-    public function __construct(ControllerResolver $resolver, Router $router)
+    public function __construct(ControllerResolverInterface $resolver, RouterInterface $router)
     {
         $this->resolver = $resolver;
         $this->router = $router;
@@ -93,6 +93,11 @@ class KernelControllerSubscriber implements ContainerAwareInterface, EventSubscr
 
         $originalRequest = $event->getRequest();
         $pathInfo = $originalRequest->getPathInfo();
+
+        // do nothing if we are on IPv4
+        if (false !== filter_var($originalRequest->getClientIp(), FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            return;
+        }
 
         // prefilter requests by pathinfo to improve speed:
         // 1100ms => 616ms

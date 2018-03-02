@@ -2,7 +2,6 @@
 // src/Stsbl/IPv6Bundle/EventListener/IDeskListener.php
 namespace Stsbl\IPv6Bundle\EventListener;
 
-use Doctrine\Bundle\DoctrineBundle\Registry as Doctrine;
 use IServ\CoreBundle\Event\IDeskEvent;
 use IServ\CoreBundle\EventListener\IDeskListenerInterface;
 use IServ\CoreBundle\Service\Config;
@@ -11,6 +10,7 @@ use IServ\CoreBundle\Util\Sudo;
 use IServ\HostBundle\Entity\Host;
 use IServ\HostBundle\Util\Network;
 use Stsbl\IPv6Bundle\Util\Network6;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -54,7 +54,7 @@ class IDeskListener implements ContainerAwareInterface, IDeskListenerInterface
     protected $container;
 
     /**
-     * @var Doctrine
+     * @var RegistryInterface
      */
     private $doctrine;
 
@@ -93,22 +93,25 @@ class IDeskListener implements ContainerAwareInterface, IDeskListenerInterface
      * Creates sso link to ipv4.mein-iserv.de
      *
      * @return string
+     * @throws \Exception
      */
     public function generateSsoLink()
     {
+        // FIXME service locator?
         $this->container->get('iserv.sudo');
         $link = trim(Sudo::shell_exec('sudo /usr/lib/iserv/ipv6_generate_sso_link'));
 
         return $link;
     }
+
     /**
-     * @param Doctrine $doctrine
+     * @param RegistryInterface $doctrine
      * @param Config $config
      * @param RequestStack $requestStack
      * @param Network6 $network6
      * @param Shell $shell
      */
-    public function __construct(Doctrine $doctrine, Config $config, RequestStack $requestStack, Network6 $network6, Shell $shell)
+    public function __construct(RegistryInterface $doctrine, Config $config, RequestStack $requestStack, Network6 $network6, Shell $shell)
     {
         $this->doctrine = $doctrine->getManager();
         $this->request = $requestStack->getCurrentRequest();
@@ -119,7 +122,7 @@ class IDeskListener implements ContainerAwareInterface, IDeskListenerInterface
 
     /**
      * @param \IServ\CoreBundle\Event\IDeskEvent $event
-     * @throws \IServ\CoreBundle\Exception\ShellExecException
+     * @throws \Exception
      */
     public function onBuildIDesk(IDeskEvent $event)
     {
@@ -141,7 +144,7 @@ class IDeskListener implements ContainerAwareInterface, IDeskListenerInterface
 
         // Check if computer is already registered
         /* @var $host Host */
-        $host = $this->doctrine->getRepository(Host::class)->findOneBy(array('mac' => $mac));
+        $host = $this->doctrine->getRepository(Host::class)->findOneBy(['mac' => $mac]);
 
         // Nothing else to do if computer is already registered
         if ($host !== null) {
@@ -154,7 +157,7 @@ class IDeskListener implements ContainerAwareInterface, IDeskListenerInterface
         $event->addContent(
             'computer-request',
             'StsblIPv6Bundle::idesk.html.twig',
-            array('action' => $computerRequest !== null ? 'pending' : 'request', 'link' => $this->generateSsoLink()),
+            ['action' => $computerRequest !== null ? 'pending' : 'request', 'link' => $this->generateSsoLink()],
             -10
         );
     }
