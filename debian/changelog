@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (18.03.02-3) experimental; urgency=medium
+
+  * MDM workaround: Do not redirect on IPv4
+
+ -- Felix Jacobi <felix.jacobi@iserv.eu>  Fri, 02 Mar 2018 17:01:07 +0100
+
 stsbl-iserv-ipv6-support (18.03.02-2) experimental; urgency=medium
 
   * Updated packaging
