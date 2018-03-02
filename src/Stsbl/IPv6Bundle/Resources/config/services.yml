@@ -22,4 +22,5 @@ services:
     Stsbl\IPv6Bundle\:
         resource: '../../{Controller,EventListener,Util}'
         bind:
+            # FIXME can be removed after proper fix for file-distribution!
             $hostManager: '@iserv.host_manager'

@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\Routing\Router;
+use Symfony\Component\Routing\RouterInterface;
 
 /*
  * The MIT License
@@ -53,7 +53,7 @@ class KernelControllerSubscriber implements ContainerAwareInterface, EventSubscr
     private $resolver;
 
     /**
-     * @var Router;
+     * @var RouterInterface;
      */
     private $router;
 
@@ -61,9 +61,9 @@ class KernelControllerSubscriber implements ContainerAwareInterface, EventSubscr
      * The constructor.
      *
      * @param ControllerResolver $resolver
-     * @param Router $router
+     * @param RouterInterface $router
      */
-    public function __construct(ControllerResolver $resolver, Router $router)
+    public function __construct(ControllerResolver $resolver, RouterInterface $router)
     {
         $this->resolver = $resolver;
         $this->router = $router;
