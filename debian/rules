@@ -8,3 +8,4 @@
 override_dh_install:
 	dh_iservinstall3
 	dh_iservgitvars
+	dh_python3
