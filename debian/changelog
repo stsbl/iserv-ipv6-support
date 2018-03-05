@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (18.03.06-2) experimental; urgency=medium
+
+  * Added missing dh_python3
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Tue, 06 Mar 2018 00:53:26 +0100
+
 stsbl-iserv-ipv6-support (18.03.06-1) experimental; urgency=medium
 
   * Removed autowire deprecations
