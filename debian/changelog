@@ -1,3 +1,11 @@
+stsbl-iserv-ipv6-support (18.03.06-1) experimental; urgency=medium
+
+  * Removed autowire deprecations
+  * Resolved autowire issues
+  * MDM workaround: Use redirection code 308 instead of 302
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Tue, 06 Mar 2018 00:50:56 +0100
+
 stsbl-iserv-ipv6-support (18.03.02-3) experimental; urgency=medium
 
   * MDM workaround: Do not redirect on IPv4
