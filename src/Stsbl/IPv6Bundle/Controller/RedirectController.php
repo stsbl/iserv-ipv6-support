@@ -24,7 +24,7 @@ class RedirectController extends PageController
     {
         $newUrl = sprintf('https://ipv4.%s/iserv%s', $this->getConfig()->get('Domain'), $request->getPathInfo());
 
-        return new RedirectResponse($newUrl);
+        return new RedirectResponse($newUrl, 308);
     }
 
     /**
