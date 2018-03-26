@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (18.03.26-1) experimental; urgency=medium
+
+  * Added scripts to ensure proper configuration of firewall and lan ranges
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Mon, 26 Mar 2018 03:05:39 +0200
+
 stsbl-iserv-ipv6-support (18.03.06-2) experimental; urgency=medium
 
   * Added missing dh_python3
