@@ -22,6 +22,7 @@ Depends:
   iserv3-sso,
   libnetaddr-mac-perl,
   libregexp-ipv6-perl,
+  python,
   stsbl-iserv-config-ipv6 (>= 18.01.08),
   stsbl-iserv-server-ferm-ipv6 (>= 18.01.03),
   stsbl-iserv-server-radvd,
