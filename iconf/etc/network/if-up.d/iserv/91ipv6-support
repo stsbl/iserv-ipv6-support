@@ -1,0 +1,2 @@
+/usr/lib/iserv/sleep_exec_once 40 ipv6-support_network sh -c "/usr/lib/iserv/newconf || /usr/lib/iserv/newconf -r || true; chklan6cfg || chklan6cfg -r || true; chkregdns6cfg || chkregdns6cfg -r || true; sleep 10 && iservchk -a ferm || true"
+
