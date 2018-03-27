@@ -1,4 +1,8 @@
 #!/usr/bin/make -f
 
 %:
-	dh $@ --with=iserv
+	dh $@
+
+override_dh_install:
+	dh_iservinstall3
+	dh_iservgitvars
