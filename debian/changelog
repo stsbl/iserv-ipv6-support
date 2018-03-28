@@ -1,3 +1,50 @@
+stsbl-iserv-ipv6-support (18.03.26-2) experimental; urgency=medium
+
+  * Added missing python dependency
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Mon, 26 Mar 2018 03:06:23 +0200
+
+stsbl-iserv-ipv6-support (18.03.26-1) experimental; urgency=medium
+
+  * Added scripts to ensure proper configuration of firewall and lan ranges
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Mon, 26 Mar 2018 03:05:39 +0200
+
+stsbl-iserv-ipv6-support (18.03.06-2) experimental; urgency=medium
+
+  * Added missing dh_python3
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Tue, 06 Mar 2018 00:53:26 +0100
+
+stsbl-iserv-ipv6-support (18.03.06-1) experimental; urgency=medium
+
+  * Removed autowire deprecations
+  * Resolved autowire issues
+  * MDM workaround: Use redirection code 308 instead of 302
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Tue, 06 Mar 2018 00:50:56 +0100
+
+stsbl-iserv-ipv6-support (18.03.02-3) experimental; urgency=medium
+
+  * MDM workaround: Do not redirect on IPv4
+
+ -- Felix Jacobi <felix.jacobi@iserv.eu>  Fri, 02 Mar 2018 17:01:07 +0100
+
+stsbl-iserv-ipv6-support (18.03.02-2) experimental; urgency=medium
+
+  * Updated packaging
+
+ -- Felix Jacobi <felix.jacobi@iserv.eu>  Fri, 02 Mar 2018 16:49:00 +0100
+
+stsbl-iserv-ipv6-support (18.03.02-1) experimental; urgency=medium
+
+  * Added workaround for IServ MDM not supporting IPv6 yet
+
+  iserv: Auf Servern mit IPv6-LAN sollte das Registrieren von iOS-Geräten über
+    die Mobilgeräteverwaltung nun korrekt funktionieren.
+
+ -- Felix Jacobi <felix.jacobi@iserv.eu>  Fri, 02 Mar 2018 16:44:02 +0100
+
 stsbl-iserv-ipv6-support (18.02.05-1) experimental; urgency=medium
 
   * Integrate squid block service into squid service

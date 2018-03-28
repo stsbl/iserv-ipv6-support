@@ -1,13 +1,27 @@
 # src/Stsbl/IPv6Bundle/Resources/config/services.yml
 services:
-    stsbl.ipv6.util.network:
-        class: Stsbl\IPv6Bundle\Util\Network6
-        arguments: ["@iserv.shell", "@iserv.host_manager"]
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
 
-    stsbl.ipv6.idesk:
-        class: Stsbl\IPv6Bundle\EventListener\IDeskListener
-        arguments: ["@doctrine", "@iserv.config", "@request_stack", "@stsbl.ipv6.util.network", "@iserv.shell"]
-        calls:
-          - ["setContainer", ["@service_container"]]
-        tags:
-          - { name: kernel.event_listener, event: iserv_portal.build_idesk, method: onBuildIDesk }
+    _instanceof:
+        IServ\CoreBundle\EventListener\IDeskListenerInterface:
+            tags:
+                - { name: kernel.event_listener, event: iserv_portal.build_idesk, method: onBuildIDesk }
+
+        Symfony\Component\DependencyInjection\ContainerAwareInterface:
+            calls:
+                - [setContainer]
+
+        Symfony\Component\EventDispatcher\EventSubscriberInterface:
+            tags:
+                - { name: kernel.event_subscriber }
+
+
+    Stsbl\IPv6Bundle\:
+        resource: '../../{Controller,EventListener,Util}'
+        bind:
+            $resolver: '@controller_resolver'
+            # FIXME can be removed after proper fix for file-distribution!
+            $hostManager: '@iserv.host_manager'
