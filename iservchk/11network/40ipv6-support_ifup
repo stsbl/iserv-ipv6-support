@@ -1,0 +1,3 @@
+Check /etc/network/if-up.d/90iserv-ipv6
+ChPerm 0755 root:root /etc/network/if-up.d/90iserv-ipv6
+
