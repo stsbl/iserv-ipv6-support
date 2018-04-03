@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 10)
 Build-Depends-Indep:
   dh-python,
   iserv3-dev,
-Standards-Version: 4.1.3.0
+Standards-Version: 4.1.3
 Homepage: https://it.stsbl.de
 
 Package: stsbl-iserv-ipv6-support
