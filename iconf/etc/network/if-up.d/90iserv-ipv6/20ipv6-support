@@ -1,7 +1,0 @@
-#!/bin/sh
-
-/usr/lib/iserv/newconf || /usr/lib/iserv/newconf -r
-chklan6cfg || chklan6cfg -r
-chkregdns6cfg || chkregdns6cfg -r
-
-iservchk -a ferm

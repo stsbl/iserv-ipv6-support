@@ -1,0 +1,8 @@
+if [ "$PHASE" = "post-up" ] && [ "$ADDRFAM" = "inet6" ]
+then
+  chklan6cfg || chklan6cfg -r
+  chkregdns6cfg || chkregdns6cfg -r
+
+  /usr/lib/iserv/sleep_exec_once 10 reload_ferm6 systemctl reload ferm6 || true
+fi
+
