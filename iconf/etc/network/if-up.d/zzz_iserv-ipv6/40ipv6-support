@@ -11,7 +11,5 @@ then
     /usr/lib/iserv/sleep_exec_once 3 reload_ferm6 systemctl reload ferm6 || true
   }
   update_lan6 &
-
-  /usr/lib/iserv/sleep_exec_once 10 reload_ferm6 systemctl reload ferm6 || true
 fi
 
