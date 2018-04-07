@@ -1,7 +1,16 @@
 if [ "$PHASE" = "post-up" ] && [ "$ADDRFAM" = "inet6" ]
 then
-  chklan6cfg || chklan6cfg -r
-  chkregdns6cfg || chkregdns6cfg -r
+  # start updating of IPv6 LAN ranges in background (Wide DHCP client
+  # requires up to 30 seconds + 3 seconds sleep_exec_once to assign
+  # all IPv6 addresses
+  update_lan6 () {
+    sleep 40
+    chklan6cfg || chklan6cfg -r
+    chkregdns6cfg || chkregdns6cfg -r
+
+    /usr/lib/iserv/sleep_exec_once 3 reload_ferm6 systemctl reload ferm6 || true
+  }
+  update_lan6 &
 
   /usr/lib/iserv/sleep_exec_once 10 reload_ferm6 systemctl reload ferm6 || true
 fi
