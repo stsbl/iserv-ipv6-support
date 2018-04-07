@@ -8,10 +8,8 @@ then
     chklan6cfg || chklan6cfg -r
     chkregdns6cfg || chkregdns6cfg -r
 
-    /usr/lib/iserv/sleep_exec_once 3 reload_ferm6 systemctl reload ferm6 || true
+    /usr/lib/iserv/sleep_exec_once 3 reload_ferm6 systemctl reload ferm || true
   }
   update_lan6 &
-
-  /usr/lib/iserv/sleep_exec_once 10 reload_ferm6 systemctl reload ferm6 || true
 fi
 
