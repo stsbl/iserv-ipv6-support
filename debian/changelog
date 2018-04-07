@@ -1,3 +1,11 @@
+stsbl-iserv-ipv6-support (18.04.08-1) experimental; urgency=medium
+
+  * Updated packaging
+  * Added post-up script for ifup that runs after wide post-up script
+  * network: Improved updating of LAN after boot
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Sun, 08 Apr 2018 00:15:12 +0200
+
 stsbl-iserv-ipv6-support (18.03.26-2) experimental; urgency=medium
 
   * Added missing python dependency
