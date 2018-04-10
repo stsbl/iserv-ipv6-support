@@ -1,3 +1,11 @@
+stsbl-iserv-ipv6-support (18.04.11-1) experimental; urgency=medium
+
+  * Fixed duplicate sh call
+  * Added workaround for IServ MDM not supporting IPv6 yet
+  * Fixed dhcpdb6
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Wed, 11 Apr 2018 01:29:51 +0200
+
 stsbl-iserv-ipv6-support (18.04.10-3) experimental; urgency=medium
 
   * Removed forward2 chain
