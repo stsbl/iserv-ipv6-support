@@ -1,3 +1,14 @@
+stsbl-iserv-ipv6-support (18.04.10-1) experimental; urgency=medium
+
+  [ Felix Jacobi ]
+  * Adapted package for new IPv6 support in iserv-server-ferm
+  * released 18.02.02-1
+  * Fixed duplicate logrotate configuration on Debian Stretch
+  * Revert "released 18.02.02-1"
+  * network: ifup: Renamed ferm6 to ferm
+
+ -- Felix Jacobi <felix.jacobi@iserv.eu>  Tue, 10 Apr 2018 17:47:05 +0200
+
 stsbl-iserv-ipv6-support (18.04.08-1) experimental; urgency=medium
 
   * Updated packaging
