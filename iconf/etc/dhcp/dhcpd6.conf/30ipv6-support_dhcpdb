@@ -1,20 +1,18 @@
 on commit {
   execute("/usr/lib/iserv/dhcpdb6", "--commit",
-      "--ip", binary-to-ascii(16, 16, ":", leased-address6),
-      "--mac", binary-to-ascii(16, 8, ":", suffix(option dhcp6.client-id, 6)),
-      "--options", binary-to-ascii(10, 8, ":",
-          option dhcp-parameter-request-list)
+      "--ip", binary-to-ascii(16, 16, ":", substring(option dhcp6.ia-na, 16, 16)),
+      "--mac", binary-to-ascii(16, 8, ":", suffix(option dhcp6.client-id, 6))
     );
 }
 on expiry {
   execute("/usr/lib/iserv/dhcpdb6", "--expiry",
-      "--ip", binary-to-ascii(16, 16, ":", leased-address6),
+      "--ip", binary-to-ascii(16, 16, ":", substring(option dhcp6.ia-na, 16, 16)),
       "--mac", binary-to-ascii(16, 8, ":", suffix(option dhcp6.client-id, 6))
     );
 }
 on release {
   execute("/usr/lib/iserv/dhcpdb6", "--release",
-      "--ip", binary-to-ascii(16, 16, ":", leased-address6),
+      "--ip", binary-to-ascii(16, 16, ":", substring(option dhcp6.ia-na, 16, 16)),
       "--mac", binary-to-ascii(16, 8, ":", suffix(option dhcp6.client-id, 6))
     );
 }

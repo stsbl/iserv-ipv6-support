@@ -13,7 +13,6 @@ GetOptions(\%opt,
     "release",
     "ip=s",
     "mac=s",
-    "options=s",
 );
 
 defined $opt{ip} or die "No IP specified!\n";
