@@ -1,6 +1,6 @@
 Source: stsbl-iserv-ipv6-support
 Section: misc
-Priority: extra
+Priority: standard
 Maintainer: Stadtteilschule Blankenese <repository@stsbl.de>
 Build-Depends: debhelper (>= 10)
 Build-Depends-Indep:
@@ -11,6 +11,8 @@ Homepage: https://it.stsbl.de
 
 Package: stsbl-iserv-ipv6-support
 Architecture: all
+Conflicts:
+  stsbl-iserv-server-ferm-ipv6,
 Depends: ${misc:Depends},
   ${perl:Depends},
   ${python3:Depends},
@@ -18,7 +20,7 @@ Depends: ${misc:Depends},
   isc-dhcp-server,
   iserv-portal,
   iserv-regdns,
-  iserv-server-ferm (>= 18.01.31),
+  iserv-server-ferm (>= 18.04.10),
   iserv-server-incron,
   iserv3-sso,
   libnetaddr-mac-perl,
