@@ -1,29 +1,34 @@
 Source: stsbl-iserv-ipv6-support
 Section: misc
-Priority: extra
+Priority: standard
 Maintainer: Stadtteilschule Blankenese <repository@stsbl.de>
-Build-Depends: debhelper (>= 9), dh-systemd, dh-python
-Standards-Version: 3.9.8
+Build-Depends: debhelper (>= 10)
+Build-Depends-Indep:
+  dh-python,
+  iserv3-dev,
+Standards-Version: 4.1.3
 Homepage: https://it.stsbl.de
 
 Package: stsbl-iserv-ipv6-support
 Architecture: all
-Xb-Private-IServ-Revision: ${iserv:Revision}
-Depends:
-  ${misc:Depends},
+Conflicts:
+  stsbl-iserv-server-ferm-ipv6,
+Depends: ${misc:Depends},
   ${perl:Depends},
   ${python3:Depends},
   ipv6ndpwatchd,
   isc-dhcp-server,
   iserv-portal,
   iserv-regdns,
-  iserv-server-ferm (>= 18.01.31),
+  iserv-server-ferm (>= 18.04.10),
   iserv-server-incron,
   iserv3-sso,
   libnetaddr-mac-perl,
   libregexp-ipv6-perl,
+  python,
   stsbl-iserv-config-ipv6 (>= 18.01.08),
   stsbl-iserv-server-radvd,
+Xb-Private-IServ-Revision: ${iserv:Revision}
 Description: IPv6 Support für IServ
  Bringt experimentellen IPv6-Support für IServ mit.
 Tag: suite::iserv

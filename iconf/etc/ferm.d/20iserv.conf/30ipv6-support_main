@@ -10,7 +10,6 @@ domain (ip6) {
 
       jump forward_white;
 
-      jump forward2;
 
       proto tcp syn dport smtp NFLOG nflog-group 1;
       proto tcp syn dport https NFLOG nflog-group 2;
@@ -28,9 +27,6 @@ domain (ip6) {
       #proto tcp dport (http https) mod set set forward_white dst ACCEPT;
       #proto icmp mod set set iserv_ns dst mod u32 u32 '0x3&0x40=0x40' ACCEPT;
       proto udp sport ntp dport ntp mod length length 76 ACCEPT;
-    }
-    chain forward2 {
-
     }
     chain input_lan {
       proto tcp dport (domain netbios-ssn microsoft-ds ipp 4447 4448) ACCEPT;

@@ -1,4 +1,4 @@
-if [ "${PHASE}" = "post-up" ] && [ -f "/var/lib/iserv/config/${IFACE}.uln" ]
+if [ "${PHASE}" = "post-up" ] && [ -f "/var/lib/iserv/config/${IFACE}.uln" ] && [ "${ADDRFAM}" = "inet6" ]
 then
    grep "^${IFACE}$" /var/lib/iserv/config/ipv6-dhcp-interfaces.list ||
      grep "iface ${IFACE} inet6 dhcp" /etc/network/interfaces.d/ipv6 || (

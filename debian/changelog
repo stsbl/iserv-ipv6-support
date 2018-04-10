@@ -1,3 +1,61 @@
+stsbl-iserv-ipv6-support (18.04.10-3) experimental; urgency=medium
+
+  * Removed forward2 chain
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Tue, 10 Apr 2018 23:05:13 +0200
+
+stsbl-iserv-ipv6-support (18.04.10-2) experimental; urgency=medium
+
+  * Added missing dh_python3
+  * Updated dependencies
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Tue, 10 Apr 2018 18:03:15 +0200
+
+stsbl-iserv-ipv6-support (18.04.10-1) experimental; urgency=medium
+
+  [ Felix Jacobi ]
+  * Adapted package for new IPv6 support in iserv-server-ferm
+  * released 18.02.02-1
+  * Fixed duplicate logrotate configuration on Debian Stretch
+  * Revert "released 18.02.02-1"
+  * network: ifup: Renamed ferm6 to ferm
+
+ -- Felix Jacobi <felix.jacobi@iserv.eu>  Tue, 10 Apr 2018 17:47:05 +0200
+
+stsbl-iserv-ipv6-support (18.04.08-1) experimental; urgency=medium
+
+  * Updated packaging
+  * Added post-up script for ifup that runs after wide post-up script
+  * network: Improved updating of LAN after boot
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Sun, 08 Apr 2018 00:15:12 +0200
+
+stsbl-iserv-ipv6-support (18.03.26-2) experimental; urgency=medium
+
+  * Added missing python dependency
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Mon, 26 Mar 2018 03:06:23 +0200
+
+stsbl-iserv-ipv6-support (18.03.26-1) experimental; urgency=medium
+
+  * Added scripts to ensure proper configuration of firewall and lan ranges
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Mon, 26 Mar 2018 03:05:39 +0200
+
+stsbl-iserv-ipv6-support (18.03.06-2) experimental; urgency=medium
+
+  * Added missing dh_python3
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Tue, 06 Mar 2018 00:53:26 +0100
+
+stsbl-iserv-ipv6-support (18.03.06-1) experimental; urgency=medium
+
+  * Removed autowire deprecations
+  * Resolved autowire issues
+  * MDM workaround: Use redirection code 308 instead of 302
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Tue, 06 Mar 2018 00:50:56 +0100
+
 stsbl-iserv-ipv6-support (18.03.02-3) experimental; urgency=medium
 
   * MDM workaround: Do not redirect on IPv4
