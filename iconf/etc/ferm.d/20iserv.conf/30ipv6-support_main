@@ -97,5 +97,11 @@ domain (ip6) {
       proto tcp dport 3129 REDIRECT to-ports 13129;
       proto tcp dport 3128 REDIRECT to-ports 13128;
     }
+    chain POSTROUTING {
+      # SNAT for unique local IPv6 LAN
+      @if $UniqueLocalLAN {
+        outerface $DEFIF saddr @ipfilter($UniqueLocalLAN) jump MASQUERADE;
+      }
+    }
   }
 }

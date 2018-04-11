@@ -7,7 +7,7 @@ echo 'Check /etc/init.d/isc-dhcp-server6'
 echo 'Check /etc/default/isc-dhcp-server6'
 echo 'ChPerm 0755 root:root /etc/init.d/isc-dhcp-server6'
 
-if [ "$UseDHCPv6" ] && [ "$DHCP" ] && netquery6 --global --lan --quiet
+if [ "$UseDHCPv6" ] && [ "$DHCP" ] && (netquery6 --global --lan --quiet || netquery6 --uniquelocal --lan --quiet)
 then
   for i in $(netquery6 --global --lan --format nic)
   do
