@@ -1,3 +1,10 @@
+stsbl-iserv-ipv6-support (18.04.15-1) experimental; urgency=medium
+
+  * Added support for NAT66 with unique local ipv6 addresses
+  * Fixed activation default value on LAN with only unique local addresses
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Sun, 15 Apr 2018 16:21:42 +0200
+
 stsbl-iserv-ipv6-support (18.04.11-1) experimental; urgency=medium
 
   * Fixed duplicate sh call
