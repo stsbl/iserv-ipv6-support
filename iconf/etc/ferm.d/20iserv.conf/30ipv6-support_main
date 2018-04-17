@@ -34,18 +34,18 @@ domain (ip6) {
       proto tcp dport (3128 3129 13128 13129) ACCEPT;
     }
     chain inet_in {
-      saddr @ipfilter($LAN) RETURN;
+      saddr @ipfilter($lanSubnets) RETURN;
       saddr fd00::/8 RETURN;
       mod state state NEW REJECT reject-with icmp6-port-unreachable;
       ACCEPT;
     }
     chain inet_out {
-      daddr @ipfilter($LAN) RETURN;
+      daddr @ipfilter($lanSubnets) RETURN;
       daddr fd00::/8 RETURN;
       jump activation_out;
     }
     chain activation_out {
-      @if $activation {
+      @if $limitInetAccessEnabled {
          mod set set mac6 src ACCEPT;
       }
     }
@@ -56,7 +56,7 @@ domain (ip6) {
       jump always_direct;
       jump forward2_first;
       jump forward2;
-      @if $activation {
+      @if $limitInetAccessEnabled {
         daddr @ipfilter($IPS6) jump filter_squid;
       }
     }
@@ -79,7 +79,7 @@ domain (ip6) {
       interface ppp+ RETURN;
       interface tun+ RETURN;
 
-      @if $activation {
+      @if $limitInetAccessEnabled {
 	mod set set mac6 src proto tcp dport http REDIRECT to-ports 3129;
         mod set set proxy6 src proto tcp dport http REDIRECT to-ports 3129;
         proto tcp dport http REDIRECT to-ports 13129;
@@ -100,7 +100,7 @@ domain (ip6) {
     chain POSTROUTING {
       # SNAT for unique local IPv6 LAN
       @if $UniqueLocalLAN {
-        outerface $DEFIF saddr @ipfilter($UniqueLocalLAN) jump MASQUERADE;
+        outerface $DEFIF6 saddr @ipfilter($UniqueLocalLAN) jump MASQUERADE;
       }
     }
   }
