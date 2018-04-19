@@ -1,7 +1,7 @@
 domain (ip6) {
   table filter {
     chain INPUT {
-      saddr (fe80::/64 fc00::/7 ff00::/8) jump input_lan;
+      saddr @ipfilter($LAN) jump input_lan;
     }
     chain FORWARD {
       jump forward_first;
@@ -32,6 +32,9 @@ domain (ip6) {
       proto tcp dport (domain netbios-ssn microsoft-ds ipp 4447 4448) ACCEPT;
       proto udp dport (domain dhcpv6-client dhcpv6-server tftp ntp netbios-ns netbios-dgm radius mdns) ACCEPT;
       proto tcp dport (3128 3129 13128 13129) ACCEPT;
+    }
+    chain input_linklocal {
+      proto udp dport dhcpv6-server ACCEPT;
     }
     chain inet_in {
       saddr @ipfilter($LAN) RETURN;
