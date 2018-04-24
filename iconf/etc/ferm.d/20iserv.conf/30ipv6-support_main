@@ -1,7 +1,7 @@
 domain (ip6) {
   table filter {
     chain INPUT {
-      saddr @ipfilter($LAN) jump input_lan;
+      saddr @ipfilter($lanSubnets) jump input_lan;
     }
     chain FORWARD {
       jump forward_first;
