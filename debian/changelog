@@ -1,3 +1,10 @@
+stsbl-iserv-ipv6-support (18.04.20-1) experimental; urgency=medium
+
+  * chklan6cfg: Fixed lan determination
+  * Restructured input chains for separate link-local and multicast input
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Fri, 20 Apr 2018 01:34:56 +0200
+
 stsbl-iserv-ipv6-support (18.04.15-1) experimental; urgency=medium
 
   * Added support for NAT66 with unique local ipv6 addresses
