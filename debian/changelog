@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (18.05.15-1) experimental; urgency=medium
+
+  * Added new handling for post wide start
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Tue, 15 May 2018 04:31:45 +0200
+
 stsbl-iserv-ipv6-support (18.04.20-1) experimental; urgency=medium
 
   * chklan6cfg: Fixed lan determination
