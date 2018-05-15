@@ -26,7 +26,7 @@ Depends: ${misc:Depends},
   libnetaddr-mac-perl,
   libregexp-ipv6-perl,
   python,
-  stsbl-iserv-config-ipv6 (>= 18.04.20),
+  tsbl-iserv-config-ipv6 (>= 18.05.15),
   stsbl-iserv-server-radvd,
 Xb-Private-IServ-Revision: ${iserv:Revision}
 Description: IPv6 Support für IServ

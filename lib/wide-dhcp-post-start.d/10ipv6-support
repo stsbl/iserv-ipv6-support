@@ -1,0 +1,6 @@
+#!/bin/sh
+
+chklan6cfg || chklan6cfg -r
+chkregdns6cfg || chkregdns6cfg -r
+
+true
