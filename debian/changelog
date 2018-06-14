@@ -1,3 +1,21 @@
+stsbl-iserv-ipv6-support (18.05.17-1) experimental; urgency=medium
+
+  * Fixed squid-block systemd dependency
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Thu, 17 May 2018 04:00:27 +0200
+
+stsbl-iserv-ipv6-support (18.05.15-2) experimental; urgency=medium
+
+  * Fixed dependency
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Tue, 15 May 2018 04:37:20 +0200
+
+stsbl-iserv-ipv6-support (18.05.15-1) experimental; urgency=medium
+
+  * Added new handling for post wide start
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Tue, 15 May 2018 04:31:45 +0200
+
 stsbl-iserv-ipv6-support (18.04.20-1) experimental; urgency=medium
 
   * chklan6cfg: Fixed lan determination
