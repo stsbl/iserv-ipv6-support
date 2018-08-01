@@ -30,16 +30,16 @@ then
 
   if [ "$1" = "-r" ]
   then
-    regdns -d "ipv6.$Domain. AAAA"
+    regdns -d "ipv6.$Domain. AAAA" > /dev/null
 
     for i in ${IPs[@]}
     do
-      regdns -a "ipv6.$Domain. 300 AAAA $i"
+      regdns -a "ipv6.$Domain. 300 AAAA $i" > /dev/null
     done
   fi
 fi
 
-IP=$(myip)
+IP=$(curl -4 -sS http://ns.iserv.eu/myip)
 CURIP=$(dig +short ipv4.$Domain A @ns.iserv.eu 2> /dev/null)
 
 if ! [ -z "$IP" ] && ! [ "$IP" = "$CURIP" ]
@@ -51,8 +51,8 @@ then
 
   if [ "$1" = "-r" ]
   then
-    regdns -d "ipv4.$Domain. A" 2> /dev/null
-    regdns -a "ipv4.$Domain. 300 A $IP" 2> /dev/null
+    regdns -d "ipv4.$Domain. A" > /dev/null
+    regdns -a "ipv4.$Domain. 300 A $IP" > /dev/null
   fi
 fi
 
