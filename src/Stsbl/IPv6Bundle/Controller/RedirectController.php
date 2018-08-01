@@ -6,6 +6,7 @@ use IServ\CoreBundle\Controller\PageController;
 use IServ\CoreBundle\Service\Config;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class RedirectController extends PageController
 {
@@ -24,7 +25,7 @@ class RedirectController extends PageController
     {
         $newUrl = sprintf('https://ipv4.%s/iserv%s', $this->getConfig()->get('Domain'), $request->getPathInfo());
 
-        return new RedirectResponse($newUrl, 308);
+        return new RedirectResponse($newUrl, Response::HTTP_TEMPORARY_REDIRECT);
     }
 
     /**
