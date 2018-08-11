@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (18.08.11-1) experimental; urgency=medium
+
+  * Use status code 307 instead of 308 for MDM workaround
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Sat, 11 Aug 2018 04:18:27 +0200
+
 stsbl-iserv-ipv6-support (18.08.01-1) experimental; urgency=medium
 
   * Corrected debian/links
