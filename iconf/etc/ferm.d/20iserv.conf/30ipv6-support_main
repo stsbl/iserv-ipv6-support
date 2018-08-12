@@ -45,7 +45,7 @@ domain (ip6) {
       saddr @ipfilter($LAN) RETURN;
       saddr fd00::/8 RETURN;
       # Reject NEW and INVALID packets from internet
-      mod state state (INVALID NEW) REJECT reject-with icmp6-port-unreachable;
+      mod state state (INVALID NEW) REJECT reject-with icmp6-adm-prohibited;
       ACCEPT;
     }
 
