@@ -1,9 +1,4 @@
 #!/usr/bin/make -f
 
 %:
-	dh $@
-
-override_dh_install:
-	dh_iservinstall3
-	dh_iservgitvars
-	dh_python3
+	dh $@ --with iserv --with stsbl --with python3
