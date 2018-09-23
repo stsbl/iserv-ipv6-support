@@ -66,8 +66,6 @@ domain (ip6) {
 
   table nat {
     chain PREROUTING {
-      jump prerouting_first;
-      jump always_direct;
       jump forward_proxy;
       @if $activation {
         daddr @ipfilter($IPS6) jump redirect_proxy;
@@ -94,6 +92,8 @@ domain (ip6) {
 
       interface ppp+ RETURN;
       interface tun+ RETURN;
+
+      jump always_direct;
 
       @if $activation {
 	# Redirect http requests from clients which have been granted internet 
