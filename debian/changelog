@@ -1,3 +1,11 @@
+stsbl-iserv-ipv6-support (18.09.23-1) experimental; urgency=medium
+
+  * debian/rules: Added missing dh_python3
+  * Updated build rules for webpack support
+  * Fixed always_direct usage
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Sun, 23 Sep 2018 14:20:21 +0200
+
 stsbl-iserv-ipv6-support (18.08.12-1) experimental; urgency=medium
 
   * ferm: Reject new packets from internet with icmp6-adm-prohibited instead
