@@ -4,12 +4,7 @@ Test "generate unique local site id"
   generate-ipv6-lula > /var/lib/iserv/config/ipv6.lula
 
 Test "generate unique local network for all nics"
-  for net in $(netquery6 -p -f nic)
-  do
-    grep "^$nic$" /var/lib/iserv/config/ipv6-dhcp-interfaces.list && continue
-    grep "iface $net inet6 dhcp" /etc/network/interfaces.d/ipv6 && continue
-    [ -f "/var/lib/iserv/config/${net}.uln" ] || exit 1
-  done
+  /usr/lib/iserv/ipv6_ula_check
   ---
   /usr/lib/iserv/ipv6_ula_gen
 

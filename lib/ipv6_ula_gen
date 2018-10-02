@@ -1,5 +1,13 @@
 #!/bin/bash -e
 
+. /usr/lib/iserv/cfg
+
+Include=""
+for ULA in ${LANInterfaces[@]}
+do
+  Include+="$(echo -e "$ULA\n")"
+done
+
 get_unused_unique_local_address()
 {
 
@@ -23,11 +31,16 @@ get_unused_unique_local_address()
 
 for net in $(netquery6 -p -f nic)
 do
-  # do not add ula to dhcp interfaces
-  grep ^$nic$ /var/lib/iserv/config/ipv6-dhcp-interfaces.list && continue
-  grep "iface $net inet6 dhcp" /etc/network/interfaces.d/ipv6 && continue
+  if ! echo $Include | grep -q "^$net$"
+  then
+    continue
+  fi
 
+  # do not add ula to dhcp interfaces
+  grep ^$net$ /var/lib/iserv/config/ipv6-dhcp-interfaces.list && continue
+  grep "iface $net inet6 dhcp" /etc/network/interfaces.d/ipv6 && continue
   [ -f "/var/lib/iserv/config/${net}.uln" ] && continue
+
   get_unused_unique_local_address > "/var/lib/iserv/config/${net}.uln"
   suffix=$(netquery6 -p -f "nic ip" | grep "^${net}" | awk '{ print $2 }' | sed 's/fe80:0000:0000:0000://g')
   ip -6 addr add "$(cat "/var/lib/iserv/config/${net}.uln" | sed 's/::$//g'):${suffix}/64" dev "${net}"
