@@ -1,0 +1,45 @@
+#!/usr/bin/perl -CSDAL
+
+# exit early if pxe module isn't installed
+print <STDIN> and exit if not -f "/var/lib/dpkg/info/iserv-pxe.list";
+
+my $ips = {};
+
+for $row (split /\n/, qx(netquery6 -lu "nic\tip"))
+{
+  my ($nic, $ip) = split /\t/, $row;
+  $ips->{$nic} = $ip;
+}
+
+while (<STDIN>)
+{
+  if (/^\[class_(.+)\]$}/ and exists $ips->{$1})
+  {
+    print;
+    print "bootfiles = $1_ipxe $1_efi64 $1_efi32 $1_efibc\n";
+    next;
+  }
+  print;
+}
+
+print "\n";
+for $nic (sort keys %{ $ips })
+{
+  print "[bootfile_${nic}_ipxe]\n";
+  print "user_class = iPXE\n";
+  print "bootfile_url = tftp://[" . ${ips}->{$nic} . "]/default.ipxe\n";
+  print "\n";
+
+  print "[bootfile_${nic}_efi32]\n";
+  print "client_architecture = 0006\n";
+  print "bootfile_url = tftp://[" . ${ips}->{$nic} . "]/efi32/ipxe.efi\n";
+  print "\n";
+  print "[bootfile_${nic}_efibc]\n";
+  print "client_architecture = 0007\n";
+  print "bootfile_url = tftp://[" . ${ips}->{$nic} . "]/efi64/ipxe.efi\n";
+  print "\n";
+  print "[bootfile_${nic}_efi64]\n";
+  print "client_architecture = 0009\n";
+  print "bootfile_url = tftp://[" . ${ips}->{$nic} . "]/efi32/ipxe.efi\n";
+  print "\n";
+}

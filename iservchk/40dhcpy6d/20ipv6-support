@@ -1,0 +1,13 @@
+MkDir 0755 root:root /var/lib/iserv/ipv6-support
+
+Test "generate duid"
+  [ -s "/var/lib/iserv/ipv6-support/duid" ]
+  ---
+  dhcpy6d --generate-duid > /var/lib/iserv/ipv6-support/duid
+
+Check /etc/default/dhcpy6d
+Check /etc/dhcpy6d.conf
+# Cannot check if process is alive :(
+#Start dhcpy6d dhcpy6d
+Start dhcpy6d
+
