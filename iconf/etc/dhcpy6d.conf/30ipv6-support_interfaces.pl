@@ -1,6 +1,12 @@
 #!/usr/bin/perl -CSDAL
 
-my $global_ips = map { my ($nic, $ip) = split /\t/, $row; } split /\n/, qx(netquery6 -lg "nic\tip");
+my $global_ips = {}; 
+
+for $row (split /\n/, qx(netquery6 -lg "nic\tip"))
+{
+  my ($nic, $ip) = split /\t/, $row;
+  $global_ips->{$nic} = $ip;
+}
 
 for $row (split /\n/, qx(netquery6 -lu "nic\tip\tprefix"))
 {
@@ -11,7 +17,7 @@ for $row (split /\n/, qx(netquery6 -lu "nic\tip\tprefix"))
   print "nameserver = $ip";
   if (exists $global_ips->{$nic})
   {
-    print "  $global_ips->{$nic}";
+    print " $global_ips->{$nic}";
   }
   print "\n";
   print "filter_mac = .*\n";
