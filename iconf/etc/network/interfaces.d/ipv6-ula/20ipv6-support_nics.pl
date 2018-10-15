@@ -13,10 +13,17 @@ for my $row (split /\n/, qx(netquery6 -lp "nic\tsuffix"))
   $link_local_ips->{$nic} = $suffix;
 }
 
+my $dhcp_handle = path "/var/lib/iserv/config/ipv6-dhcp-interfaces.list";
+my %dhcp_interfaces = map { $_ => 1 } $dhcp_handle->lines_utf8;
+my $static_network_hamdle = path "/etc/network/interfaces.d/ipv6";
+my @lines_static_network = $static_network_handle->lines_utf8;
+
 for my $file (glob "/var/lib/iserv/ipv6-support/ula/*.uln")
 {
   my $nic = basename $file, ".uln";
   next if not exists $link_local_ips->{$nic};
+  next if exists $dhcp_interfaces{$nic};
+  grep { /^iface $nic inet6 dhcp$/ } @lines_static_network and continue;
 
   my $handle = path $file;
   my @lines = $handle->lines_utf8;
@@ -24,7 +31,7 @@ for my $file (glob "/var/lib/iserv/ipv6-support/ula/*.uln")
 
   print "auto $nic\n";
   print "iface $nic inet6 static\n";
-  print "        address " . $prefix . $link_local_ips->{$nic} . "\n";
+  print "        address " . $prefix . ":" . $link_local_ips->{$nic} . "\n";
   print "        netmask 64\n";
   print "\n";
 }
