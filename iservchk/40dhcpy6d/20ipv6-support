@@ -1,5 +1,3 @@
-MkDir 0755 root:root /var/lib/iserv/ipv6-support
-
 Test "generate duid"
   [ -s "/var/lib/iserv/ipv6-support/duid" ]
   ---

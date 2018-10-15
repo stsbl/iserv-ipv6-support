@@ -17,6 +17,6 @@ do
 
   grep -q "^$net"'$' /var/lib/iserv/config/ipv6-dhcp-interfaces.list && continue
   grep "iface $net inet6 dhcp" /etc/network/interfaces.d/ipv6 && continue
-  [ -f "/var/lib/iserv/config/${net}.uln" ] || exit 1
+  [ -f "/var/lib/iserv/ipv6-support/ula/${net}.uln" ] || exit 1
 done
 

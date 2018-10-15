@@ -14,9 +14,9 @@ get_unused_unique_local_address()
   while true
   do
     SUBNET_SIZE=64
-    NUM=$(sipcalc -S ${SUBNET_SIZE} $(cat /var/lib/iserv/config/ipv6.lula) | grep Network | awk '{print $3}' | sed 's/:0000:0000:0000:0000$/::/g' | wc -l)
+    NUM=$(sipcalc -S ${SUBNET_SIZE} $(cat /var/lib/iserv/ipv6-support/prefix) | grep Network | awk '{print $3}' | sed 's/:0000:0000:0000:0000$/::/g' | wc -l)
     CHOSEN=$(shuf -i 1-${NUM} -n 1)
-    NET=$(sipcalc -S ${SUBNET_SIZE} $(cat /var/lib/iserv/config/ipv6.lula) | grep Network | awk '{print $3}' | sed 's/:0000:0000:0000:0000$/::/g' | sed -n "${CHOSEN}p")
+    NET=$(sipcalc -S ${SUBNET_SIZE} $(cat /var/lib/iserv/ipv6-support/prefix) | grep Network | awk '{print $3}' | sed 's/:0000:0000:0000:0000$/::/g' | sed -n "${CHOSEN}p")
 
     if [[ -f /var/lib/iserv/config/*.uln ]]
     then
@@ -41,7 +41,7 @@ do
   grep "iface $net inet6 dhcp" /etc/network/interfaces.d/ipv6 && continue
   [ -f "/var/lib/iserv/config/${net}.uln" ] && continue
 
-  get_unused_unique_local_address > "/var/lib/iserv/config/${net}.uln"
+  get_unused_unique_local_address > "/var/lib/iserv/ipv6-support/ula/${net}.uln"
   suffix=$(netquery6 -p -f "nic ip" | grep "^${net}" | awk '{ print $2 }' | sed 's/fe80:0000:0000:0000://g')
-  ip -6 addr add "$(cat "/var/lib/iserv/config/${net}.uln" | sed 's/::$//g'):${suffix}/64" dev "${net}"
+  ip -6 addr add "$(cat "/var/lib/iserv/ipv6-support/ula/${net}.uln" | sed 's/::$//g'):${suffix}/64" dev "${net}"
 done

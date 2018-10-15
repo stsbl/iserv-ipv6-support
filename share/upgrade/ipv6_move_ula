@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+FILES=(/var/lib/iserv/config/*.uln)
+
+for FILE in ${FILES[@]}
+do
+  mv -v "$FILE" "/var/lib/iserv/ipv6-support/ula/$(basename $FILE)"
+done
