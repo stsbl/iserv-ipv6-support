@@ -15,7 +15,7 @@ for my $row (split /\n/, qx(netquery6 -lp "nic\tsuffix"))
 
 my $dhcp_handle = path "/var/lib/iserv/config/ipv6-dhcp-interfaces.list";
 my %dhcp_interfaces = map { $_ => 1 } $dhcp_handle->lines_utf8;
-my $static_network_hamdle = path "/etc/network/interfaces.d/ipv6";
+my $static_network_handle = path "/etc/network/interfaces.d/ipv6";
 my @lines_static_network = $static_network_handle->lines_utf8;
 
 for my $file (glob "/var/lib/iserv/ipv6-support/ula/*.uln")
