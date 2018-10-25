@@ -2,19 +2,8 @@
 
 . /usr/lib/iserv/cfg
 
-Include=""
-for ULA in ${LANInterfaces[@]}
+for net in ${LANInterfaces[@]}
 do
-  Include+="$(echo -e "$ULA\n")"
-done
-
-for net in $(netquery6 -p -f nic)
-do
-  if ! echo $Include | grep -q "^$net$"
-  then
-    continue
-  fi
-
   grep -q "^$net"'$' /var/lib/iserv/config/ipv6-dhcp-interfaces.list && continue
   grep "iface $net inet6 dhcp" /etc/network/interfaces.d/ipv6 && continue
   [ -f "/var/lib/iserv/ipv6-support/ula/${net}.uln" ] || exit 1
