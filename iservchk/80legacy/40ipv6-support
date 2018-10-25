@@ -2,3 +2,11 @@ Remove /var/lib/iserv/config/dhcpd6.conf.hosts
 Remove /var/lib/iserv/config/hosts6.ferm
 Remove /etc/ferm.d/20iserv-ipv6.conf
 
+Remove /etc/dhcp/dhcpd6.conf
+
+Remove "remove init script of isc-dhcp-server6"
+  ! [ -f "/etc/default/isc-dhcp-server6" ] &&
+      ! [ -f "/etc/init.d/isc-dhcp-server6" ]
+  ---
+  systemctl disable isc-dhcp-server6
+  rm -f /etc/default/isc-dhcp-server6 /etc/init.d/isc-dhcp-server6

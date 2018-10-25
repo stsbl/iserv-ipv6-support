@@ -1,16 +1,24 @@
 #!/usr/bin/perl -CSDAL
 
+use warnings;
+use strict;
+use IServ::Conf;
+
+my %activate_dhcp = map { $_ => 1 } @{ $conf->{DHCP} };
+
 my $global_ips = {}; 
 
-for $row (split /\n/, qx(netquery6 -lg "nic\tip"))
+for my $row (split /\n/, qx(netquery6 -lg "nic\tip"))
 {
   my ($nic, $ip) = split /\t/, $row;
   $global_ips->{$nic} = $ip;
 }
 
-for $row (split /\n/, qx(netquery6 -lu "nic\tip\tprefix"))
+for my $row (split /\n/, qx(netquery6 -lu "nic\tip\tprefix"))
 {
   my ($nic, $ip, $prefix) = split /\t/, $row;
+  next if not exists $activate_dhcp{$nic};
+
   print "[class_$nic]\n";
   print "addresses = eth1\n";
   print "interface = $nic\n";
