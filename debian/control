@@ -27,6 +27,7 @@ Depends: ${misc:Depends},
   libpath-tiny-perl,
   libregexp-ipv6-perl,
   python,
+  sipcalc,
   stsbl-iserv-config-ipv6 (>= 18.10.15),
   stsbl-iserv-server-radvd,
 Xb-Private-IServ-Revision: ${iserv:Revision}
