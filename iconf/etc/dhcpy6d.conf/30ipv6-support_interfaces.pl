@@ -19,8 +19,8 @@ for my $row (split /\n/, qx(netquery6 -lu "nic\tip\tprefix"))
   my ($nic, $ip, $prefix) = split /\t/, $row;
   next if not exists $activate_dhcp{$nic};
 
-  print "[class_$nic]\n";
-  print "addresses = eth1\n";
+  print "[class_default_$nic]\n";
+  print "addresses = $nic\n";
   print "interface = $nic\n";
   print "nameserver = $ip";
   if (exists $global_ips->{$nic})
@@ -32,10 +32,10 @@ for my $row (split /\n/, qx(netquery6 -lu "nic\tip\tprefix"))
   print "\n";
 
   print "[address_$nic]\n";
-  print "# Choosing MAC-based addresses.\n";
-  print "category = mac\n";
+  print "# Choosing EUI-64-based addresses.\n";
+  print "category = eui64\n";
   print "# ULA-type address pattern.\n";
-  print "pattern = $prefix\$mac\$\n";
+  print "pattern = $prefix\$eui64\$\n";
   print "\n"
 }
 

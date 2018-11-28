@@ -53,6 +53,6 @@ sub print_time($$)
     write_file "/var/lib/iserv/config/dhcpd6.conf.$nic.hosts", @{ $out->{$nic} };
   }
 
-  system "/etc/init.d/isc-dhcp-server6", "restart", "&>/dev/null", "&";
+  #system "/etc/init.d/isc-dhcp-server6", "restart", "&>/dev/null", "&";
   print_time("update dhcp", $moduletime);
 }
