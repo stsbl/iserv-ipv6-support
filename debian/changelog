@@ -1,3 +1,16 @@
+stsbl-iserv-ipv6-support (18.11.30-1) experimental; urgency=medium
+
+  * Do not generate ULA for non LAN interfaces
+  * Use dhcpy6d instead of ISC dhcp server for DHCPv6
+  * Replaced volatile post-up script by real network config for unique local addresses
+  * Improved ipv6-ula network configuration
+  * Removed isc-dhcp-server support
+  * Improved sso user generation and fixed ULA assigning
+  * Adapted module structure to web application move
+  * Added missing sipcalc dependency
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Fri, 30 Nov 2018 00:55:10 +0100
+
 stsbl-iserv-ipv6-support (18.09.23-1) experimental; urgency=medium
 
   * debian/rules: Added missing dh_python3
