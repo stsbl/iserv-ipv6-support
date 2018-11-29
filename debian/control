@@ -16,7 +16,7 @@ Conflicts:
 Depends: ${misc:Depends},
   ${perl:Depends},
   ${python3:Depends},
-  dhcpy6d,
+  dhcpy6d (>= 0.7.99-7+stsbl-immediately1),
   ipv6ndpwatchd,
   iserv-portal,
   iserv-regdns,
