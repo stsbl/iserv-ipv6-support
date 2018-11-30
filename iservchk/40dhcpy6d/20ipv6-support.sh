@@ -2,7 +2,7 @@
 
 . /usr/lib/iserv/cfg
 
-if [ $UseDHCPv6 ] && [ $DHCP ] && netquery6 -gulq
+if [ "$UseDHCPv6" ] && [ "$DHCP" ] && netquery6 -gulq
 then
   echo 'Test "generate duid"'
   echo '  [ -s "/var/lib/iserv/ipv6-support/duid" ]'
@@ -11,13 +11,11 @@ then
   echo
   echo 'Check /etc/default/dhcpy6d'
   echo 'Check /etc/dhcpy6d.conf'
-  echo '# Cannot check if process is alive :('
-  echo '#Start dhcpy6d dhcpy6d'
-  echo 'Start dhcpy6d'
+  echo 'Start dhcpy6d dhcpy6d'
 else
   echo 'Remove /etc/dhcpy6d.conf'
   echo
-  echo 'Stop dhcpy6d'
+  echo 'Stop dhcpy6d dhcpy6d'
 fi
 echo
 
