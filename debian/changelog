@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (18.11.30-3) experimental; urgency=medium
+
+  * Removed duplicated IPv6Bundle
+
+ -- Felix Jacobi <felix.jacobi@stsbl.de>  Fri, 30 Nov 2018 03:14:02 +0100
+
 stsbl-iserv-ipv6-support (18.11.30-2) experimental; urgency=medium
 
   * dhcpy6d: Monitor daemon process and fixed screwed up iservchk script
