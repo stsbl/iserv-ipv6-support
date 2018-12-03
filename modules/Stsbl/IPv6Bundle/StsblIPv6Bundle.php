@@ -15,7 +15,7 @@ class StsblIPv6Bundle extends Bundle implements AutoloadRoutingBundleInterface
     /**
      * {@inheritdoc}
      */
-    public function getContainerExtension()
+    public function getContainerExtension(): StsblIPv6Extension
     {
         return new StsblIPv6Extension();
     }
