@@ -89,7 +89,7 @@ class IDeskListener implements IDeskListenerInterface, ServiceSubscriberInterfac
      *
      * @return string
      */
-    public function generateSsoLink(): string
+    private function generateSsoLink(): string
     {
         $this->container->get('iserv.sudo');
         $link = trim(Sudo::shell_exec('sudo /usr/lib/iserv/ipv6_generate_sso_link'));
