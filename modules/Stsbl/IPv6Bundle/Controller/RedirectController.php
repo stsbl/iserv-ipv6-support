@@ -1,47 +1,22 @@
-<?php
-// src/Stsbl/IPv6Bundle/Controller/RedirectController.php
+<?php declare(strict_types = 1);
+
 namespace Stsbl\IPv6Bundle\Controller;
 
-use IServ\CoreBundle\Controller\PageController;
+use IServ\CoreBundle\Controller\AbstractPageController;
 use IServ\CoreBundle\Service\Config;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class RedirectController extends PageController
+class RedirectController extends AbstractPageController
 {
     /**
-     * @var Config
-     */
-    private $config;
-
-    /**
      * Action to redirect mdm request to IPv4 host
-     *
-     * @param Request $request
-     * @return RedirectResponse
      */
-    public function redirectMdmAction(Request $request)
+    public function redirectMdmAction(Request $request, Config $config): RedirectResponse
     {
-        $newUrl = sprintf('https://ipv4.%s/iserv%s', $this->getConfig()->get('Domain'), $request->getPathInfo());
+        $newUrl = sprintf('https://ipv4.%s/iserv%s', $config->get('Domain'), $request->getPathInfo());
 
         return new RedirectResponse($newUrl, Response::HTTP_TEMPORARY_REDIRECT);
-    }
-
-    /**
-     * @return Config
-     */
-    public function getConfig()
-    {
-        return $this->config;
-    }
-
-    /**
-     * @param Config $config
-     * @required
-     */
-    public function setConfig(Config $config)
-    {
-        $this->config = $config;
     }
 }

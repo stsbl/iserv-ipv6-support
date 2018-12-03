@@ -1,19 +1,21 @@
-<?php
-// src/Stsbl/IPv6Bundle/EventListener/IDeskListener.php
+<?php declare(strict_types = 1);
+
 namespace Stsbl\IPv6Bundle\EventListener;
 
+use IServ\ComputerRequestBundle\Entity\ComputerRequest;
 use IServ\CoreBundle\Event\IDeskEvent;
 use IServ\CoreBundle\EventListener\IDeskListenerInterface;
+use IServ\CoreBundle\Service\BundleDetector;
 use IServ\CoreBundle\Service\Config;
 use IServ\CoreBundle\Service\Shell;
+use IServ\CoreBundle\Service\Sudo as SudoService;
 use IServ\CoreBundle\Util\Sudo;
 use IServ\HostBundle\Entity\Host;
 use IServ\HostBundle\Util\Network;
+use Psr\Container\ContainerInterface;
 use Stsbl\IPv6Bundle\Util\Network6;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /*
@@ -44,14 +46,18 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * @author Felix Jacobi <felix.jacobi@stsbl.de>
  * @license MIT License <https://opensource.org/licenses/MIT>
  */
-class IDeskListener implements ContainerAwareInterface, IDeskListenerInterface
+class IDeskListener implements IDeskListenerInterface, ServiceSubscriberInterface
 {
-    use ContainerAwareTrait;
 
     /**
-     * @var Container
+     * @var BundleDetector
      */
-    protected $container;
+    private $bundleDetector;
+
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
 
     /**
      * @var RegistryInterface
@@ -79,58 +85,46 @@ class IDeskListener implements ContainerAwareInterface, IDeskListenerInterface
     private $shell;
 
     /**
-     * Checks if bundle is installed
-     *
-     * @param $name
-     * @return bool
-     */
-    private function hasBundle($name)
-    {
-        return array_key_exists($name, $this->container->getParameter('kernel.bundles'));
-    }
-
-    /**
      * Creates sso link to ipv4.mein-iserv.de
      *
      * @return string
-     * @throws \Exception
      */
-    public function generateSsoLink()
+    public function generateSsoLink(): string
     {
-        // FIXME service locator?
         $this->container->get('iserv.sudo');
         $link = trim(Sudo::shell_exec('sudo /usr/lib/iserv/ipv6_generate_sso_link'));
 
         return $link;
     }
 
-    /**
-     * @param RegistryInterface $doctrine
-     * @param Config $config
-     * @param RequestStack $requestStack
-     * @param Network6 $network6
-     * @param Shell $shell
-     */
-    public function __construct(RegistryInterface $doctrine, Config $config, RequestStack $requestStack, Network6 $network6, Shell $shell)
-    {
-        $this->doctrine = $doctrine->getManager();
-        $this->request = $requestStack->getCurrentRequest();
+    public function __construct(
+        BundleDetector $bundleDetector,
+        Config $config,
+        ContainerInterface $container,
+        Network6 $network6,
+        RegistryInterface $doctrine,
+        RequestStack $requestStack,
+        Shell $shell
+    ) {
+        $this->bundleDetector = $bundleDetector;
         $this->config = $config;
+        $this->container = $container;
+        $this->doctrine = $doctrine->getManager();
         $this->network6 = $network6;
+        $this->request = $requestStack->getCurrentRequest();
         $this->shell = $shell;
     }
 
-    /**
-     * @param \IServ\CoreBundle\Event\IDeskEvent $event
-     * @throws \Exception
-     */
-    public function onBuildIDesk(IDeskEvent $event)
+    public function onBuildIDesk(IDeskEvent $event): void
     {
         $ip = $this->request->getClientIp();
         $lan = $this->config->get('lan');
 
         // Skip if ip is not in LAN, computer request module is not installed or activation is disabled
-        if (!(Network::ipInLan($ip, $lan)) || !($this->config->get('activation')) || !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) || !($this->hasBundle('IServComputerRequestBundle'))) {
+        if (!Network::ipInLan($ip, $lan) ||
+            !$this->config->get('Activation') ||
+            !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) ||
+            !$this->bundleDetector->isLoaded('IServComputerRequestBundle')) {
             return;
         }
 
@@ -138,7 +132,7 @@ class IDeskListener implements ContainerAwareInterface, IDeskListenerInterface
         $mac = $this->network6->queryMac($ip);
 
         // exit if mac is not available
-        if (!$mac) {
+        if (null === $mac) {
             return;
         }
 
@@ -152,13 +146,22 @@ class IDeskListener implements ContainerAwareInterface, IDeskListenerInterface
         }
 
         // Check if there is already a pending request
-        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $computerRequest = $this->doctrine->getRepository(\IServ\ComputerRequestBundle\Entity\ComputerRequest::class)->findOneBy(['mac' => $mac]);
+        $computerRequest = $this->doctrine->getRepository(ComputerRequest::class)->findOneBy(['mac' => $mac]);
         $event->addContent(
-            'computer-request',
-            'StsblIPv6Bundle::idesk.html.twig',
+            'computer-request-ipv6',
+            '@StsblIPv6/idesk.html.twig',
             ['action' => $computerRequest !== null ? 'pending' : 'request', 'link' => $this->generateSsoLink()],
-            -10
+            -600 // keep in sync with \IServ\ComputerRequestBundle\EventListener::onBuildIDesk()!
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices(): array
+    {
+        return [
+            'iserv.sudo' => SudoService::class, // fetch sudo lazily to prevent eager util initialization!
+        ];
     }
 }

@@ -10,15 +10,6 @@ services:
             tags:
                 - { name: kernel.event_listener, event: iserv_portal.build_idesk, method: onBuildIDesk }
 
-        Symfony\Component\DependencyInjection\ContainerAwareInterface:
-            calls:
-                - [setContainer]
-
-        Symfony\Component\EventDispatcher\EventSubscriberInterface:
-            tags:
-                - { name: kernel.event_subscriber }
-
-
     Stsbl\IPv6Bundle\:
         resource: '../../{Controller,EventListener,Util}'
         bind:

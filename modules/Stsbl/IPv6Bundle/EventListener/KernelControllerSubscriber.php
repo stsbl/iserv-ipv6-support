@@ -1,15 +1,15 @@
-<?php
-// src/Stsbl/IPv6Bundle/EventListener/KernelControllerSubscriber.php
+<?php declare(strict_types = 1);
+
 namespace Stsbl\IPv6Bundle\EventListener;
 
+use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use IServ\CoreBundle\Service\BundleDetector;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
@@ -43,10 +43,8 @@ use Symfony\Component\Routing\RouterInterface;
  * @author Felix Jacobi <felix.jacobi@stsbl.de>
  * @license MIT license <https://opensource.org/licenses/MIT>
  */
-class KernelControllerSubscriber implements ContainerAwareInterface, EventSubscriberInterface
+class KernelControllerSubscriber implements EventSubscriberInterface
 {
-    use ContainerAwareTrait;
-
     /**
      * @var ControllerResolverInterface
      */
@@ -58,13 +56,13 @@ class KernelControllerSubscriber implements ContainerAwareInterface, EventSubscr
     private $router;
 
     /**
-     * The constructor.
-     *
-     * @param ControllerResolverInterface $resolver
-     * @param RouterInterface $router
+     * @var BundleDetector
      */
-    public function __construct(ControllerResolverInterface $resolver, RouterInterface $router)
+    private $bundleDetector;
+
+    public function __construct(BundleDetector $bundleDetector, ControllerResolverInterface $resolver, RouterInterface $router)
     {
+        $this->bundleDetector = $bundleDetector;
         $this->resolver = $resolver;
         $this->router = $router;
     }
@@ -79,15 +77,11 @@ class KernelControllerSubscriber implements ContainerAwareInterface, EventSubscr
 
     /**
      * Redirects MDM API request to IPv4
-     *
-     * @param FilterControllerEvent $event
-     * @throws \Doctrine\Common\Annotations\AnnotationException
-     * @throws \ReflectionException
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(FilterControllerEvent $event): void
     {
         // do nothing if MDM is not installed
-        if (!array_key_exists('IServMdmBundle', $this->container->getParameter('kernel.bundles'))) {
+        if (!$this->bundleDetector->isLoaded('IServMdmBundle')) {
             return;
         }
 
@@ -121,8 +115,18 @@ class KernelControllerSubscriber implements ContainerAwareInterface, EventSubscr
         $route = null;
 
         if (null !== $controller || null !== $action) {
-            $reflectionMethod = new \ReflectionMethod($controller, $action);
-            $annotationReader = new AnnotationReader();
+            try {
+                $reflectionMethod = new \ReflectionMethod($controller, $action);
+            } catch (\ReflectionException $e) {
+                throw new \RuntimeException('Failed to reflect controller action!', 0, $e);
+            }
+
+            try {
+                $annotationReader = new AnnotationReader();
+            } catch (AnnotationException $e) {
+                throw new \RuntimeException('Failed to create annotation reader!', 0, $e);
+            }
+
             $annotations = $annotationReader->getMethodAnnotations($reflectionMethod);
             /* @var $annotation Route */
             list($annotation) = array_filter($annotations, function ($annotation) {

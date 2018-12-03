@@ -1,7 +1,8 @@
-<?php
-// src/Stsbl/IPv6Bundle/Network6.php
+<?php declare(strict_types = 1);
+
 namespace Stsbl\IPv6Bundle\Util;
 
+use IServ\CoreBundle\Exception\ShellExecException;
 use IServ\CoreBundle\Service\Shell;
 use IServ\HostBundle\Service\HostManager;
 
@@ -59,14 +60,14 @@ class Network6
 
     /**
      * Query mac address for ipv6 address via IPv6 NDP table
-     *
-     * @param $ip
-     * @return bool
-     * @throws \IServ\CoreBundle\Exception\ShellExecException
      */
-    public function queryMac($ip)
+    public function queryMac(string $ip): ?string
     {
-        $this->shell->exec('sudo', ['/usr/lib/iserv/ipv6_neigh_discovery', $ip]);
+        try {
+            $this->shell->exec('sudo', ['/usr/lib/iserv/ipv6_neigh_discovery', $ip]);
+        } catch (ShellExecException $e) {
+            throw new \RuntimeException('Failed to run ipv6_neigh_discovery!', 0, $e);
+        }
 
         foreach ($this->shell->getOutput() as $output) {
             list(, , , , $mac) = explode(' ', $output);
@@ -76,6 +77,6 @@ class Network6
             }
         }
 
-        return false;
+        return null;
     }
 }
