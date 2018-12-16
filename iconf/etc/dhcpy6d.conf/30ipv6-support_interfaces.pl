@@ -19,7 +19,8 @@ for my $row (split /\n/, qx(netquery6 -lg "nic\tip\tprefix"))
 for my $row (split /\n/, qx(netquery6 -lu "nic\tip\tprefix"))
 {
   my ($nic, $ip, $prefix) = split /\t/, $row;
-  next if not exists $activate_dhcp{$nic};
+  next if not exists $activate_dhcp{$nic} and
+      not grep { /^\*$/ } keys %activate_dhcp;
 
   print "[class_default_$nic]\n";
   print "addresses = $nic temp_$nic";
