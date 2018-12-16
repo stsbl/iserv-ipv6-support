@@ -1,3 +1,10 @@
+stsbl-iserv-ipv6-support (18.12.16-3) experimental; urgency=medium
+
+  * dhcpy6d: Fixed config on DHCP interface wildcard
+  * dhcpy6d: Fixed ntp server option
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Sun, 16 Dec 2018 04:37:27 +0100
+
 stsbl-iserv-ipv6-support (18.12.16-2) experimental; urgency=medium
 
   * chkipv6ula: Added command to replace previous errornous ipv6 unique local
