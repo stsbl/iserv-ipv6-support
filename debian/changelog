@@ -1,3 +1,10 @@
+stsbl-iserv-ipv6-support (18.12.16-2) experimental; urgency=medium
+
+  * chkipv6ula: Added command to replace previous errornous ipv6 unique local
+    address generation
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Sun, 16 Dec 2018 04:18:31 +0100
+
 stsbl-iserv-ipv6-support (18.12.16-1) experimental; urgency=medium
 
   * dhcpy6d: Added ntp server
