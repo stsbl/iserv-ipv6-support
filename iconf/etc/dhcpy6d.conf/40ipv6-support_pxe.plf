@@ -32,14 +32,14 @@ for $nic (sort keys %{ $ips })
 
   print "[bootfile_${nic}_efi32]\n";
   print "client_architecture = 0006\n";
-  print "bootfile_url = tftp://[" . ${ips}->{$nic} . "]/efi32/ipxe.efi\n";
+  print "bootfile_url = tftp://[" . ${ips}->{$nic} . "]/efi32/ipxe-snponly.efi\n";
   print "\n";
   print "[bootfile_${nic}_efibc]\n";
   print "client_architecture = 0007\n";
-  print "bootfile_url = tftp://[" . ${ips}->{$nic} . "]/efi64/ipxe.efi\n";
+  print "bootfile_url = tftp://[" . ${ips}->{$nic} . "]/efi64/ipxe-snponly.efi\n";
   print "\n";
   print "[bootfile_${nic}_efi64]\n";
   print "client_architecture = 0009\n";
-  print "bootfile_url = tftp://[" . ${ips}->{$nic} . "]/efi32/ipxe.efi\n";
+  print "bootfile_url = tftp://[" . ${ips}->{$nic} . "]/efi32/ipxe-snponly.efi\n";
   print "\n";
 }
