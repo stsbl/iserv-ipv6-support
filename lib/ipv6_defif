@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+
+LC_ALL=C ip -6 route show default | awk '$1=="default" {print $5}' | sed 's/^ppp[0-9]\+/ppp+/'

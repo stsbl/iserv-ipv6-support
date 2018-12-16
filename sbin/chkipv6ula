@@ -1,0 +1,75 @@
+#!/bin/bash
+set -e
+
+. /usr/lib/iserv/cfg
+
+DEFIF=$(. /usr/lib/iserv/ipv6_defif)
+REPAIR=
+
+usage()
+{
+  cat <<EOT
+Options:
+  -h	Show this help
+  -r	Generate new unique local addresses and assign them to network interfaces.
+EOT
+
+}
+
+while getopts "hr" option
+do
+  case $option in
+    h) usage && exit 0;;
+    r) REPAIR=1;;
+    ?) usage && exit 1;;
+  esac
+done
+
+get_unused_unique_local_address()
+{
+  while true
+  do
+    SUBNET_SIZE=64
+    NUM=$(sipcalc -S ${SUBNET_SIZE} $(cat /var/lib/iserv/ipv6-support/prefix) | grep Network | awk '{print $3}' | sed 's/:0000:0000:0000:0000$/::/g' | wc -l)
+    CHOSEN=$(shuf -i 1-${NUM} -n 1)
+    NET=$(sipcalc -S ${SUBNET_SIZE} $(cat /var/lib/iserv/ipv6-support/prefix) | grep Network | awk '{print $3}' | sed 's/:0000:0000:0000:0000$/::/g' | sed -n "${CHOSEN}p")
+
+    if [[ -f /var/lib/iserv/ipv6-support/ula/*.uln ]]
+    then
+      # validate if net is taken
+      grep -q "^${NET}$" /var/lib/iserv/ipv6-support/ula/*.uln && continue
+    fi
+
+    echo -n ${NET}
+    return
+  done
+}
+
+for net in ${LANInterfaces[@]}
+do
+  # do not add ula to dhcp interfaces
+  grep -q "^$net$" /var/lib/iserv/config/ipv6-dhcp-interfaces.list && continue
+  grep -q "^iface $net inet6 dhcp$" /etc/network/interfaces.d/ipv6 && continue
+
+  # do not generate ula for default interface as we cannot ensure that it is
+  # understood corretly there
+  [[ $net = $DEFIF ]] && continue
+
+  # do not generate ula if already done
+  [ -f "/var/lib/iserv/ipv6-support/ula/${net}.uln" ] && continue
+
+  echo "Missing unique local prefix for interface $net."
+
+  if [ -n "$REPAIR" ]
+  then
+    echo "Generating new prefix for interface $net..."
+    prefix="$(get_unused_unique_local_address | tee "/var/lib/iserv/ipv6-support/ula/${net}.uln")"
+    echo "Using $prefix for interface $net."
+
+    suffix="$(netquery6 -i "$net" -p -f "ip" | sed 's/fe80:0000:0000:0000://g')"
+    address="$(echo "$prefix" | sed 's/::$//g'):${suffix}/64"
+    echo "Assigning address $address to interface $net..."
+
+    ip -6 addr add "$address" dev "$net"
+  fi
+done

@@ -16,38 +16,9 @@ Test "generate unique local site id"
   generate-ipv6-lula > /var/lib/iserv/ipv6-support/prefix
 
 Test "generate unique local network for all nics"
-  /usr/lib/iserv/ipv6_ula_check
+  chkipv6ula
   ---
-  /usr/lib/iserv/ipv6_ula_gen
-
-Test "ensure that all unique local addresses are assigned"
-  for nic in $(netquery6 -f nic | uniq)
-  do
-    # do not handle interfaces without ula
-    [ -f "/var/lib/iserv/ipv6-support/ula/${nic}.uln" ] || continue
-    # do not handle static interfaces
-    (grep -qE "^${nic}$" /var/lib/iserv/config/ipv6-dhcp-interfaces.list ||
-      grep "iface ${nic} inet6 dhcp" /etc/network/interfaces.d/ipv6) &&
-      continue
-    prefix="$(cat "/var/lib/iserv/ipv6-support/ula/${nic}.uln" | sed 's/::$//g')"
-    suffix=$(netquery6 -p -f "nic ip" | grep "^${nic}" | awk '{ print $2 }' | sed 's/fe80:0000:0000:0000//g')
-    address="$prefix$suffix"
-    (netquery6 -u -f "nic ip" | grep -qE "^${nic}\s${address}") || exit 1
-  done
-  ---
-  for nic in $(netquery6 -f nic | uniq)
-  do
-    # do not handle interfaces without ula
-    [ -f "/var/lib/iserv/ipv6-support/ula/${nic}.uln" ] || continue
-    # do not handle static interfaces
-    (grep -qE "^${nic}$" /var/lib/iserv/config/ipv6-dhcp-interfaces.list ||
-      grep "iface ${nic} inet6 dhcp" /etc/network/interfaces.d/ipv6) &&
-      continue
-    prefix="$(cat "/var/lib/iserv/ipv6-support/ula/${nic}.uln" | sed 's/::$//g')"
-    suffix=$(netquery6 -p -f "nic ip" | grep "^${nic}" | awk '{ print $2 }' | sed 's/fe80:0000:0000:0000//g')
-    address="$prefix$suffix"
-    (netquery6 -u -f "nic ip" | grep -qE "^${nic}\s${address}") || ip addr add "${address}/64" dev "${nic}"
-  done
+  chkipv6ula -r
 
 Check /etc/network/interfaces.d/ipv6-ula
 
