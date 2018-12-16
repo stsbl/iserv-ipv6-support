@@ -33,7 +33,7 @@ for my $row (split /\n/, qx(netquery6 -lu "nic\tip\tprefix"))
     print " $global_ips->{$nic}";
   }
   print "\n";
-  print "ntp = $ip";
+  print "ntp_server = $ip";
   if (exists $global_ips->{$nic})
   {
     print " $global_ips->{$nic}";
