@@ -1,3 +1,10 @@
+stsbl-iserv-ipv6-support (18.12.16-1) experimental; urgency=medium
+
+  * dhcpy6d: Added ntp server
+  * dhcpy6d: PXE: Use ipxe-snponly.efi as in DHCPv4
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Sun, 16 Dec 2018 02:29:40 +0100
+
 stsbl-iserv-ipv6-support (18.12.03-1) experimental; urgency=medium
 
   * Improved code of IPv6Bundle
