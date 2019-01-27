@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (19.01.27-1) experimental; urgency=medium
+
+  * Only allow access to DHCPv6 server port on interfaces where it is enabled
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Sun, 27 Jan 2019 22:21:52 +0100
+
 stsbl-iserv-ipv6-support (18.12.16-3) experimental; urgency=medium
 
   * dhcpy6d: Fixed config on DHCP interface wildcard
