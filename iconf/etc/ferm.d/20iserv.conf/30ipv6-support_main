@@ -33,7 +33,9 @@ domain (ip6) {
 
     chain input_lan {
       proto tcp dport (domain netbios-ssn microsoft-ds ipp 4447 4448) ACCEPT;
-      proto udp dport (domain dhcpv6-client dhcpv6-server tftp ntp netbios-ns netbios-dgm radius mdns) ACCEPT;
+      proto udp dport (domain dhcpv6-client tftp ntp netbios-ns netbios-dgm radius mdns) ACCEPT;
+      # Only allow DHCPv6 server on interfaces where it is enabled in config
+      proto udp dport (dhcpv6-server) interface ($DHCPInterfaces) ACCEPT;
       proto tcp dport (3128 3129 13128 13129) ACCEPT;
     }
 
@@ -96,13 +98,13 @@ domain (ip6) {
       jump always_direct;
 
       @if $activation {
-	# Redirect http requests from clients which have been granted internet 
+        # Redirect http requests from clients which have been granted internet 
         # access to Squid.
-	mod set set mac6 src proto tcp dport http REDIRECT to-ports 3129;
+        mod set set mac6 src proto tcp dport http REDIRECT to-ports 3129;
         mod set set proxy6 src proto tcp dport http REDIRECT to-ports 3129;
         # Redirect http requests from everyone else to Squid block honeypot
         # instance. 
-	proto tcp dport http REDIRECT to-ports 13129;
+        proto tcp dport http REDIRECT to-ports 13129;
       } @else {
         # Redirect http requests from everyone to regular Squid if activation
         # was disabled in IServ configuration.
