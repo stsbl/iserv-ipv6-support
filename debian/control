@@ -12,7 +12,7 @@ Homepage: https://it.stsbl.de
 Package: stsbl-iserv-ipv6-support
 Architecture: all
 Conflicts:
-  dhcpy6d (= 0.7.99-7+stsbl-immediately1),
+#  dhcpy6d (= 0.7.99-7+stsbl-immediately1),
   stsbl-iserv-server-ferm-ipv6,
 Depends: ${misc:Depends},
   ${perl:Depends},

@@ -13,3 +13,9 @@ Test "remove init script of isc-dhcp-server6"
   rm -f /etc/default/isc-dhcp-server6 /etc/init.d/isc-dhcp-server6
   systemctl is-active dhcpy6d && systemctl restart dhcpy6d
 
+Test "downgrade dhcpy6d"
+  ! [ "0.7.99-7+stsbl-immediately1" = "$(dpkg-query --showformat='${Version}' --show dhcpy6d)" ]
+  ---
+  /usr/lib/iserv/aptitude_auto install "dhcpy6d/$(iservdebianrelease)-$(iservumode)"
+  iservchk -ra dhcpy6d
+
