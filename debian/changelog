@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (19.02.10-1) experimental; urgency=medium
+
+  * Try to migrate to new dhcpy6d package
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Sun, 10 Feb 2019 23:55:32 +0100
+
 stsbl-iserv-ipv6-support (19.01.28-1) experimental; urgency=medium
 
   * dhcpy6d: Added workaround for multiple instances
