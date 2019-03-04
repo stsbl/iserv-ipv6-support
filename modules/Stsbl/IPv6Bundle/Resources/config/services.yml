@@ -14,5 +14,3 @@ services:
         resource: '../../{Controller,EventListener,Util}'
         bind:
             $resolver: '@controller_resolver'
-            # FIXME can be removed after proper fix for file-distribution!
-            $hostManager: '@iserv.host_manager'
