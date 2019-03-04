@@ -1,3 +1,10 @@
+stsbl-iserv-ipv6-support (19.03.04-1) experimental; urgency=medium
+
+  * Updated source format
+  * Removed dependency on legacy service alias
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Mon, 04 Mar 2019 19:39:45 +0100
+
 stsbl-iserv-ipv6-support (19.02.11-1) experimental; urgency=medium
 
   * Hopefully finally fixed dhcpy6d downgrade :)
