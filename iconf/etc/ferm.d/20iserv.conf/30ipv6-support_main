@@ -8,6 +8,7 @@ domain (ip6) {
       jump forward_first;
 
       proto tcp tcp-flags (SYN RST) SYN TCPMSS clamp-mss-to-pmtu;
+      mod conntrack ctstate INVALID DROP;
 
       jump forward_white;
 
