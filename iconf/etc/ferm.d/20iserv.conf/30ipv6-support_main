@@ -34,14 +34,13 @@ domain (ip6) {
 
     chain input_lan {
       proto tcp dport (domain netbios-ssn microsoft-ds ipp 4447 4448) ACCEPT;
-      proto udp dport (domain dhcpv6-client tftp ntp netbios-ns netbios-dgm radius mdns) ACCEPT;
+      proto udp dport (domain ntp netbios-ns netbios-dgm radius mdns) ACCEPT;
       # Only allow DHCPv6 server on interfaces where it is enabled in config
-      proto udp dport (dhcpv6-server) interface ($DHCPInterfaces) ACCEPT;
       proto tcp dport (3128 3129 13128 13129) ACCEPT;
     }
 
     chain input_linklocal {
-      proto udp dport dhcpv6-server ACCEPT;
+      proto udp dport dhcpv6-server interface ($DHCPInterfaces) ACCEPT;
     }
 
     chain inet_in {
