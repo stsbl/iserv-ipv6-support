@@ -1,3 +1,10 @@
+stsbl-iserv-ipv6-support (19.05.24-1) experimental; urgency=medium
+
+  * Rearranged DHCPv6 rules, cleanup
+  * Added native bind view support
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Fri, 24 May 2019 00:24:52 +0200
+
 stsbl-iserv-ipv6-support (19.05.09-1) experimental; urgency=medium
 
   * Added rule to drop invalid packets to prevent routing table overflow on AVM devices
