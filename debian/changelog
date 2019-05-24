@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (19.05.24-2) experimental; urgency=medium
+
+  * bind: Added fallback IPv6
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Fri, 24 May 2019 20:21:40 +0200
+
 stsbl-iserv-ipv6-support (19.05.24-1) experimental; urgency=medium
 
   * Rearranged DHCPv6 rules, cleanup
