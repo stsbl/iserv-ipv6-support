@@ -1,3 +1,11 @@
+stsbl-iserv-ipv6-support (19.05.25-1) experimental; urgency=medium
+
+  * bind: Improved handling of default IP with LAN
+  * bind: Removed LAN restriction on including ACLs
+  * bind: Added updated default IP handling to legacy zone
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Sat, 25 May 2019 01:02:21 +0200
+
 stsbl-iserv-ipv6-support (19.05.24-2) experimental; urgency=medium
 
   * bind: Added fallback IPv6
