@@ -7,7 +7,7 @@ while read line
 do
   IFS=' ' out=($line)
   SEDARGS+=("-e" "s#^(acl \"acl-${out[1]}-default\" \\{ )(.+)#\\1${out[0]}; \\2#g")
-done < <(netquery6 -gul "prefix/length nic" | sort | uniq)
+done < <(netquery6 -gu "prefix/length nic" | sort | uniq)
 
 if [ -n "$SEDARGS" ]
 then
