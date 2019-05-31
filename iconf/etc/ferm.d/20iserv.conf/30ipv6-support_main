@@ -1,7 +1,7 @@
 domain (ip6) {
   table filter {
     chain INPUT {
-      saddr @ipfilter($LAN) jump input_lan;
+      mod set set iserv-portal-lan6 src jump input_lan;
     }
 
     chain FORWARD {
@@ -26,9 +26,9 @@ domain (ip6) {
     }
 
     chain forward_white {
-      #proto tcp dport (http https) mod set set always_direct dst ACCEPT;
-      #proto tcp dport (http https) mod set set forward_white dst ACCEPT;
-      #proto icmp mod set set iserv_ns dst mod u32 u32 '0x3&0x40=0x40' ACCEPT;
+      proto tcp dport (http https) mod set set iserv-portal-always_direct6 dst ACCEPT;
+      proto tcp dport (http https) mod set set iserv-portal-forward_white6 dst ACCEPT;
+      proto icmp mod set set iserv-portal-ns6 dst mod u32 u32 '0x3&0x40=0x40' ACCEPT;
       proto udp sport ntp dport ntp mod length length 76 ACCEPT;
     }
 
@@ -44,16 +44,14 @@ domain (ip6) {
     }
 
     chain inet_in {
-      saddr @ipfilter($LAN) RETURN;
-      saddr fd00::/8 RETURN;
+      mod set set iserv-portal-lan6 src RETURN;
       # Reject NEW and INVALID packets from internet
       mod state state (INVALID NEW) REJECT reject-with icmp6-adm-prohibited;
       ACCEPT;
     }
 
     chain inet_out {
-      daddr @ipfilter($LAN) RETURN;
-      daddr fd00::/8 RETURN;
+      mod set set iserv-portal-lan6 src RETURN;
       jump activation_out;
     }
 
@@ -61,7 +59,7 @@ domain (ip6) {
       @if $activation {
         # Allow packets to the internet from clients which have been granted
         # internet access.
-        mod set set mac6 src ACCEPT;
+        mod set set iserv-ipv6-support-forward src ACCEPT;
       }
     }
   }
@@ -100,8 +98,8 @@ domain (ip6) {
       @if $activation {
         # Redirect http requests from clients which have been granted internet 
         # access to Squid.
-        mod set set mac6 src proto tcp dport http REDIRECT to-ports 3129;
-        mod set set proxy6 src proto tcp dport http REDIRECT to-ports 3129;
+        mod set set iserv-ipv6-support-forward src proto tcp dport http REDIRECT to-ports 3129;
+        mod set set iserv-ipv6-support-proxyonly src proto tcp dport http REDIRECT to-ports 3129;
         # Redirect http requests from everyone else to Squid block honeypot
         # instance. 
         proto tcp dport http REDIRECT to-ports 13129;
@@ -118,8 +116,8 @@ domain (ip6) {
       interface ppp+ RETURN;
       interface tun+ RETURN;
 
-      mod set set proxy6 src RETURN;
-      mod set set mac6 src RETURN;
+      mod set set iserv-ipv6-support-proxyonly src RETURN;
+      mod set set iserv-ipv6-support-forward src RETURN;
 
       proto tcp dport 3129 REDIRECT to-ports 13129;
       proto tcp dport 3128 REDIRECT to-ports 13128;

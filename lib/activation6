@@ -1,19 +1,19 @@
 #!/usr/bin/perl -T -CSDAL
+
 use warnings;
 use strict;
-use File::Slurp::Unicode;
-use IPC::Run qw(run);
 use IServ::Conf;
 use IServ::DB;
-use NetAddr::MAC;
+use Path::Tiny;
+
 undef %ENV;
+
+my $fn_forward = "/var/lib/iserv/ipv6-support/ipset/forward.d/ipv6-support";
+my $fn_proxyonly = "/var/lib/iserv/ipv6-support/ipset/proxyonly.d/ipv6-support";
 
 $ENV{PATH} = '/usr/sbin:/usr/bin:/sbin:/bin';
 
-system "ipset -exist create mac6 hash:mac";
-system "ipset -exist create proxy6 hash:mac";
-
-exit 0 if !$conf->{Activation};
+exit 0 unless $conf->{Activation};
 
 IServ::DB::Do "DELETE FROM nacs WHERE timer IS NOT NULL AND timer <= now()";
 IServ::DB::Do "UPDATE hosts SET override_route = NULL, override_until = NULL, ".
@@ -24,13 +24,14 @@ IServ::DB::Do "UPDATE hosts SET deploy_until = NULL ".
 my %active = IServ::DB::SelectAll_Hash "
   -- add whitelisted hosts
   SELECT mac, proxyenforce FROM hosts
-    WHERE
+    WHERE (
       -- whitelisted in computer management
       internet
       -- whitelisted in the computer module
       OR override_route
       -- whitelisted by deploy
       OR deploy_until IS NOT NULL
+    ) AND mac IS NOT NULL
   -- add users with inet_access privilege
   UNION SELECT mac, proxyenforce FROM samba_user_last
     JOIN users_priv USING (act)
@@ -48,42 +49,18 @@ my %active = IServ::DB::SelectAll_Hash "
     JOIN users_priv USING (act)
     LEFT OUTER JOIN hosts USING (ip)
     WHERE privilege LIKE 'inet_block'
-  ORDER BY 1
+  ORDER BY mac
   ";
 
-# update iptables
-# only hosts with proxyenforce='f' will be whitelisted in NAT
-my %rules = map {("ipset add mac6 $_", 1)}
-    grep { !$active{$_}{'proxyenforce'} } keys %active;
+# update ipsets
+# only hosts with proxyenforce='f' will be whitelisted in foward
+my @fowards_macs = map { uc "$_\n" } grep { not $active{$_}{'proxyenforce'} } sort keys %active;
+my @proxyonly_macs = map { uc "$_\n" } grep { $active{$_}{'proxyenforce'} } sort keys %active;
 
-my %proxy_only = map {("ipset add proxy6 $_", 1)}
-    grep { $active{$_}{'proxyenforce'} } keys %active;
+print "updating forward ipset\n";
+path($fn_forward)->spew_utf8(@fowards_macs);
+system "chkipsets", "-r", "-q", "iserv-ipv6-support-forward";
 
-if (%rules)
-{
-  my $upd = join "", map "$_\n", keys %rules;
-  printf "updating mac ipsets\n";
-  system "ipset -exist create newmac6 hash:mac";
-  system "ipset swap mac6 newmac6";
-  system "ipset flush newmac6";
-  system $upd;
-} 
-else
-{
-  system "ipset flush mac6";
-}
-
-if (%proxy_only)
-{
-  my $upd = join "", map "$_\n", keys %proxy_only;
-  printf "updating mac proxyonly ipsets\n";
-  system "ipset -exist create newproxy6 hash:mac";
-  system "ipset swap proxy6 newproxy6";
-  system "ipset flush newproxy6";
-  system $upd;
-}
-else
-{
-  system "ipset flush proxy6";
-}
-
+print "updating proxyonly ipset\n";
+path($fn_proxyonly)->spew_utf8(@proxyonly_macs);
+system "chkipsets", "-r", "-q", "iserv-ipv6-support-proxyonly";

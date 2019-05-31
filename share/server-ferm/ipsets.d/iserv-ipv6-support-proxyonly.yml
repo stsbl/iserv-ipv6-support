@@ -1,0 +1,6 @@
+Files: ~
+Directories:
+  - /var/lib/iserv/ipv6-support/ipset/proxyonly.d
+Type: "hash:mac"
+ExecFetch: ~
+
