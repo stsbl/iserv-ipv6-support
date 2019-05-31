@@ -83,17 +83,13 @@ domain (ip6) {
 
     }
 
-    chain always_direct {
-      #proto tcp dport http mod set set always_direct6 dst ACCEPT;
-    }
-
     chain forward_proxy {
       daddr @ipfilter($IPS6) RETURN;
 
       interface ppp+ RETURN;
       interface tun+ RETURN;
 
-      jump always_direct;
+      proto tcp dport http mod set set iserv-portal-always_direct6 dst ACCEPT;
 
       @if $activation {
         # Redirect http requests from clients which have been granted internet 
