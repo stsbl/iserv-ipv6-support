@@ -10,6 +10,9 @@ domain (ip6) {
       proto tcp tcp-flags (SYN RST) SYN TCPMSS clamp-mss-to-pmtu;
       mod conntrack ctstate INVALID DROP;
 
+      outerface $DEFIF6 jump inet_out;
+      interface $DEFIF6 jump inet_in;
+
       jump forward_white;
 
       proto tcp syn dport smtp NFLOG nflog-group 1;
@@ -18,8 +21,6 @@ domain (ip6) {
       interface tun+ ACCEPT;
       outerface tun+ ACCEPT;
 
-      outerface $DEFIF6 jump inet_out;
-      interface $DEFIF6 jump inet_in;
     }
 
     chain forward_first {
@@ -28,8 +29,10 @@ domain (ip6) {
     chain forward_white {
       proto tcp dport (http https) mod set set iserv-portal-always_direct6 dst ACCEPT;
       proto tcp dport (http https) mod set set iserv-portal-forward_white6 dst ACCEPT;
-      proto icmp mod set set iserv-portal-ns6 dst mod u32 u32 '0x3&0x40=0x40' ACCEPT;
+      proto (icmp ipv6-icmp) mod set set iserv-portal-ns6 dst mod u32 u32 '0x3&0x40=0x40' ACCEPT;
       proto udp sport ntp dport ntp mod length length 76 ACCEPT;
+      # Allow ICMP access to DEFIF network to ensure that PMTU discovery works
+      proto (icmp ipv6-icmp) outerface $DEFIF ACCEPT;
     }
 
     chain input_lan {
