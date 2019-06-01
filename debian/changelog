@@ -1,3 +1,11 @@
+stsbl-iserv-ipv6-support (19.06.02-1) experimental; urgency=medium
+
+  * Allow ICMP to DEFIF network to ensure that PMTU discovery works, fixed
+    potenial security hole in forward_white chain (accepted packets from
+    internet to LAN hosts in serveral cases)
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Sun, 02 Jun 2019 01:51:23 +0200
+
 stsbl-iserv-ipv6-support (19.05.31-1) experimental; urgency=medium
 
   * Added support for new chkipsets
