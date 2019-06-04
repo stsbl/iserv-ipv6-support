@@ -10,10 +10,20 @@ domain (ip6) {
       proto tcp tcp-flags (SYN RST) SYN TCPMSS clamp-mss-to-pmtu;
       mod conntrack ctstate INVALID DROP;
 
-      outerface $DEFIF6 jump inet_out;
-      interface $DEFIF6 jump inet_in;
+      interface $DEFIF6 mod set ! set iserv-portal-lan6 src jump forward_in;
 
+      # We need to jump to inet_in BEFORE forward_white to prevent abuse of rules
+      # from there for accessing resources in local networks from internet (e.g.
+      # if a rule without source and target restriction is in forward_white).
+      # forward_white is not intented for whitelisting access from internet to
+      # local networks, rather than whitelisting targetsi for local networks
+      # that must be even reachable if proxy is enforced or internet access
+      # is blocked. You explicitly have to use the forward_in chain for this
+      # purpose.
+      interface $DEFIF6 jump inet_in;
       jump forward_white;
+      outerface $DEFIF6 jump inet_out;
+
 
       proto tcp syn dport smtp NFLOG nflog-group 1;
       proto tcp syn dport https NFLOG nflog-group 2;
@@ -24,6 +34,9 @@ domain (ip6) {
     }
 
     chain forward_first {
+    }
+
+    chain forward_in {
     }
 
     chain forward_white {
