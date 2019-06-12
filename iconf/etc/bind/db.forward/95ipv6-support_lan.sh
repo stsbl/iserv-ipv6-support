@@ -9,7 +9,6 @@ IPv4="$(netquery if ip | grep -E "^${ICONF_SCHEMA_P0:-invalid} " | awk '{print $
 for i in $(netquery6 -gu -i "${ICONF_SCHEMA_P0:-invalid}" ip | grep . || { echo "${DEFAULT_IPv6[@]}" | sort -u; })
 do
   echo -e "@\t\tAAAA\t$i"
-  echo -e "wpad\t\tAAAA\t$i"
   echo -e "$(hostname -s)\t\tAAAA\t$i"
   echo -e "ipv6\t\tAAAA\t$i"
 done
