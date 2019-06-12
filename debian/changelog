@@ -1,3 +1,13 @@
+stsbl-iserv-ipv6-support (19.06.13-1) experimental; urgency=medium
+
+  * Allow forward_white to whitelist internet targets again, prevent abuse of
+    rules from forward_white chain for unwanted access to local networks from
+    internet by jumping to inet_in chain first, added forward_in chain for
+    this purpose
+  * Removed obsolete WPAD AAAA record
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Thu, 13 Jun 2019 01:34:21 +0200
+
 stsbl-iserv-ipv6-support (19.06.02-1) experimental; urgency=medium
 
   * Allow ICMP to DEFIF network to ensure that PMTU discovery works, fixed
