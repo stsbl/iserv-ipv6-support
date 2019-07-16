@@ -1,3 +1,10 @@
+stsbl-iserv-ipv6-support (19.07.17-1) experimental; urgency=medium
+
+  * Removed obsolete init script templates for isc-dhcp-server
+  * Moved squid-block to native systemd unit (taken from Debian Buster)
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Wed, 17 Jul 2019 01:34:37 +0200
+
 stsbl-iserv-ipv6-support (19.07.16-1) experimental; urgency=medium
 
   * dhcpy6d: Minor iservchk script improvement
