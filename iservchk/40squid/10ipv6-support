@@ -1,15 +1,7 @@
-Test "fix squid command on jessie"
-  [ "$(iservdebianrelease)" = "jessie" ] || exit 0
-  [ -f "/usr/sbin/squid" ] || exit 1
-  ---
-  ln -s squid3 /usr/sbin/squid
-
-MkDir 0755 proxy:proxy /var/log/squid
 MkDir 0750 proxy:proxy /var/spool/squid-block
 MkDir 0755 root:root /etc/squid-block
 Check /etc/squid-block/squid-block.conf
-Check /etc/init.d/squid-block
-ChPerm 0755 root:root /etc/init.d/squid-block
+Remove /etc/init.d/squid-block
 
 Test 'squid block cache directory'
   [ -d /var/spool/squid-block/00 ]
@@ -61,3 +53,11 @@ Test "squid-block service"
   systemctl is-enabled -q squid-block.service
   ---
   systemctl enable squid-block.service
+
+# Intentionally does not use iservchk command as squid-block normally is
+# started along with squid.service
+Test "start squid-block"
+  [[ $(systemctl is-active squid-block.service) = active ]]
+  ---
+  systemctl start squid-block.service
+

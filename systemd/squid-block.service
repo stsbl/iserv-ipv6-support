@@ -1,0 +1,23 @@
+## Copyright (C) 1996-2019 The Squid Software Foundation and contributors
+##
+## Squid software is distributed under GPLv2+ license and includes
+## contributions from numerous individuals and organizations.
+## Please see the COPYING and CONTRIBUTORS files for details.
+##
+
+[Unit]
+Description=Squid Web Proxy Server (Block Honeypot)
+Documentation=man:squid(8)
+After=network.target network-online.target nss-lookup.target
+
+[Service]
+Type=forking
+PIDFile=/run/squid-block.pid
+ExecStartPre=/usr/sbin/squid-block -f /etc/squid-block/squid-block.conf -N -z
+ExecStart=/usr/sbin/squid-block -f /etc/squid-block/squid-block.conf -sYC
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target
+
