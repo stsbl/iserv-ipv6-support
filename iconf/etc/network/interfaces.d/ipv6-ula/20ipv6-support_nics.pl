@@ -23,15 +23,19 @@ for my $file (glob "/var/lib/iserv/ipv6-support/ula/*.uln")
   my $nic = basename $file, ".uln";
   next if not exists $link_local_ips->{$nic};
   next if exists $dhcp_interfaces{$nic};
-  grep { /^iface $nic inet6 dhcp$/ } @lines_static_network and continue;
+  grep { /^iface $nic inet6 dhcp$/ } @lines_static_network and next;
 
   my $handle = path $file;
   my @lines = $handle->lines_utf8;
   my $prefix = ((shift @lines) =~ s/::$//gr);
+  my $glue = "";
+  # only add glue between prefix and suffix if suffix doesn't already have
+  # double points (suffix starting with zero)
+  $glue = ":" unless $link_local_ips->{$nic} =~ /^::/;
 
   print "auto $nic\n";
   print "iface $nic inet6 static\n";
-  print "        address " . $prefix . ":" . $link_local_ips->{$nic} . "\n";
+  print "        address " . $prefix . $glue . $link_local_ips->{$nic} . "\n";
   print "        netmask 64\n";
   print "\n";
 }
