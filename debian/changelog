@@ -1,3 +1,12 @@
+stsbl-iserv-ipv6-support (19.07.16-1) experimental; urgency=medium
+
+  * dhcpy6d: Minor iservchk script improvement
+  * interfaces: Fixed generation of IPv6 ULA stanzas in several cases
+  * Fixed typo in squid config
+  * Dropped legacy symlinks
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Tue, 16 Jul 2019 23:29:56 +0200
+
 stsbl-iserv-ipv6-support (19.06.13-1) experimental; urgency=medium
 
   * Allow forward_white to whitelist internet targets again, prevent abuse of
