@@ -1,9 +1,0 @@
-#!/bin/sh
-
-if [ "$(iservdebianrelease)" = "jessie" ]
-then
-  sed 's/grep -oE $(cat \/run\/squid.pid)/grep -oE $(cat \/run\/squid3.pid)/g'
-else
-  cat -
-fi
-
