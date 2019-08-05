@@ -1,10 +1,11 @@
-<?php declare(strict_types = 1);
+<?php
+declare(strict_types = 1);
 
 namespace Stsbl\IPv6Bundle\EventListener;
 
-use Doctrine\Common\Annotations\AnnotationException;
-use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\Reader;
 use IServ\CoreBundle\Service\BundleDetector;
+use Stsbl\IPv6Bundle\Controller\RedirectController;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -60,11 +61,17 @@ class KernelControllerSubscriber implements EventSubscriberInterface
      */
     private $bundleDetector;
 
-    public function __construct(BundleDetector $bundleDetector, ControllerResolverInterface $resolver, RouterInterface $router)
+    /**
+     * @var Reader
+     */
+    private $reader;
+
+    public function __construct(BundleDetector $bundleDetector, ControllerResolverInterface $resolver, RouterInterface $router, Reader $reader)
     {
         $this->bundleDetector = $bundleDetector;
         $this->resolver = $resolver;
         $this->router = $router;
+        $this->reader = $reader;
     }
 
     /**
@@ -121,13 +128,7 @@ class KernelControllerSubscriber implements EventSubscriberInterface
                 throw new \RuntimeException('Failed to reflect controller action!', 0, $e);
             }
 
-            try {
-                $annotationReader = new AnnotationReader();
-            } catch (AnnotationException $e) {
-                throw new \RuntimeException('Failed to create annotation reader!', 0, $e);
-            }
-
-            $annotations = $annotationReader->getMethodAnnotations($reflectionMethod);
+            $annotations = $this->reader->getMethodAnnotations($reflectionMethod);
             /* @var $annotation Route */
             list($annotation) = array_filter($annotations, function ($annotation) {
                 return $annotation instanceof Route;
@@ -149,7 +150,7 @@ class KernelControllerSubscriber implements EventSubscriberInterface
         }
 
         // duplicate original request
-        $request = $originalRequest->duplicate(null, null, ['_controller' => 'StsblIPv6Bundle:Redirect:redirectMdm']);
+        $request = $originalRequest->duplicate(null, null, ['_controller' => RedirectController::class . '::redirectMdm']);
         $controller = $this->resolver->getController($request);
 
         // skip unresolvable controller

@@ -1,10 +1,11 @@
-<?php declare(strict_types = 1);
+<?php
+declare(strict_types = 1);
 
 namespace Stsbl\IPv6Bundle\EventListener;
 
 use IServ\ComputerRequestBundle\Entity\ComputerRequest;
-use IServ\CoreBundle\Event\IDeskEvent;
-use IServ\CoreBundle\EventListener\IDeskListenerInterface;
+use IServ\CoreBundle\Event\HomePageEvent;
+use IServ\CoreBundle\EventListener\HomePageListenerInterface;
 use IServ\CoreBundle\Service\BundleDetector;
 use IServ\CoreBundle\Service\Config;
 use IServ\CoreBundle\Service\Shell;
@@ -15,8 +16,8 @@ use IServ\HostBundle\Util\Network;
 use Psr\Container\ContainerInterface;
 use Stsbl\IPv6Bundle\Util\Network6;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 
 /*
  * The MIT License
@@ -46,7 +47,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * @author Felix Jacobi <felix.jacobi@stsbl.de>
  * @license MIT License <https://opensource.org/licenses/MIT>
  */
-class IDeskListener implements IDeskListenerInterface, ServiceSubscriberInterface
+class HomePageListener implements HomePageListenerInterface, ServiceSubscriberInterface
 {
 
     /**
@@ -91,7 +92,7 @@ class IDeskListener implements IDeskListenerInterface, ServiceSubscriberInterfac
      */
     private function generateSsoLink(): string
     {
-        $this->container->get('iserv.sudo');
+        $this->container->get(SudoService::class);
         $link = trim(Sudo::shell_exec('sudo /usr/lib/iserv/ipv6_generate_sso_link'));
 
         return $link;
@@ -115,7 +116,7 @@ class IDeskListener implements IDeskListenerInterface, ServiceSubscriberInterfac
         $this->shell = $shell;
     }
 
-    public function onBuildIDesk(IDeskEvent $event): void
+    public function onBuildHomePage(HomePageEvent $event): void
     {
         $ip = $this->request->getClientIp();
         $lan = $this->config->get('lan');

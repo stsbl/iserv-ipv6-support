@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+declare(strict_types = 1);
 
 namespace Stsbl\IPv6Bundle\Controller;
 
@@ -13,7 +14,7 @@ class RedirectController extends AbstractPageController
     /**
      * Action to redirect mdm request to IPv4 host
      */
-    public function redirectMdmAction(Request $request, Config $config): RedirectResponse
+    public function redirectMdm(Request $request, Config $config): RedirectResponse
     {
         $newUrl = sprintf('https://ipv4.%s/iserv%s', $config->get('Domain'), $request->getPathInfo());
 
