@@ -66,7 +66,7 @@ do
     prefix="$(get_unused_unique_local_address | tee "/var/lib/iserv/ipv6-support/ula/${net}.uln")"
     echo "Using $prefix for interface $net."
 
-    suffix="$(netquery6 -i "$net" -p -f "ip" | sed 's/fe80:0000:0000:0000://g')"
+    suffix="$(netquery6 -i "$net" -p -f "ip" | sed 's/^fe80:://g')"
     address="$(echo "$prefix" | sed 's/::$//g'):${suffix}/64"
     echo "Assigning address $address to interface $net..."
 
