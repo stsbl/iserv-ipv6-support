@@ -34,7 +34,7 @@ my %new_ipv6 = map { $_ => 1 } split "\n", qx(sh -c "netquery6 --global --lan --
 
 for (keys %new_ipv6)
 {
-  unless (defined $seen{$_})
+  unless (defined $seen{$_} or /\/128$/)
   {
     print "ip range $_ missing.\n";
     $repaired++;
