@@ -1,3 +1,14 @@
+stsbl-iserv-ipv6-support (19.08.08-1) experimental; urgency=medium
+
+  * Removed jessie artifacts
+  * chkipv6ula: Fixed netquery6 compatibility
+  * Fixed deprecations
+  * chklan6cfg: Do add IPv6 addresses without network (128 bit prefix) usually
+    coming from DHCPv6 to LAN as their cannot be handled sensible (would just
+    consider our own host as LAN)
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Thu, 08 Aug 2019 03:26:45 +0200
+
 stsbl-iserv-ipv6-support (19.07.17-1) experimental; urgency=medium
 
   * Removed obsolete init script templates for isc-dhcp-server
