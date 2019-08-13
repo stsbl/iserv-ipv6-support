@@ -13,10 +13,17 @@ Test 'squid block cache directory'
 # the first instance will continue running, but all other started instances
 # will clobber the PID file, which breaks squid3 -k check:
 #   squid: ERROR: Could not send signal 0 to process 4172: (3) No such process
-Test "pidfile corresponds to the correct squid instance"
+Test "pidfile corresponds to the correct squid-block instance"
   # a non-existing pidfile means squid isn't running; Start will fix that
   [ -f /run/squid-block.pid ] || exit 0
-  pid=$(pidof "(squid-1)" | grep -oE $(cat /run/squid-block.pid))
+
+  if [ "$(iservdebianrelease)" = "stretch" ]
+  then
+    pid=$(pidof "(squid-1)" | tr ' ' '\n' | grep -oE "$(cat /run/squid-block.pid)")
+  else
+    pid=$(pidof "squid-block")
+  fi
+
   pidfile="$(cat /run/squid-block.pid)"
   [ "$pid" = "$pidfile" ] || exit 1
   ---
