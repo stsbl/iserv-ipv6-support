@@ -1,2 +1,2 @@
-/usr/lib/iserv/activation IN_OPEN /usr/lib/iserv/sleep_exec_once 5 activation6 /usr/lib/iserv/activation6
+/var/lib/iserv/portal/activation.iplist IN_CLOSE_WRITE /usr/lib/iserv/sleep_exec_once 5 activation6 /usr/lib/iserv/activation6
 
