@@ -1,3 +1,8 @@
+#!/bin/bash
+
+if netquery6 -gulq
+then
+  cat <<EOT
 MkDir 0750 proxy:proxy /var/spool/squid-block
 MkDir 0755 root:root /etc/squid-block
 Check /etc/squid-block/squid-block.conf
@@ -17,20 +22,20 @@ Test "pidfile corresponds to the correct squid-block instance"
   # a non-existing pidfile means squid isn't running; Start will fix that
   [ -f /run/squid-block.pid ] || exit 0
 
-  if [ "$(iservdebianrelease)" = "stretch" ]
+  if [ "\$(iservdebianrelease)" = "stretch" ]
   then
-    pid=$(pidof "(squid-1)" | tr ' ' '\n' | grep -oE "$(cat /run/squid-block.pid)")
+    pid=\$(pidof "(squid-1)" | tr ' ' '\n' | grep -oE "\$(cat /run/squid-block.pid)")
   else
-    pid=$(pidof "squid-block")
+    pid=\$(pidof "squid-block")
   fi
 
-  pidfile="$(cat /run/squid-block.pid)"
-  [ "$pid" = "$pidfile" ] || exit 1
+  pidfile="\$(cat /run/squid-block.pid)"
+  [ "\$pid" = "\$pidfile" ] || exit 1
   ---
   # kill running instance
   killall squid-block
   # wait for it to shutdown
-  for i in $(seq 1 300)
+  for i in \$(seq 1 300)
   do
     killall -q -s 0 squid || break
     sleep 0.1
@@ -64,7 +69,12 @@ Test "squid-block service"
 # Intentionally does not use iservchk command as squid-block normally is
 # started along with squid.service
 Test "start squid-block"
-  [[ $(systemctl is-active squid-block.service) = active ]]
+  [[ \$(systemctl is-active squid-block.service) = active ]]
   ---
   systemctl start squid-block.service
 
+EOT
+else
+  echo "Stop squid-block"
+  echo
+fi
