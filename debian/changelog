@@ -1,3 +1,11 @@
+stsbl-iserv-ipv6-support (19.08.25-1) experimental; urgency=medium
+
+  * incrond: "Improved" hackish way to execute activation6 for Buster to
+    prevent incrond process spam
+  * Disable squid-block if no IPv6 LAN is available
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Sun, 25 Aug 2019 20:54:50 +0200
+
 stsbl-iserv-ipv6-support (19.08.14-1) experimental; urgency=medium
 
   * squid: Fixed pid handling for Debian Buster
