@@ -47,7 +47,7 @@ use Symfony\Contracts\Service\ServiceSubscriberInterface;
  * @author Felix Jacobi <felix.jacobi@stsbl.de>
  * @license MIT License <https://opensource.org/licenses/MIT>
  */
-class HomePageListener implements HomePageListenerInterface, ServiceSubscriberInterface
+final class HomePageListener implements HomePageListenerInterface, ServiceSubscriberInterface
 {
 
     /**
@@ -162,7 +162,7 @@ class HomePageListener implements HomePageListenerInterface, ServiceSubscriberIn
     public static function getSubscribedServices(): array
     {
         return [
-            'iserv.sudo' => SudoService::class, // fetch sudo lazily to prevent eager util initialization!
+            SudoService::class, // fetch sudo lazily to prevent eager util initialization!
         ];
     }
 }
