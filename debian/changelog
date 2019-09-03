@@ -1,3 +1,12 @@
+stsbl-iserv-ipv6-support (19.09.03-2) experimental; urgency=medium
+
+  * Fixed computer request dashboard (broken since revision be488c76)
+
+  iserv: Fehlermeldung auf der Startseite beim Zugriff mit Geräten behoben,
+    die bisher nicht in die Geräteverwaltung eingetragen sind.
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Tue, 03 Sep 2019 16:25:58 +0200
+
 stsbl-iserv-ipv6-support (19.09.03-1) experimental; urgency=medium
 
   * ferm: Dropped rests of forward2 chain, fixed inet_out chain restriction,
