@@ -10,9 +10,4 @@ domain (ip6) {
       }
     }
   }
-  table nat {
-    chain forward2 {
-      ACCEPT;
-    }
-  }
 }

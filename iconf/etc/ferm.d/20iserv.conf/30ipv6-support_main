@@ -10,6 +10,9 @@ domain (ip6) {
       proto tcp tcp-flags (SYN RST) SYN TCPMSS clamp-mss-to-pmtu;
       mod conntrack ctstate INVALID DROP;
 
+      interface tun+ ACCEPT;
+      outerface tun+ ACCEPT;
+
       interface $DEFIF6 mod set ! set iserv-portal-lan6 src jump forward_in;
 
       # We need to jump to inet_in BEFORE forward_white to prevent abuse of rules
@@ -21,16 +24,12 @@ domain (ip6) {
       # is blocked. You explicitly have to use the forward_in chain for this
       # purpose.
       interface $DEFIF6 jump inet_in;
-      jump forward_white;
-      outerface $DEFIF6 jump inet_out;
-
 
       proto tcp syn dport smtp NFLOG nflog-group 1;
       proto tcp syn dport https NFLOG nflog-group 2;
 
-      interface tun+ ACCEPT;
-      outerface tun+ ACCEPT;
-
+      jump forward_white;
+      outerface $DEFIF6 jump inet_out;
     }
 
     chain forward_first {
@@ -67,7 +66,7 @@ domain (ip6) {
     }
 
     chain inet_out {
-      mod set set iserv-portal-lan6 src RETURN;
+      mod set set iserv-portal-lan6 dst RETURN;
       jump activation_out;
     }
 
