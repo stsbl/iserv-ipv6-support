@@ -1,3 +1,10 @@
+stsbl-iserv-ipv6-support (19.09.03-1) experimental; urgency=medium
+
+  * ferm: Dropped rests of forward2 chain, fixed inet_out chain restriction,
+    improved rule order
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Tue, 03 Sep 2019 03:52:26 +0200
+
 stsbl-iserv-ipv6-support (19.08.25-1) experimental; urgency=medium
 
   * incrond: "Improved" hackish way to execute activation6 for Buster to
