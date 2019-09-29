@@ -23,7 +23,7 @@ for my $row (split /\n/, qx(netquery6 -lu "nic\tip\tprefix"))
       not grep { /^\*$/ } keys %activate_dhcp;
 
   print "[class_default_$nic]\n";
-  print "addresses = $nic temp_$nic";
+  print "addresses = fixed $nic temp_$nic";
   print " global_$nic global_temp_$nic" if exists $global_prefixes->{$nic};
   print "\n";
   print "interface = $nic\n";

@@ -2,12 +2,15 @@
 
 use warnings; 
 use strict;
-use File::Slurp::Unicode;
 use IServ::DB;
+use List::MoreUtils qw(uniq);
 use NetAddr::MAC;
+use Path::Tiny;
+use Stsbl::IServ::Net::IPv6;
 use Time::HiRes qw(gettimeofday tv_interval);
 
-my @uniquelocal_prefixes = sort split "\n", qx(netquery6 --uniquelocal --format "nic prefix");
+my $fn_clients = "/var/lib/iserv/ipv6-support/dhcpy6d/clients.conf";
+
 
 sub print_time($$)
 {
@@ -15,44 +18,103 @@ sub print_time($$)
   printf "$mod: %.0fms\n", tv_interval($time) * 1000;
 }
 
-# dhcp
+sub write_file_if_modified($$)
 {
-  my $out;
-  my $moduletime = [gettimeofday];
+  my ($fn, $content) = @_;
+  my $path = path $fn;
 
-  for (@{ DBH->selectall_arrayref("SELECT Name, MAC ".
-    "FROM hosts WHERE MAC IS NOT NULL ORDER BY Name") or die $! })
+  do {
+    $path->spew_utf8($content);
+    return 1;
+  } if $path->slurp_utf8 ne $content;
+
+  return 0;
+}
+
+sub format_def(%)
+{
+  my (%def) = @_;
+  my @ret;
+
+  push @ret, "[client_" . (delete $def{_id}) . "]";
+
+  for (sort keys %def)
   {
-    my ($name, $mac) = @$_;
-
-    for my $prefix (sort @uniquelocal_prefixes)
+    if (ref $def{$_} eq "ARRAY")
     {
-      my ($nic, $net) = split " ", $prefix;
-
-      # strip double : at end
-      my $ip_net = substr $net, 0, -2;
-      my $mac_converter = new NetAddr::MAC $mac;
-      my $ip = $ip_net . ":" . as_ipv6_suffix $mac_converter;
-
-      my @content;
-      undef @content;
-      @content = @{ $out->{$nic} } if defined $out->{$nic};
-      @content = () if not @content;
-
-      push @content, "host $name-$nic {\n";
-      push @content, "  hardware ethernet $mac;\n";
-      push @content, "  fixed-address6 $ip;\n";
-      push @content, "}\n";
-
-      $out->{$nic} = \@content;
+      push @ret, "$_ = " . join " ", uniq sort @{ $def{$_} };
+    }
+    else
+    {
+      push @ret, "$_ = " . $def{$_};
     }
   }
 
-  for my $nic (sort keys %$out)
+  push @ret, ("", "");
+
+  @ret;
+}
+
+# dhcp
+{
+  my @addresses;
+  my @content;
+  my %defs;
+  my %hosts = IServ::DB::SelectAll_Hash
+      "SELECT v6.id, h.Name, h.MAC, v6.ipv6_iid, v6.interface FROM ".
+      "host_ipv6 v6 LEFT JOIN hosts h ON h.id = v6.host_id";
+  my $moduletime = [gettimeofday];
+  my $out;
+  my %prefixes;
+  
+  for (uniq split /\n/,
+      qx(netquery6 --lan --uniquelocal --global --format "nic\tprefix\tlength"))
   {
-    write_file "/var/lib/iserv/config/dhcpd6.conf.$nic.hosts", @{ $out->{$nic} };
+    my ($nic, $prefix, $length) = split /\t/;
+    push @{ $prefixes{$nic} }, [$prefix, $length];
   }
 
-  #system "/etc/init.d/isc-dhcp-server6", "restart", "&>/dev/null", "&";
+  my $id_counter = 0;
+
+  for (sort keys %hosts)
+  {
+    my $mac = $hosts{$_}{mac};
+    next unless $mac;
+ 
+    unless (exists $defs{$mac})
+    {
+      $defs{$mac}{_id} = ++$id_counter;
+      $defs{$mac}{class} = "default_" . $hosts{$_}{interface};
+      $defs{$mac}{hostname} = $hosts{$_}{name};
+      $defs{$mac}{mac} = $mac;
+    }
+
+    push @{ $prefixes{$_} }, ["fe80::", 64] for keys %prefixes;
+
+    for my $net (@{ $prefixes{ $hosts{$_}{interface} } // [] })
+    {
+      my @net = @{ $net };
+
+      # We can only handle EUI-64 compliant networks now
+      next if $net[1] ne "64";
+
+      push @addresses, join_prefix_and_suffix($net[0], $net[1], $hosts{$_}{ipv6_iid}, 64);
+      my $mac_converter = new NetAddr::MAC $mac;
+      push @addresses, join_prefix_and_suffix($net[0], $net[1], "::" . as_ipv6_suffix $mac_converter, 64);
+      push @{ $defs{$mac}{address} }, @addresses;
+    }
+  }
+
+  for (sort keys %defs)
+  {
+    push @content, format_def %{ $defs{$_} };
+  }
+
+  if (write_file_if_modified $fn_clients, join "\n", @content)
+  {
+    print "Restarting dhcp server ...\n";
+    system "systemctl", "try-restart", "dhcpy6d.service";
+  }
+
   print_time("update dhcp", $moduletime);
 }

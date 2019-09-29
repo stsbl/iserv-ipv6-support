@@ -28,9 +28,14 @@ Depends: ${misc:Depends},
   libregexp-ipv6-perl,
   python,
   sipcalc,
-  stsbl-iserv-config-ipv6 (>= 18.10.15),
+  stsbl-iserv-config-ipv6 (>= 19.09.29),
   stsbl-iserv-server-radvd,
 Xb-Private-IServ-Revision: ${iserv:Revision}
-Description: IPv6 Support für IServ
- Bringt experimentellen IPv6-Support für IServ mit.
-Tag: suite::iserv
+Description: IPv6-Unterstützung für IServ (EXPERIMENTELL)
+ Bringt experimentelle IPv6-Unterstützung für IServ mit.
+ .
+ Hinweis: Bitte nehmen Sie Kontakt mit dem Hersteller auf, bevor Sie dieses
+ Paket installieren. Eine Installation ohne entsprechende Fachkenntnisse und
+ anschließender Konfiguration kann die Stabilität des IServ-Systems
+ beeinträchtigen.
+Tag: suite::iserv, role::plugin, status::highlighted, status::experimental

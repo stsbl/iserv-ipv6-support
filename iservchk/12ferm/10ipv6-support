@@ -2,3 +2,7 @@ MkDir 0755 root:root /var/lib/iserv/ipv6-support/ipset
 MkDir 0755 root:root /var/lib/iserv/ipv6-support/ipset/proxyonly.d
 MkDir 0755 root:root /var/lib/iserv/ipv6-support/ipset/forward.d
 
+# used by newhosts in ferm hook
+MkDir 0755 root:root /var/lib/iserv/ipv6-support/dhcpy6d
+Touch /var/lib/iserv/ipv6-support/dhcpy6d/clients.conf
+

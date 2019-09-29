@@ -21,13 +21,12 @@ Usage: chklan6cfg [options]
   -r, --repair       write new config
 USAGE
 
-exit 0 if !$conf->{UpdateIPv6LAN};
+exit 0 unless $conf->{UpdateIPv6LAN};
 
 my @current = @{ $conf->{LAN} };
 
 my %seen;
-$seen{$_} = 1 
-  for @current;
+$seen{$_} = 1 for @current;
 
 my %old_ipv6 = map { $_ => 1 } grep /$Regexp::IPv6::IPv6_re\/(\d+)/, @current;
 my %new_ipv6 = map { $_ => 1 } split "\n", qx(sh -c "netquery6 --global --lan --format prefix/length; netquery6 --uniquelocal --lan --format prefix/length");

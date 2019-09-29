@@ -21,14 +21,13 @@ Usage: chkregdns6cfg [options]
   -r, --repair       write new config
 USAGE
 
-exit 0 if !$conf->{UpdateIPv6Regdns};
+exit 0 unless $conf->{UpdateIPv6Regdns};
 
 my @current = @{ $conf->{ExternalIPs} };
-exit 0 if !@current;
+exit 0 unless @current;
 
 my %seen;
-$seen{$_} = 1 
-  for @current;
+$seen{$_} = 1 for @current;
 
 my %old_ipv6 = map { $_ => 1 } grep /$Regexp::IPv6::IPv6_re/, @current;
 my %new_ipv6 = map { $_ => 1 } split "\n", qx(netquery6 --global --lan --format ip);
@@ -51,7 +50,7 @@ for (keys %old_ipv6)
   }
 }
 
-exit 0 if !$repaired;
+exit 0 unless $repaired;
 
 # reset all ipv6 addresses for fill current from netquery6
 delete $seen{$_} for keys %old_ipv6;
@@ -59,7 +58,7 @@ delete $seen{$_} for keys %old_ipv6;
 # fill new ips
 $seen{$_} = 1 for keys %new_ipv6;
 
-exit 0 if !keys %seen;
+exit 0 unless keys %seen;
 
 if ($opt{repair})
 {

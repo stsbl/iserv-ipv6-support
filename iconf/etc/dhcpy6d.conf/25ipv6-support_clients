@@ -1,0 +1,2 @@
+store_file_config = /var/lib/iserv/ipv6-support/dhcpy6d/clients.conf
+
