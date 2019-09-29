@@ -57,7 +57,6 @@ sub format_def(%)
 
 # dhcp
 {
-  my @addresses;
   my @content;
   my %defs;
   my %hosts = IServ::DB::SelectAll_Hash
@@ -93,6 +92,7 @@ sub format_def(%)
 
     for my $net (@{ $prefixes{ $hosts{$_}{interface} } // [] })
     {
+      my @addresses;
       my @net = @{ $net };
 
       # We can only handle EUI-64 compliant networks now
