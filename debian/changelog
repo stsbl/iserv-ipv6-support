@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (19.09.30-2) experimental; urgency=medium
+
+  * newhosts: Fixed address variable being in wrong scope
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Mon, 30 Sep 2019 01:39:08 +0200
+
 stsbl-iserv-ipv6-support (19.09.30-1) experimental; urgency=medium
 
   * Bumped copyright
