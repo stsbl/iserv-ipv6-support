@@ -3,7 +3,7 @@ stsbl-iserv-ipv6-support (19.09.30-1) experimental; urgency=medium
   * Bumped copyright
   * Added database and backend for static IPv6 suffix management
 
- -- Felix Jacobi <Felix@jacobi-hamburg.net>  Mon, 30 Sep 2019 01:06:46 +0200
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Mon, 30 Sep 2019 01:10:33 +0200
 
 stsbl-iserv-ipv6-support (19.09.03-2) experimental; urgency=medium
 
