@@ -1,9 +1,0 @@
-#!/bin/sh
-
-if [ "$(iservdebianrelease)" = "jessie" ]
-then
-  sed 's/error_directory \/etc\/squid\/errors/error_directory \/etc\/squid3\/errors/g'
-else
-  cat -
-fi
-

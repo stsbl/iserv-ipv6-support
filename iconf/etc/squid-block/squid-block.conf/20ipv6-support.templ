@@ -9,10 +9,8 @@
 pid_filename /run/squid-block.pid
 
 # Allow access only from the local network
-$(netquery6 --global --lan --format "  http_port [ip]:13129 intercept")
-$(netquery6 --uniquelocal --format "  http_port [ip]:13129 intercept")
-$(netquery6 --global --lan --format "  http_port [ip]:13128")
-$(netquery6 --uniquelocal --format "  http_port [ip]:13128")
+$(netquery6 -gul "  http_port [ip]:13129 intercept")
+$(netquery6 -gul "  http_port [ip]:13128")
   http_port [::1]:13128
 
 # Cache Replacement Policy
@@ -127,14 +125,15 @@ $(netquery6 --uniquelocal --format "  http_port [ip]:13128")
   redirector_access deny whitelist
 
 # Allow HTTP access to IServ itself
-$(netquery6 --format "  acl to_iserv dst ip")
+$(netquery -p "  acl to_iserv dst ip")
+$(netquery6 -gul "  acl to_iserv dst ip")
   http_access allow to_iserv
 
 # Deny access to the remaining LAN
   acl to_lan dst ::1
   acl to_lan dst 127.0.0.0/8
 $(for net in ${LAN[*]}; do echo "  acl to_lan dst $net"; done)
-  http_access deny to_lan
 
-# Prevent malicious clients from spoofing hostnames to circumvent blocked internet access
-  host_verify_strict on
+# Cache Administrator
+  cache_mgr admins@$Domain
+
