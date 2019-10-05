@@ -30,7 +30,7 @@ my %seen;
 $seen{$_} = 1 for @current;
 
 my %old_ipv6 = map { $_ => 1 } grep /$Regexp::IPv6::IPv6_re/, @current;
-my %new_ipv6 = map { $_ => 1 } split "\n", qx(netquery6 --global --lan --format ip);
+my %new_ipv6 = map { $_ => 1 } split "\n", qx(netquery6 -i "\$(. /usr/lib/iserv/ipv6_defif)" -gl ip);
 
 for (keys %new_ipv6)
 {

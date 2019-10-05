@@ -6,7 +6,7 @@ DEFIF="$(/usr/lib/iserv/ipv6_defif)"
 
 if [ "$DEFIF" ]
 then
-  if [ "$Activation" ] && netquery6 --quiet --global --lan
+  if [ "$Activation" ] && netquery6 -qgul
   then
     echo "Generating ipsets for users and devices with internet access (ipv6) ..."
     /usr/lib/iserv/activation6 >/dev/null

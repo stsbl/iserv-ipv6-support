@@ -6,10 +6,9 @@
 
 ERRORS=0
 
-DEFIF="$(LC_ALL=C ip -6 route show default | awk '$1=="default" {print $5}' | 
-  sed 's/^ppp[0-9]\+/ppp+/')"
+DEFIF="$(. /usr/lib/iserv/ipv6_defif)"
 
-IPs="$(netquery6 --global --format "ip" | while read i
+IPs="$(netquery6 -i "$DEFIF" -g "ip" | while read i
 do
   perl -e 'use Net::IP; print Net::IP::ip_expand_address "$ARGV[0]", 6;' "$i"
   echo
@@ -39,8 +38,8 @@ then
   fi
 fi
 
-IP=$(curl -4 -sS http://ns.iserv.eu/myip)
-CURIP=$(dig +short ipv4.$Domain A @ns.iserv.eu 2> /dev/null)
+IP="$(myip -4)"
+CURIP="$(dig +short ipv4.$Domain A @ns.iserv.eu 2> /dev/null)"
 
 if ! [ -z "$IP" ] && ! [ "$IP" = "$CURIP" ]
 then

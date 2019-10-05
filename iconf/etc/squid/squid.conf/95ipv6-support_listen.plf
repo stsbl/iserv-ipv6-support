@@ -6,8 +6,8 @@ sub uniq(@) {
   grep !$seen{$_}++, @_;
 }
 
-my $out = join "\n", sort uniq split "\n", qx(netquery6 --global --lan --format "  http_port [ip]:3128\n  http_port [ip]:3129 intercept"; netquery6 --uniquelocal --format "  http_port [ip]:3128\n  http_port [ip]:3129 intercept");
-my $out_acl = join "\n", sort uniq split "\n", qx(netquery6 --global --lan --format "  acl to_iserv dst ip"; netquery6 --uniquelocal --format "  acl to_iserv dst ip");
+my $out = join "\n", sort uniq split "\n", qx(netquery6 -gul "  http_port [ip]:3128\n  http_port [ip]:3129 intercept");
+my $out_acl = join "\n", sort uniq split "\n", qx(netquery6 -gul "  acl to_iserv dst ip");
 
 while (my $line = <STDIN>)
 {

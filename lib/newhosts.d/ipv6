@@ -67,7 +67,7 @@ sub format_def(%)
   my %prefixes;
   
   for (uniq split /\n/,
-      qx(netquery6 --lan --uniquelocal --global --format "nic\tprefix\tlength"))
+      qx(netquery6 -gul "nic\tprefix\tlength"))
   {
     my ($nic, $prefix, $length) = split /\t/;
     push @{ $prefixes{$nic} }, [$prefix, $length];
