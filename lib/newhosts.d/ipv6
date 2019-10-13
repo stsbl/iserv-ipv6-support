@@ -42,7 +42,7 @@ sub format_def(%)
   {
     if (ref $def{$_} eq "ARRAY")
     {
-      push @ret, "$_ = " . join " ", uniq sort @{ $def{$_} };
+      push @ret, "$_ = " . join " ", uniq @{ $def{$_} };
     }
     else
     {
@@ -66,8 +66,7 @@ sub format_def(%)
   my $out;
   my %prefixes;
   
-  for (uniq split /\n/,
-      qx(netquery6 -gul "nic\tprefix\tlength"))
+  for (uniq split /\n/, qx(netquery6 -gul "nic\tprefix\tlength"))
   {
     my ($nic, $prefix, $length) = split /\t/;
     push @{ $prefixes{$nic} }, [$prefix, $length];
@@ -79,6 +78,8 @@ sub format_def(%)
   {
     my $mac = $hosts{$_}{mac};
     next unless $mac;
+
+    my $mac_converter = new NetAddr::MAC $mac;
  
     unless (exists $defs{$mac})
     {
@@ -88,21 +89,32 @@ sub format_def(%)
       $defs{$mac}{mac} = $mac;
     }
 
-    push @{ $prefixes{$_} }, ["fe80::", 64] for keys %prefixes;
-
     for my $net (@{ $prefixes{ $hosts{$_}{interface} } // [] })
     {
-      my @addresses;
       my @net = @{ $net };
 
       # We can only handle EUI-64 compliant networks now
       next if $net[1] ne "64";
 
-      push @addresses, join_prefix_and_suffix($net[0], $net[1], $hosts{$_}{ipv6_iid}, 64);
-      my $mac_converter = new NetAddr::MAC $mac;
-      push @addresses, join_prefix_and_suffix($net[0], $net[1], "::" . as_ipv6_suffix $mac_converter, 64);
-      push @{ $defs{$mac}{address} }, @addresses;
+      push @{ $defs{$mac}{address} },
+          join_prefix_and_suffix($net[0], $net[1], $hosts{$_}{ipv6_iid}, 64);
     }
+
+    for my $net (@{ $prefixes{ $hosts{$_}{interface} } // [] })
+    {
+      my @net = @{ $net };
+
+      # We can only handle EUI-64 compliant networks now
+      next if $net[1] ne "64";
+
+      push @{ $defs{$mac}{address} },
+          join_prefix_and_suffix($net[0], $net[1], "::" . as_ipv6_suffix $mac_converter, 64);
+    }
+
+    my @addresses;
+    push @addresses, join_prefix_and_suffix("fe80::", 64, $hosts{$_}{ipv6_iid}, 64);
+    push @addresses, join_prefix_and_suffix("fe80::", 64, "::" . as_ipv6_suffix $mac_converter, 64);
+    push @{ $defs{$mac}{address} }, @addresses;
   }
 
   for (sort keys %defs)
