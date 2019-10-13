@@ -5,6 +5,7 @@ set -e
 
 DEFIF=$(. /usr/lib/iserv/ipv6_defif)
 REPAIR=
+ERR=0
 
 usage()
 {
@@ -56,20 +57,45 @@ do
   [[ $net = $DEFIF ]] && continue
 
   # do not generate ula if already done
-  [ -f "/var/lib/iserv/ipv6-support/ula/${net}.uln" ] && continue
-
-  echo "Missing unique local prefix for interface $net."
-
-  if [ -n "$REPAIR" ]
+  prefix=
+  if ! [ -f "/var/lib/iserv/ipv6-support/ula/${net}.uln" ]
   then
-    echo "Generating new prefix for interface $net ..."
-    prefix="$(get_unused_unique_local_address | tee "/var/lib/iserv/ipv6-support/ula/${net}.uln")"
-    echo "Using $prefix for interface $net."
+    echo "Missing unique local prefix for interface $net."
+    let ERR++ || true
 
-    suffix="$(netquery6 -i "$net" -p ip | sed 's/^fe80:://g')"
-    address="$(echo "$prefix" | sed 's/::$//g'):${suffix}/64"
-    echo "Assigning address $address to interface $net ..."
+    if [ -n "$REPAIR" ]
+    then
+      echo "Generating new prefix for interface $net..."
+      prefix="$(get_unused_unique_local_address | tee "/var/lib/iserv/ipv6-support/ula/${net}.uln")"
+    fi
+  else
+    prefix="$(< "/var/lib/iserv/ipv6-support/ula/${net}.uln")"
+  fi
 
-    ip -6 addr add "$address" dev "$net"
+  if [ -z "$prefix" ]
+  then
+    continue
+  fi
+
+  echo "Using prefix $prefix for interface $net."
+
+  suffix="$(netquery6 -i "$net" -p -f "suffix" | sort -r | head -n 1)"
+  address="$(echo "$prefix" | sed 's/::$//g'):${suffix}/64"
+
+  if ! netquery6 -i "$net" -u -f "ip/length" | grep -q "^$address$"
+  then
+    echo "Unique local address $address is not assigned to interface $net..."
+    let ERR++ || true
+
+    if [ -n "$REPAIR" ]
+    then
+      echo "Assigning address $address to interface $net..."
+      ip -6 addr add "$address" dev "$net"
+    fi
   fi
 done
+
+if [ $ERR -gt 0 ] && [ -z "$REPAIR" ]
+then
+  exit 1
+fi
