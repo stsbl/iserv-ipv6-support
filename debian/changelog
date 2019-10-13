@@ -1,3 +1,16 @@
+stsbl-iserv-ipv6-support (19.10.13-1) testing; urgency=medium
+
+  * squid: Improved iconf templates
+  * various: Improved netquery6 usage
+  * ipv6_defif: Moved to config-ipv6
+  * chkipv6ula: Fixed error reporting
+  * dhcpy6d: Fixed Address already in use caused by multiple entries for
+    same interface in configuration
+  * newhosts: Improved dhcpy6d configuration generation
+  * dhcpv6: Removed obsolete configuration variables and files
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Sun, 13 Oct 2019 17:56:28 +0200
+
 stsbl-iserv-ipv6-support (19.09.30-2) experimental; urgency=medium
 
   * newhosts: Fixed address variable being in wrong scope
