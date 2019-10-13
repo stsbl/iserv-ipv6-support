@@ -1,16 +1,3 @@
-msgid "Use DHCPv6 to manage IPv6 addresses in local network"
-msgstr "DHCPv6 benutzen, um IPv6-Adressen im lokalen Netzwerk zu verwalten"
-
-msgid ""
-"DHCPv6 is not required, but highly recommended to ensure that a client "
-"uses the correct address. Without it, is not safe that client uses "
-"the intended ip address."
-msgstr ""
-"DHCPv6 wird nicht benötigt, wird aber unbedingt empfohlen, um "
-"sicherzustellen, das ein Client die korrekte IP-Adresse benutzt. "
-"Ohne es kann nicht sichergestellt werden, das ein Client die "
-"gewünschte IP-Adresse benutzt."
-
 msgid ""
 "Update Regdns configuration automatically to include current IPv6 addresses"
 msgstr ""
@@ -36,20 +23,3 @@ msgstr ""
 "Wenn dies aktiviert ist, wird ein Cronjob die iservcfg-Option Lokale "
 "IP-Bereiche automatisch aktualisieren, damit alle aktuellen "
 "Ipv6-Adressen enthalten sind."
-
-msgid "Allow unknown clients for DHCPv6"
-msgstr "DHCPv6 für unbekannte Clients erlauben"
-
-msgid ""
-"If this option is enabled, unknown clients will assigned a IPv6 address from "
-"a dynamic range. This option is currently disabled by default as some "
-"features as NACs and computer request which work with unknown clients "
-"have no IPv6 support."
-
-msgstr ""
-"Wenn diese Option aktiviert ist, wird unbekannten Clients eine IPv6-Adresse "
-"aus einer dynamischen Range zugewiesen. Diese Option ist momentan "
-"standardmäßig deaktiviert, da einige Funktionen wie NACs und "
-"Computerbewerbungen, welche mit unbekannten Clients arbeiten, keinen "
-"IPv6-Support besitzen."
-

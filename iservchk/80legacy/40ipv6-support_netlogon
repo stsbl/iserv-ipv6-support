@@ -1,0 +1,3 @@
+Remove /etc/samba/netlogon/ipv6-disable-randomize-identifier.bat
+Remove /etc/samba/netlogon/ipv6-enable-randomize-identifier.bat
+

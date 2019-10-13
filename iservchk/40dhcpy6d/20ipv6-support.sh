@@ -2,7 +2,7 @@
 
 . /usr/lib/iserv/cfg
 
-if [ $UseDHCPv6 ] && [[ ${#DHCP} -gt 0 ]] && netquery6 -gulq
+if [[ ${#DHCP} -gt 0 ]] && netquery6 -gulq
 then
   echo 'Test "generate duid"'
   echo '  [ -s "/var/lib/iserv/ipv6-support/duid" ]'

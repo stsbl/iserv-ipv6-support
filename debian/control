@@ -11,8 +11,6 @@ Homepage: https://it.stsbl.de
 
 Package: stsbl-iserv-ipv6-support
 Architecture: all
-Conflicts:
-  stsbl-iserv-server-ferm-ipv6,
 Depends: ${misc:Depends},
   ${perl:Depends},
   ${python3:Depends},
@@ -31,6 +29,8 @@ Depends: ${misc:Depends},
   sipcalc,
   stsbl-iserv-config-ipv6 (>= 19.10.06),
   stsbl-iserv-server-radvd,
+Breaks: stsbl-iserv-server-radvd (<< 19.10.13),
+Conflicts: stsbl-iserv-server-ferm-ipv6,
 Xb-Private-IServ-Revision: ${iserv:Revision}
 Description: IPv6-Unterstützung für IServ (EXPERIMENTELL)
  Bringt experimentelle IPv6-Unterstützung für IServ mit.
