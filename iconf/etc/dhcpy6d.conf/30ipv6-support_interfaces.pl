@@ -3,80 +3,73 @@
 use warnings;
 use strict;
 use IServ::Conf;
+use List::MoreUtils qw(uniq);
 
 my %activate_dhcp = map { $_ => 1 } @{ $conf->{DHCP} };
 
-my $global_ips = {};
-my $global_prefixes = {};
+my %ips;
 
-for my $row (split /\n/, qx(netquery6 -lg "nic\tip\tprefix"))
+for my $row (split /\n/, qx(netquery6 -gul "nic\tip\tprefix\tlength"))
 {
-  my ($nic, $ip, $prefix) = split /\t/, $row;
-  $global_ips->{$nic} = $ip;
-  $global_prefixes->{$nic} = $prefix;
+  my ($nic, $ip, $prefix, $length) = split /\t/, $row;
+  next if $length ne 64;
+  push @{ $ips{$nic} }, [$ip, $prefix];
 }
 
-for my $row (split /\n/, qx(netquery6 -lu "nic\tip\tprefix"))
+for my $nic (uniq sort split /\n/, qx(netquery6 -gul "nic"))
 {
-  my ($nic, $ip, $prefix) = split /\t/, $row;
   next if not exists $activate_dhcp{$nic} and
       not grep { /^\*$/ } keys %activate_dhcp;
+  next unless exists $ips{$nic};
+  my @ips;
+  my %prefixes;
+
+  for (@{ $ips{$nic} })
+  {
+    my @net = @{ $_ };
+    push @ips, $net[0];
+    $prefixes{ $net[1] } = 1;
+  }
+
+  @ips = sort @ips;
+  my $ips = join " ", @ips;
+
+  my @address_pools;
+  my $addresses = "";
+  my $i = 0;
+  
+  for my $prefix (sort keys %prefixes)
+  {
+    my $address_key = "${nic}_$i";
+    $addresses .= "[address_$address_key]\n";
+    $addresses .= "# Choosing EUI-64-based addresses.\n";
+    $addresses .= "category = eui64\n";
+    $addresses .= "# ULA-type address pattern.\n";
+    $addresses .= "pattern = $prefix\$eui64\$\n";
+    $addresses .= "ia_type = na\n";
+    $addresses .= "\n";
+    push @address_pools, $address_key;
+
+    my $temp_address_key = "temp_${nic}_$i";
+    $addresses .= "[address_$temp_address_key]\n";
+    $addresses .= "# Choosing random addresses.\n";
+    $addresses .= "category = random\n";
+    $addresses .= "# ULA-type address pattern.\n";
+    $addresses .= "pattern = $prefix\$random64\$\n";
+    $addresses .= "ia_type = ta\n";
+    $addresses .= "\n";
+    push @address_pools, $temp_address_key;
+
+    $i++;
+  }
 
   print "[class_default_$nic]\n";
-  print "addresses = fixed $nic temp_$nic";
-  print " global_$nic global_temp_$nic" if exists $global_prefixes->{$nic};
-  print "\n";
+  print "addresses = " . join(" ", sort @address_pools) . "\n";
   print "interface = $nic\n";
-  print "nameserver = $ip";
-  if (exists $global_ips->{$nic})
-  {
-    print " $global_ips->{$nic}";
-  }
-  print "\n";
-  print "ntp_server = $ip";
-  if (exists $global_ips->{$nic})
-  {
-    print " $global_ips->{$nic}";
-  }
-  print "\n";
+  print "nameserver = $ips\n";
+  print "ntp_server = $ips\n";
   print "filter_mac = .*\n";
   print "\n";
-
-  print "[address_$nic]\n";
-  print "# Choosing EUI-64-based addresses.\n";
-  print "category = eui64\n";
-  print "# ULA-type address pattern.\n";
-  print "pattern = $prefix\$eui64\$\n";
-  print "ia_type = na\n";
-  print "\n";
-
-  print "[address_temp_$nic]\n";
-  print "# Choosing random addresses.\n";
-  print "category = random\n";
-  print "# ULA-type address pattern.\n";
-  print "pattern = $prefix\$random64\$\n";
-  print "ia_type = ta\n";
-  print "\n";
-
-  if (exists $global_prefixes->{$nic})
-  {
-    my $prefix = $global_prefixes->{$nic};
-	print "[address_global_$nic]\n";
-	print "# Choosing EUI-64-based addresses.\n";
-	print "category = eui64\n";
-	print "# ULA-type address pattern.\n";
-	print "pattern = $prefix\$eui64\$\n";
-    print "ia_type = na\n";
-	print "\n";
-
-    print "[address_global_temp_$nic]\n";
-    print "# Choosing random addresses.\n";
-    print "category = random\n";
-    print "# ULA-type address pattern.\n";
-    print "pattern = $prefix\$random64\$\n";
-    print "ia_type = ta\n";
-    print "\n";
-  }
-
+  print $addresses;
 }
 
