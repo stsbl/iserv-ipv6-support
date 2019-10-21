@@ -1,3 +1,11 @@
+stsbl-iserv-ipv6-support (19.10.21-1) stable; urgency=medium
+
+  * Dhcpy6d: Fixed duplicated interfaces in configuration and simplified
+    generation
+  * Chkipv6ula: Fixed handling of compressed ip addresses
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Mon, 21 Oct 2019 23:28:16 +0200
+
 stsbl-iserv-ipv6-support (19.10.13-1) testing; urgency=medium
 
   * squid: Improved iconf templates
