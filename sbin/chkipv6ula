@@ -81,6 +81,7 @@ do
 
   suffix="$(netquery6 -i "$net" -p -f "suffix" | sort -r | head -n 1)"
   address="$(echo "$prefix" | sed 's/::$//g'):${suffix}/64"
+  address="$(perl -mNet::IP -e 'print Net::IP::ip_compress_address shift, 6;' "$address")"
 
   if ! netquery6 -i "$net" -u -f "ip/length" | grep -q "^$address$"
   then
