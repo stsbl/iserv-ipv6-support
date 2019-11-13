@@ -20,5 +20,4 @@ Test "generate unique local network for all nics"
   ---
   chkipv6ula -r
 
-Check /etc/network/interfaces.d/ipv6-ula
 
