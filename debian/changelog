@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (19.11.15-1) testing; urgency=medium
+
+  * dhcpy6d.conf: Moved nameserver property to dns-ula
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Fri, 15 Nov 2019 06:10:43 +0100
+
 stsbl-iserv-ipv6-support (19.11.13-1) testing; urgency=medium
 
   * Moved /etc/network/interfaces.d/ipv6-ula to config-ipv6
