@@ -44,7 +44,6 @@ for my $nic (uniq sort split /\n/, qx(netquery6 -gul "nic"))
     $addresses .= "[address_$address_key]\n";
     $addresses .= "# Choosing EUI-64-based addresses.\n";
     $addresses .= "category = eui64\n";
-    $addresses .= "# ULA-type address pattern.\n";
     $addresses .= "pattern = $prefix\$eui64\$\n";
     $addresses .= "ia_type = na\n";
     $addresses .= "\n";
@@ -54,7 +53,6 @@ for my $nic (uniq sort split /\n/, qx(netquery6 -gul "nic"))
     $addresses .= "[address_$temp_address_key]\n";
     $addresses .= "# Choosing random addresses.\n";
     $addresses .= "category = random\n";
-    $addresses .= "# ULA-type address pattern.\n";
     $addresses .= "pattern = $prefix\$random64\$\n";
     $addresses .= "ia_type = ta\n";
     $addresses .= "\n";
@@ -66,7 +64,6 @@ for my $nic (uniq sort split /\n/, qx(netquery6 -gul "nic"))
   print "[class_default_$nic]\n";
   print "addresses = " . join(" ", sort @address_pools) . "\n";
   print "interface = $nic\n";
-  print "nameserver = $ips\n";
   print "ntp_server = $ips\n";
   print "filter_mac = .*\n";
   print "\n";
