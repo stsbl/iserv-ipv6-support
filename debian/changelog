@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (19.12.07-1) stable; urgency=medium
+
+  * Chklan6cfg: Do not include IP addresses without prefix in LAN range
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Sat, 07 Dec 2019 19:16:51 +0100
+
 stsbl-iserv-ipv6-support (19.11.15-1) testing; urgency=medium
 
   * dhcpy6d.conf: Moved nameserver property to dns-ula
