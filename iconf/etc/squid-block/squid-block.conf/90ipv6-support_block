@@ -1,5 +1,5 @@
 # Block everything
   http_access deny all
   icp_access deny all
-  deny_info ERR_ISERV_COMPUTER_BLOCKED all
+  deny_info http://${Servername}/iserv/public/internet/noaccess?url=%U all
 
