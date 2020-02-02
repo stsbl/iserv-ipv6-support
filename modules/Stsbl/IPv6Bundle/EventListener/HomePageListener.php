@@ -87,13 +87,17 @@ final class HomePageListener implements HomePageListenerInterface, ServiceSubscr
 
     /**
      * Creates sso link to ipv4.mein-iserv.de
-     *
-     * @return string
      */
-    private function generateSsoLink(): string
+    private function generateSsoLink(): ?string
     {
         $this->container->get(SudoService::class);
-        $link = trim(Sudo::shell_exec('sudo /usr/lib/iserv/ipv6_generate_sso_link'));
+        $link = Sudo::shell_exec('sudo /usr/lib/iserv/ipv6_generate_sso_link');
+
+        // No output => no link available
+        if (null === $link) {
+            return  null;
+        }
+        $link = \trim($link);
 
         return $link;
     }
@@ -146,12 +150,19 @@ final class HomePageListener implements HomePageListenerInterface, ServiceSubscr
             return;
         }
 
+        $ssoLink = $this->generateSsoLink();
+
+        // SSO link could not be generated
+        if (null === $ssoLink) {
+            return;
+        }
+
         // Check if there is already a pending request
         $computerRequest = $this->doctrine->getRepository(ComputerRequest::class)->findOneBy(['mac' => $mac]);
         $event->addContent(
             'computer-request-ipv6',
             '@StsblIPv6/idesk.html.twig',
-            ['action' => $computerRequest !== null ? 'pending' : 'request', 'link' => $this->generateSsoLink()],
+            ['action' => $computerRequest !== null ? 'pending' : 'request', 'link' => $ssoLink],
             -600 // keep in sync with \IServ\ComputerRequestBundle\EventListener::onBuildIDesk()!
         );
     }
