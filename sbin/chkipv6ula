@@ -79,7 +79,7 @@ do
 
   echo "Using prefix $prefix for interface $net."
 
-  suffix="$(netquery6 -i "$net" -p -f "suffix" | sort -r | head -n 1)"
+  suffix="$(/usr/lib/iserv/ipv6_iid "$net")"
   address="$(echo "$prefix" | sed 's/::$//g'):${suffix}/64"
   address="$(perl -mNet::IP -e 'print Net::IP::ip_compress_address shift, 6;' "$address")"
 

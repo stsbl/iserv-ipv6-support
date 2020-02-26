@@ -4,13 +4,17 @@ use warnings;
 use strict;
 use File::Basename;
 use Path::Tiny;
+use Stsbl::IServ::Net::IPv6;
 
 my $link_local_ips = {};
 
-for my $row (split /\n/, qx(netquery6 -lp "nic\tsuffix"))
+for my $row (split /\n/, qx(netquery6 -lp "nic\tlength"))
 {
-  my ($nic, $suffix) = split /\t/, $row;
-  $link_local_ips->{$nic} = $suffix;
+  my ($nic, $length) = split /\t/, $row;
+  next unless $length eq 64;
+  my $iid = qx(/usr/lib/iserv/ipv6_iid $nic);
+  chomp $iid;
+  $link_local_ips->{$nic} = $iid;
 }
 
 my $dhcp_handle = path "/var/lib/iserv/config/ipv6-dhcp-interfaces.list";
@@ -28,14 +32,8 @@ for my $file (glob "/var/lib/iserv/ipv6-support/ula/*.uln")
   my $handle = path $file;
   my @lines = $handle->lines_utf8;
   my $prefix = ((shift @lines) =~ s/::$//gr);
-  my $glue = "";
-  # only add glue between prefix and suffix if suffix doesn't already have
-  # double points (suffix starting with zero)
-  $glue = ":" unless $link_local_ips->{$nic} =~ /^::/;
-
   print "auto $nic\n";
-  print "iface $nic inet6 static\n";
-  print "        address " . $prefix . $glue . $link_local_ips->{$nic} . "\n";
-  print "        netmask 64\n";
+  print "iface $nic inet6 auto\n";
+  print "        address " . join_prefix_and_suffix($prefix, 64, $link_local_ips->{$nic}, 64)  . "/64\n";
   print "\n";
 }

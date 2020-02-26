@@ -1,0 +1,26 @@
+#!/usr/bin/perl -CSDAL
+
+use warnings;
+use strict;
+use Net::Interface;
+use NetAddr::MAC;
+use Stsbl::IServ::Net::IPv6;
+
+my $if = shift;
+my $prefix = shift;
+die "Usage: $0 interface [prefix]\n" unless defined $if;
+
+my $ifo = Net::Interface->new($if) or die "Interface $if not found.\n";
+my $mac = lc $ifo->mac_bin2hex() or die "Inteface $if has no MAC address.\n";
+
+my $mac_converter = NetAddr::MAC->new($mac);
+my $suffix = $mac_converter->as_ipv6_suffix;
+
+if (defined $prefix)
+{
+  print join_prefix_and_suffix($prefix, 64, $suffix, 64) . "\n";
+}
+else
+{
+  print $suffix . "\n";
+}
