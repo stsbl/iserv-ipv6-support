@@ -1,3 +1,12 @@
+stsbl-iserv-ipv6-support (20.02.27-1) stable; urgency=medium
+
+  * Refactored chkipv6ula and /etc/network/interfaces.d/ipv6-ula
+    generation to use MAC address instead of link local address as data
+    source
+  * Ipv6_iid: Suppress warning on interfaces without MAC address
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Thu, 27 Feb 2020 00:49:01 +0100
+
 stsbl-iserv-ipv6-support (20.02.02-1) stable; urgency=medium
 
   * Home page: Fixed exception in case no sso link is available
