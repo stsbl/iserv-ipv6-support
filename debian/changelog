@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (20.02.27-2) stable; urgency=medium
+
+  * Moved dhcpy6d main config to server-dhcpy6d
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Thu, 27 Feb 2020 05:23:08 +0100
+
 stsbl-iserv-ipv6-support (20.02.27-1) stable; urgency=medium
 
   * Refactored chkipv6ula and /etc/network/interfaces.d/ipv6-ula
