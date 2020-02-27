@@ -1,0 +1,5 @@
+Test "move legacy duid file"
+  ! [ -f "/var/lib/iserv/ipv6-support/duid" ]
+  ---
+  mv /var/lib/iserv/ipv6-support/duid /var/lib/iserv/server-dhcpy6d/duid
+

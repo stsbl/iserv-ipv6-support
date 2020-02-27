@@ -5,6 +5,3 @@ $([ $UpdateIPv6LAN ] && echo -e "# Update IPv6 LAN ranges\n*/5 *   * * *   root 
 # Check protocol (IPv4 and IPv6) specific dns record
 */5 *   * * *   root    (chkdnspsr || /usr/lib/iserv/sleep_exec_once 10 chkdnspsr chkdnspsr -r) > /dev/null
 
-# Check volatile dhcpy6d every 10 minutes to detect duplicated instances early
-*/10 *  * * *   root    iservchk -a dhcpy6d
-

@@ -54,10 +54,6 @@ domain (ip6) {
       proto tcp dport (3128 3129 13128 13129) ACCEPT;
     }
 
-    chain input_linklocal {
-      proto udp dport dhcpv6-server interface ($DHCPInterfaces) ACCEPT;
-    }
-
     chain inet_in {
       mod set set iserv-portal-lan6 src RETURN;
       # Reject NEW and INVALID packets from internet
