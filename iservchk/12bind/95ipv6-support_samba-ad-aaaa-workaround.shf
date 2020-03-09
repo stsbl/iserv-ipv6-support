@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+
+sed -r -E 's#^Check /etc/bind/db\.samba-ad\.d/(.+)$#\Test "check /etc/bind/db.samba-ad.d/\1"\
+  iconf check "/etc/bind/db.samba-ad.d/\1" > /dev/null 2> >(grep -vx '"'"'warning: unknown dns entry type "AAAA"'"'"')\
+  ---\
+  iconf repair "/etc/bind/db.samba-ad.d/\1" > /dev/null 2> >(grep -vx '"'"'warning: unknown dns entry type "AAAA"'"'"')\
+#g'
