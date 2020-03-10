@@ -33,7 +33,8 @@ for my $file (glob "/var/lib/iserv/ipv6-support/ula/*.uln")
   my @lines = $handle->lines_utf8;
   my $prefix = ((shift @lines) =~ s/::$//gr);
   print "auto $nic\n";
-  print "iface $nic inet6 auto\n";
-  print "        address " . join_prefix_and_suffix($prefix, 64, $link_local_ips->{$nic}, 64)  . "/64\n";
+  print "iface $nic inet6 static\n";
+  print "	address " . join_prefix_and_suffix($prefix, 64, $link_local_ips->{$nic}, 64)  . "/64\n";
+  print "	autoconf 1\n";
   print "\n";
 }
