@@ -1,3 +1,11 @@
+stsbl-iserv-ipv6-support (20.03.10-1) stable; urgency=medium
+
+  * Added workaround for anoying 'warning: unknown dns entry type "AAAA"'
+    messages by server-samba-ad
+  * /etc/network/interfaces.d/ipv6-ula: Changed method to static (again)
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Tue, 10 Mar 2020 03:25:31 +0100
+
 stsbl-iserv-ipv6-support (20.02.27-2) stable; urgency=medium
 
   * Moved dhcpy6d main config to server-dhcpy6d
