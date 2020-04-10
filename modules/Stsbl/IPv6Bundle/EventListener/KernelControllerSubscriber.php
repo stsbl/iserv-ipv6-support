@@ -12,7 +12,7 @@ use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -66,12 +66,18 @@ class KernelControllerSubscriber implements EventSubscriberInterface
      */
     private $reader;
 
-    public function __construct(BundleDetector $bundleDetector, ControllerResolverInterface $resolver, RouterInterface $router, Reader $reader)
+    /**
+     * @var UrlMatcherInterface
+     */
+    private $urlMatcher;
+
+    public function __construct(BundleDetector $bundleDetector, ControllerResolverInterface $resolver, RouterInterface $router, Reader $reader, UrlMatcherInterface $urlMatcher)
     {
         $this->bundleDetector = $bundleDetector;
         $this->resolver = $resolver;
         $this->router = $router;
         $this->reader = $reader;
+        $this->urlMatcher = $urlMatcher;
     }
 
     /**
@@ -100,58 +106,22 @@ class KernelControllerSubscriber implements EventSubscriberInterface
             return;
         }
 
-        // prefilter requests by pathinfo to improve speed:
-        // 1100ms => 616ms
-        if (!preg_match('#^/public/mdm#', $pathInfo)) {
-            return;
-        }
-
-        $context = new RequestContext();
-        $context->fromRequest($originalRequest);
-        $matcher = new UrlMatcher($this->router->getRouteCollection(), $context);
-
         try {
-            $originalRequest->attributes->add($matcher->match($pathInfo));
-            list($controller, $action) = $this->resolver->getController($originalRequest);
+            $originalRequest->attributes->add($this->urlMatcher->match($pathInfo));
         } catch (ResourceNotFoundException $e) {
             // skip
             return;
         }
 
-
-        $route = null;
-
-        if (null !== $controller || null !== $action) {
-            try {
-                $reflectionMethod = new \ReflectionMethod($controller, $action);
-            } catch (\ReflectionException $e) {
-                throw new \RuntimeException('Failed to reflect controller action!', 0, $e);
-            }
-
-            $annotations = $this->reader->getMethodAnnotations($reflectionMethod);
-            /* @var $annotation Route */
-            list($annotation) = array_filter($annotations, function ($annotation) {
-                return $annotation instanceof Route;
-            });
-            if (!isset($annotation)) {
-                // do not handle actions without annotation
-                return;
-            }
-
-            $route = $annotation->getName();
-        } else {
-            // skip unresolvable
-            return;
-        }
-
+        $route = $originalRequest->attributes->get('_route');
         // do not handle non public mdm routes
-        if ($route !== 'mdm_ios_dep_enroll' && $route !== 'mdm_ios_api') {
+        if ($route !== 'public_mdm_ios_dep_enroll' && $route !== 'public_mdm_ios_api') {
             return;
         }
 
         // duplicate original request
-        $request = $originalRequest->duplicate(null, null, ['_controller' => RedirectController::class . '::redirectMdm']);
-        $controller = $this->resolver->getController($request);
+        $originalRequest->attributes->set('_controller', RedirectController::class . '::redirectMdm');
+        $controller = $this->resolver->getController($originalRequest);
 
         // skip unresolvable controller
         if (!$controller) {
