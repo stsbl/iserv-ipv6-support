@@ -1,3 +1,10 @@
+stsbl-iserv-ipv6-support (20.04.21-1) stable; urgency=medium
+
+  * Fixed intercepting MDM API calls to redirect them to IPv4
+  * KernelControllerSubsriber: Catch MethodNotAllowedException
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Tue, 21 Apr 2020 01:21:17 +0200
+
 stsbl-iserv-ipv6-support (20.03.10-1) stable; urgency=medium
 
   * Added workaround for anoying 'warning: unknown dns entry type "AAAA"'
