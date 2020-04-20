@@ -11,6 +11,7 @@ use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
@@ -108,7 +109,7 @@ class KernelControllerSubscriber implements EventSubscriberInterface
 
         try {
             $originalRequest->attributes->add($this->urlMatcher->match($pathInfo));
-        } catch (ResourceNotFoundException $e) {
+        } catch (ResourceNotFoundException|MethodNotAllowedException $e) {
             // skip
             return;
         }
