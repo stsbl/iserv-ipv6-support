@@ -99,7 +99,7 @@ class KernelControllerSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $originalRequest = $event->getRequest();
+        $originalRequest = $event->getRequest()->duplicate();
         $pathInfo = $originalRequest->getPathInfo();
 
         // do nothing if we are on IPv4
