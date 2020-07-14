@@ -7,7 +7,7 @@ Build-Depends-Indep:
   dh-python,
   iserv3-dev,
 Standards-Version: 4.4.0
-Homepage: https://it.stsbl.de
+Homepage: ${iserv:Homepage}
 
 Package: stsbl-iserv-ipv6-support
 Architecture: all
@@ -34,7 +34,7 @@ Depends: ${misc:Depends},
   stsbl-iserv-server-radvd,
 Breaks: stsbl-iserv-server-radvd (<< 19.10.13),
 Conflicts: stsbl-iserv-server-ferm-ipv6,
-Xb-Private-IServ-Revision: ${iserv:Revision}
+Xb-Private-Iserv-Revision: ${iserv:Revision}
 Description: IPv6-Unterstützung für IServ (EXPERIMENTELL)
  Bringt experimentelle IPv6-Unterstützung für IServ mit.
  .
