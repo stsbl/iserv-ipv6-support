@@ -33,7 +33,7 @@ my %new_ipv6 = map { $_ => 1 } grep { !/^::\/128$/ } split "\n", qx(netquery6 -g
 
 for (keys %new_ipv6)
 {
-  unless (defined $seen{$_} or /\/128$/)
+  unless (defined $seen{$_} or /\/128$/ or !/\/[0-9]{1,3}$/)
   {
     print "ip range $_ missing.\n";
     $repaired++;
@@ -62,7 +62,8 @@ exit 0 if !keys %seen and !keys %old_ipv6;
 if ($opt{repair})
 {
   # build value for store_cfg
-  my $arg = '("'.join('" "', sort keys %seen).'")';
+  my $arg = '("'.join('" "', grep { !/\/128$/ and /\/[0-9]{1,3}$/ }
+      sort keys %seen).'")';
   system "store_cfg_array", "/etc/iserv/config", "LAN", $arg
     and die "failed to write new config: $!\n";
   system "/usr/lib/iserv/newconf";
