@@ -1,3 +1,13 @@
+stsbl-iserv-ipv6-support (20.08.02-1) testing; urgency=medium
+
+  * Bumped copyright
+  * Chklan6cfg: FIxed skipping IP addresses without network (128-bit
+    prefix)
+  * Updated locales
+  * Updated locale handling to use genpo
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Sun, 02 Aug 2020 07:24:33 +0200
+
 stsbl-iserv-ipv6-support (20.06.03-1) stable; urgency=medium
 
   * KernelControllerSubscriber: Fixed messing up original request
