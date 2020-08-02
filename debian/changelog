@@ -1,3 +1,12 @@
+stsbl-iserv-ipv6-support (20.08.02-2) testing; urgency=medium
+
+  * Moved MDM API workaround to webserver configuration in order to make
+    it more stable
+  * Fixed clash with upcoming computerrequest update
+  * Removed usage of deprecated template
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Sun, 02 Aug 2020 11:14:12 +0200
+
 stsbl-iserv-ipv6-support (20.08.02-1) testing; urgency=medium
 
   * Bumped copyright
