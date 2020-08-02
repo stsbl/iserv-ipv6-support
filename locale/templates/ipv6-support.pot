@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-02 01:07+0200\n"
+"POT-Creation-Date: 2020-08-02 11:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,7 +29,7 @@ msgid ""
 "include all current IPv6 ranges of the server."
 msgstr ""
 
-#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/idesk.html.twig.php
+#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
 msgid "Internet access requested"
 msgstr ""
 
@@ -37,21 +37,19 @@ msgstr ""
 msgid "Network"
 msgstr ""
 
-#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/idesk.html.twig.php
+#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
 msgid "Reload start page to request internet access"
 msgstr ""
 
-#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/idesk.html.twig.php
+#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
 msgid "Request internet access"
 msgstr ""
 
-#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/idesk.html.twig.php
+#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
 msgid ""
-"This computer is not registered in the computer management which could "
-"result in you not being able to access the internet. Request your computer "
-"to be added to remedy this. IServ currently cannot query required "
-"information about your host. Please click the button below to reload the "
-"start page to request internet access."
+"This device is not registered in the host management which could result in "
+"you not being able to access the internet. Request your device to be added "
+"to remedy this."
 msgstr ""
 
 #: config/11ipv6-support
@@ -63,16 +61,15 @@ msgid ""
 "Update Regdns configuration automatically to include current IPv6 addresses"
 msgstr ""
 
-#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/idesk.html.twig.php
+#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
 msgid ""
-"You have already filed a request to add this computer to the computer "
-"management."
+"You have already filed a request to add this device to the host management."
 msgstr ""
 
-#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/idesk.html.twig.php
+#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
 msgid ""
-"Your request for internet access has been granted, but your computer isn't "
-"using the assigned IP address yet. Instruct your computer to renew its DHCP "
+"Your request for internet access has been granted, but your device isn't "
+"using the assigned IP address yet. Instruct your device to renew its DHCP "
 "lease; If you don't know how to do this, just reboot it. You should then be "
 "able to access the internet."
 msgstr ""

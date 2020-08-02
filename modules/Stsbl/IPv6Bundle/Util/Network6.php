@@ -71,7 +71,7 @@ class Network6
         }
 
         foreach ($this->shell->getOutput() as $output) {
-            list(, , , , $mac) = explode(' ', $output);
+            [, , , , $mac] = explode(' ', $output);
 
             if (isset($mac) && $this->hostManager->isMac($mac)) {
                 return $mac;

@@ -5,12 +5,6 @@ services:
         autoconfigure: true
         public: false
 
-    _instanceof:
-        IServ\CoreBundle\EventListener\IDeskListenerInterface:
-            tags:
-                - { name: kernel.event_listener, event: iserv_portal.build_idesk, method: onBuildIDesk }
-
     Stsbl\IPv6Bundle\:
-        resource: '../../{Controller,EventListener,Util}'
-        bind:
-            $resolver: '@controller_resolver'
+        resource: '../../'
+        exclude: '../../{Entity,Tests,Resources}'

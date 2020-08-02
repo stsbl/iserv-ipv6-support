@@ -1,0 +1,34 @@
+{% extends "@IServCore/Dashboard/main.html.twig" %}
+
+{% block dashboard_heading_panel %}
+    {% if action == 'pending' or action == 'wrong_ip' %}
+        {% set title = ico('globe-green', 'fugue') ~ _('Internet access requested') %}
+    {% else %}
+        {% set title = ico('globe-green', 'fugue') ~ _('Request internet access') %}
+    {% endif %}
+    <div class="panel-heading">
+        {{ title|raw }}
+    </div>
+{% endblock %}
+
+{% block dashboard_class %}panel-warning{% endblock %}
+
+{% block dashboard_content %}
+    <p>
+        {% if action == 'pending' %}
+            {{ _('You have already filed a request to add this device to the host management.') }}
+        {% elseif action == 'wrong_ip' %}
+            {{ _('Your request for internet access has been granted, but your device isn\'t using the assigned IP address yet. Instruct your device to renew its DHCP lease; If you don\'t know how to do this, just reboot it. You should then be able to access the internet.') }}
+        {% else %}
+            {{ _('This device is not registered in the host management which could result in you not being able to access the internet. Request your device to be added to remedy this.') }}
+        {% endif %}
+    </p>
+{% endblock %}
+
+{% block dashboard_footer %}
+    {% if action != 'pending' and action != 'wrong_ip' %}
+        <div class="clearfix">
+            <a href="{{ link }}" class="btn btn-link pull-right">{{ icon('refresh') }}{{ _('Reload start page to request internet access') }}</a>
+        </div>
+    {% endif %}
+{% endblock %}

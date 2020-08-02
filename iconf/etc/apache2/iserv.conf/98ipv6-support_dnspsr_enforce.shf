@@ -2,6 +2,6 @@
 
 . /usr/lib/iserv/cfg
 
-sed -E "/RewriteCond %\{HTTP_HOST\} !=$Domain/a \
+sed -E "/RewriteCond %\{HTTP_HOST\} !=$Domain/a \\
   RewriteCond %\{HTTP_HOST\} !=ipv4.$Domain\\$(echo -e "\n")
   RewriteCond %\{HTTP_HOST\} !=ipv6.$Domain"

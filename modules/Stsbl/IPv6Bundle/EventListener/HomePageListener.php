@@ -123,7 +123,7 @@ final class HomePageListener implements HomePageListenerInterface, ServiceSubscr
     public function onBuildHomePage(HomePageEvent $event): void
     {
         $ip = $this->request->getClientIp();
-        $lan = $this->config->get('lan');
+        $lan = $this->config->get('LAN');
 
         // Skip if ip is not in LAN, computer request module is not installed or activation is disabled
         if (!Network::ipInLan($ip, $lan) ||
@@ -161,7 +161,7 @@ final class HomePageListener implements HomePageListenerInterface, ServiceSubscr
         $computerRequest = $this->doctrine->getRepository(ComputerRequest::class)->findOneBy(['mac' => $mac]);
         $event->addContent(
             'computer-request-ipv6',
-            '@StsblIPv6/idesk.html.twig',
+            '@StsblIPv6/device_request_homepage.html.twig',
             ['action' => $computerRequest !== null ? 'pending' : 'request', 'link' => $ssoLink],
             -600 // keep in sync with \IServ\ComputerRequestBundle\EventListener::onBuildIDesk()!
         );
