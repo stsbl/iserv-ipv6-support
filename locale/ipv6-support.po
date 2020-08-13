@@ -56,9 +56,9 @@ msgid ""
 "you not being able to access the internet. Request your device to be added "
 "to remedy this."
 msgstr ""
-"Dieses Gerät ist nicht in die Geräteverwaltung eingetragen und hat daher "
-"unter Umständen keinen Internetzugang. Beantragen Sie die Eintragung, um "
-"Zugang zum Internet erhalten zu können."
+"Dieses Gerät ist nicht in der Geräteverwaltung registriert, was dazu "
+"führen könnte, dass Sie keinen Internetzugang haben. Bewerben Sie "
+"sich mit Ihrem Gerät, um dies zu beheben."
 
 #: config/11ipv6-support
 msgid "Update LAN ranges automatically to include current IPv6 ranges"
