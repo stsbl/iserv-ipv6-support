@@ -4,6 +4,8 @@ Priority: standard
 Maintainer: Stadtteilschule Blankenese <repository@stsbl.de>
 Build-Depends: debhelper (>= 10)
 Build-Depends-Indep:
+  dh-sequence-python2,
+  dh-sequence-python3,
   dh-python,
   iserv-buildtools,
 Standards-Version: 4.4.0
