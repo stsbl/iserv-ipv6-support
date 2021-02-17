@@ -5,7 +5,7 @@ Maintainer: Stadtteilschule Blankenese <repository@stsbl.de>
 Build-Depends: debhelper (>= 10)
 Build-Depends-Indep:
   dh-python,
-  iserv3-dev,
+  iserv-buildtools,
 Standards-Version: 4.4.0
 Homepage: ${iserv:Homepage}
 
