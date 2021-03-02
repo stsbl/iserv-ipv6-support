@@ -80,7 +80,7 @@ print "updating network interface access list\n";
 
 my @if_acl;
 my %hosts = %active;
-my %all_hosts = IServ::DB::SelectAll_Hash "SELECT mac, ip FROM hosts";
+my %all_hosts = IServ::DB::SelectAll_Hash "SELECT mac, ip FROM hosts WHERE mac IS NOT NULL";
 
 while (my ($k, $row) = each %all_hosts)
 {
