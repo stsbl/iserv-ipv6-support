@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+
+exec run-parts --report /usr/lib/iserv/activation.d

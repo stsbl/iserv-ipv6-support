@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = "remove" ]
+then
+  dpkg-divert --package stsbl-iserv-ipv6-support --remove --rename \
+      --divert /usr/lib/iserv/activation.d/portal /usr/lib/iserv/activation
+fi
