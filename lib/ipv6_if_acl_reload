@@ -1,0 +1,3 @@
+#!/bin/bash
+payload="$(ferm --lines --noexec /var/lib/iserv/ipv6-support/ferm/if_acl.ferm | grep -- '-A ipv6_if_filter')"
+echo -e "*filter\n:ipv6_if_filter - [0:0]\n${payload}\nCOMMIT\n" | ip6tables-restore -n

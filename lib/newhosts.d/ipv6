@@ -10,7 +10,7 @@ use Stsbl::IServ::Net::IPv6;
 use Time::HiRes qw(gettimeofday tv_interval);
 
 my $fn_clients = "/var/lib/iserv/ipv6-support/dhcpy6d/clients.conf";
-
+my $fn_all_macs = "/var/lib/iserv/ipv6-support/ipset/all.d/ipv6-support";
 
 sub print_time($$)
 {
@@ -57,12 +57,12 @@ sub format_def(%)
 
 # dhcp
 {
+  my $moduletime = [gettimeofday];
   my @content;
   my %defs;
   my %hosts = IServ::DB::SelectAll_Hash
       "SELECT v6.id, h.Name, h.MAC, v6.ipv6_iid, v6.interface FROM ".
       "host_ipv6 v6 LEFT JOIN hosts h ON h.id = v6.host_id";
-  my $moduletime = [gettimeofday];
   my $out;
   my %prefixes;
   
@@ -129,4 +129,15 @@ sub format_def(%)
   }
 
   print_time("update dhcp", $moduletime);
+}
+
+# known MAC ipset
+{
+  my $moduletime = [gettimeofday];
+  my @macs = map { uc "$_\n" } IServ::DB::SelectCol "SELECT Mac FROM hosts ORDER BY Mac";
+
+  path($fn_all_macs)->spew_utf8(@macs);
+  system "chkipsets", "-r", "-q", "iserv-ipv6-support-all";
+
+  print_time("update known macs", $moduletime);
 }

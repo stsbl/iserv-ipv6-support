@@ -51,7 +51,14 @@ domain (ip6) {
       proto tcp dport (domain netbios-ssn microsoft-ds ipp 4447 4448) ACCEPT;
       proto udp dport (domain ntp netbios-ns netbios-dgm radius mdns) ACCEPT;
       # Only allow DHCPv6 server on interfaces where it is enabled in config
-      proto tcp dport (3128 3129 13128 13129) ACCEPT;
+      proto tcp dport (3128 3129 13128 13129) jump input_squid;
+    }
+
+    # Before allowing connections to Squid, check if correct network was used
+    # as source to prevent abuse of foreign networks by clients.
+    chain input_squid {
+      jump ipv6_if_filter;
+      ACCEPT;
     }
 
     chain inet_in {
@@ -70,8 +77,15 @@ domain (ip6) {
       @if $activation {
         # Allow packets to the internet from clients which have been granted
         # internet access.
-        mod set set iserv-ipv6-support-forward src ACCEPT;
+        mod set set iserv-ipv6-support-forward src jump activation_check;
       }
+    }
+
+    # Before allowing connections to internet, check if correct network was used
+    # as source to prevent abuse of foreign networks by clients.
+    chain activation_check {
+      jump ipv6_if_filter;
+      ACCEPT;
     }
   }
 
@@ -103,12 +117,12 @@ domain (ip6) {
       proto tcp dport http mod set set iserv-portal-always_direct6 dst ACCEPT;
 
       @if $activation {
-        # Redirect http requests from clients which have been granted internet 
+        # Redirect http requests from clients which have been granted internet
         # access to Squid.
         mod set set iserv-ipv6-support-forward src proto tcp dport http REDIRECT to-ports 3129;
         mod set set iserv-ipv6-support-proxyonly src proto tcp dport http REDIRECT to-ports 3129;
         # Redirect http requests from everyone else to Squid block honeypot
-        # instance. 
+        # instance.
         proto tcp dport http REDIRECT to-ports 13129;
       } @else {
         # Redirect http requests from everyone to regular Squid if activation
@@ -126,6 +140,11 @@ domain (ip6) {
       mod set set iserv-ipv6-support-proxyonly src RETURN;
       mod set set iserv-ipv6-support-forward src RETURN;
 
+      # Do not treat foreign traffic
+      daddr @ipfilter($IPS6) jump redirect_proxy_intercept;
+    }
+
+    chain redirect_proxy_intercept {
       proto tcp dport 3129 REDIRECT to-ports 13129;
       proto tcp dport 3128 REDIRECT to-ports 13128;
     }

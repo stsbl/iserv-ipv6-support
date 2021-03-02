@@ -1,0 +1,2 @@
+@include '/var/lib/iserv/ipv6-support/ferm/if_acl.ferm';
+

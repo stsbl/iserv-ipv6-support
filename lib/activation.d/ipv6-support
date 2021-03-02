@@ -4,12 +4,14 @@ use warnings;
 use strict;
 use IServ::Conf;
 use IServ::DB;
+use Net::IP;
 use Path::Tiny;
 
 undef %ENV;
 
 my $fn_forward = "/var/lib/iserv/ipv6-support/ipset/forward.d/ipv6-support";
 my $fn_proxyonly = "/var/lib/iserv/ipv6-support/ipset/proxyonly.d/ipv6-support";
+my $fn_if_acl = "/var/lib/iserv/ipv6-support/ferm/if_acl.ferm";
 
 $ENV{PATH} = '/usr/sbin:/usr/bin:/sbin:/bin';
 
@@ -21,9 +23,18 @@ IServ::DB::Do "UPDATE hosts SET override_route = NULL, override_until = NULL, ".
 IServ::DB::Do "UPDATE hosts SET deploy_until = NULL ".
   "WHERE deploy_until <= now()";
 
+# IPv6 hosts will be mapped to a "home interface" using their IPv4 address
+my %if_mapping;
+
+for (split /\n/, qx(netquery -p 'net/bits\tif'))
+{
+  my ($net, $if) = split /\t/, $_, 2;
+  push  @{ $if_mapping{$net} }, $if;
+}
+
 my %active = IServ::DB::SelectAll_Hash "
   -- add whitelisted hosts
-  SELECT mac, proxyenforce FROM hosts
+  SELECT mac, ip, proxyenforce FROM hosts
     WHERE (
       -- whitelisted in computer management
       internet
@@ -33,19 +44,19 @@ my %active = IServ::DB::SelectAll_Hash "
       OR deploy_until IS NOT NULL
     ) AND mac IS NOT NULL
   -- add users with inet_access privilege
-  UNION SELECT mac, proxyenforce FROM samba_user_last
+  UNION SELECT mac, ip, proxyenforce FROM samba_user_last
     JOIN users_priv USING (act)
     LEFT OUTER JOIN hosts USING (ip)
     WHERE privilege LIKE 'inet_access'
   -- add users with NACs
-  UNION SELECT mac, proxyenforce FROM nacs
+  UNION SELECT mac, ip, proxyenforce FROM nacs
     LEFT OUTER JOIN hosts USING (ip)
     WHERE ip IS NOT NULL
     AND timer IS NOT NULL
   -- remove hosts that have been blacklisted in the computer module
-  EXCEPT SELECT mac, proxyenforce FROM hosts WHERE NOT override_route
+  EXCEPT SELECT mac, ip, proxyenforce FROM hosts WHERE NOT override_route
   -- remove users with inet_block privilege
-  EXCEPT SELECT mac, proxyenforce FROM samba_user_last
+  EXCEPT SELECT mac, ip, proxyenforce FROM samba_user_last
     JOIN users_priv USING (act)
     LEFT OUTER JOIN hosts USING (ip)
     WHERE privilege LIKE 'inet_block'
@@ -64,3 +75,61 @@ system "chkipsets", "-r", "-q", "iserv-ipv6-support-forward";
 print "updating proxyonly ipset\n";
 path($fn_proxyonly)->spew_utf8(@proxyonly_macs);
 system "chkipsets", "-r", "-q", "iserv-ipv6-support-proxyonly";
+
+print "updating network interface access list\n";
+
+my @if_acl;
+my %hosts = %active;
+my %all_hosts = IServ::DB::SelectAll_Hash "SELECT mac, ip FROM hosts";
+
+while (my ($k, $row) = each %all_hosts)
+{
+  $hosts{$k} = $row;
+}
+
+for my $mac (sort keys %hosts)
+{
+  my $has_interface = 0;
+
+  for my $ip_range (sort keys %if_mapping)
+  {
+    my $net = Net::IP->new($ip_range);
+    my $ip = Net::IP->new($hosts{$mac}{ip});
+
+    if ($net->overlaps($ip) == $IP_B_IN_A_OVERLAP)
+    {
+      push @if_acl, "      interface $_ mod mac mac-source $mac RETURN;\n"
+          for @{ $if_mapping{$ip_range} };
+      $has_interface = 1;
+    }
+  }
+
+  # No interface found (remote network, must allow from everywhere
+  push @if_acl, "      mod mac mac-source $mac RETURN;\n";
+}
+
+# Do not reject unknown mac address, they will be handled by regular activation
+push @if_acl, "      mod set ! set iserv-ipv6-support-all src RETURN;\n";
+
+# Reject hosts without entry in chain
+push @if_acl, "      proto tcp REJECT reject-with tcp-reset;\n";
+push @if_acl, "      REJECT reject-with icmp6-adm-prohibited;\n";
+
+unshift @if_acl, <<EOT
+domain (ip6) {
+  table filter {
+    chain ipv6_if_filter {
+EOT
+;
+
+push @if_acl, <<EOT
+    }
+  }
+}
+
+EOT
+;
+
+path($fn_if_acl)->spew_utf8(@if_acl);
+
+system "/usr/lib/iserv/ipv6_if_acl_reload";

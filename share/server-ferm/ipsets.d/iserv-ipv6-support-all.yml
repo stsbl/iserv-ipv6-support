@@ -1,0 +1,6 @@
+Files: ~
+Directories:
+  - /var/lib/iserv/ipv6-support/ipset/all.d
+Type: "hash:mac"
+ExecFetch: ~
+
