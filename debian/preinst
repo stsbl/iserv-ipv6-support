@@ -3,7 +3,7 @@ set -e
 
 if [ "$1" = "install" ] || [ "$1" = "upgrade" ]
 then
-  # Directory possibly does not exists yet, we're in preinst
+  # Directories possibly does not exists yet, we're in preinst
   mkdir -p /usr/lib/iserv/activation.d
 
   dpkg-divert --package stsbl-iserv-ipv6-support --add --rename \
