@@ -134,7 +134,7 @@ sub format_def(%)
 # known MAC ipset
 {
   my $moduletime = [gettimeofday];
-  my @macs = map { uc "$_\n" } IServ::DB::SelectCol "SELECT Mac FROM hosts ORDER BY Mac";
+  my @macs = map { uc "$_\n" } IServ::DB::SelectCol "SELECT Mac FROM hosts WHERE Mac IS NOT NULL ORDER BY Mac";
 
   path($fn_all_macs)->spew_utf8(@macs);
   system "chkipsets", "-r", "-q", "iserv-ipv6-support-all";
