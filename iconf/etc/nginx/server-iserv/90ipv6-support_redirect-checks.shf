@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+
+. /usr/lib/iserv/cfg
+
+sed -r -E -e 's/^if \(\$redirect_checks = "([0-9]+)"\) \{$/if \($redirect_checks = "\111"\) {/' \
+    -e '/^set \$redirect_checks ""\;$/a\
+# Not ipv4 IP domain\
+if ($host != "ipv4.'"$Domain"'") {\
+    set $redirect_checks "${redirect_checks}1";\
+}\
+# Not ipv6 IP domain\
+if ($host != "ipv6.'"$Domain"'") {\
+    set $redirect_checks "${redirect_checks}1";\
+}'
