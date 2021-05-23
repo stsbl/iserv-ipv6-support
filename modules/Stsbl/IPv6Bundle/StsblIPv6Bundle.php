@@ -1,10 +1,12 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace Stsbl\IPv6Bundle;
 
 use IServ\CoreBundle\Routing\AutoloadRoutingBundleInterface;
 use Stsbl\IPv6Bundle\DependencyInjection\StsblIPv6Extension;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -16,7 +18,7 @@ class StsblIPv6Bundle extends Bundle implements AutoloadRoutingBundleInterface
     /**
      * {@inheritdoc}
      */
-    public function getContainerExtension(): StsblIPv6Extension
+    public function getContainerExtension(): ?ExtensionInterface
     {
         return new StsblIPv6Extension();
     }

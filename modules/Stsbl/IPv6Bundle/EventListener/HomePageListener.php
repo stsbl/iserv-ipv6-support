@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace Stsbl\IPv6Bundle\EventListener;
 
@@ -49,7 +50,6 @@ use Symfony\Contracts\Service\ServiceSubscriberInterface;
  */
 final class HomePageListener implements HomePageListenerInterface, ServiceSubscriberInterface
 {
-
     /**
      * @var BundleDetector
      */
@@ -61,7 +61,7 @@ final class HomePageListener implements HomePageListenerInterface, ServiceSubscr
     private $container;
 
     /**
-     * @var RegistryInterface
+     * @var \Doctrine\Persistence\ManagerRegistry
      */
     private $doctrine;
 
@@ -71,7 +71,7 @@ final class HomePageListener implements HomePageListenerInterface, ServiceSubscr
     private $request;
 
     /**
-     * @var Config
+     * @var \IServ\Library\Config\Config
      */
     private $config;
 
@@ -104,10 +104,10 @@ final class HomePageListener implements HomePageListenerInterface, ServiceSubscr
 
     public function __construct(
         BundleDetector $bundleDetector,
-        Config $config,
+        \IServ\Library\Config\Config $config,
         ContainerInterface $container,
         Network6 $network6,
-        RegistryInterface $doctrine,
+        \Doctrine\Persistence\ManagerRegistry $doctrine,
         RequestStack $requestStack,
         Shell $shell
     ) {
