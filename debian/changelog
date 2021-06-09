@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (21.06.09.2) testing; urgency=medium
+
+  * Added debhelper token
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Wed, 09 Jun 2021 23:14:17 +0200
+
 stsbl-iserv-ipv6-support (21.06.09.1) testing; urgency=medium
 
   * Turned source format to native
