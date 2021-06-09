@@ -1,3 +1,11 @@
+stsbl-iserv-ipv6-support (21.06.09.1) testing; urgency=medium
+
+  * Turned source format to native
+  * Rectored code and fixed deprecations
+  * Removed obsolete ferm hook
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Wed, 09 Jun 2021 23:00:32 +0200
+
 stsbl-iserv-ipv6-support (21.05.02.2) stable; urgency=medium
 
   * Re-release, now changes
