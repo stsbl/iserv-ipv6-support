@@ -32,35 +32,45 @@ for (split /\n/, qx(netquery -p 'net/bits\tif'))
   push  @{ $if_mapping{$net} }, $if;
 }
 
+# mac IS NULL can happen in a few cases if big actice query above returns
+# either IPv4 addresses which are not in host management or IPv6
+# addresses (e.g. when Samba connects using IPv6)
+#
+# TODO:
+# * Try to get IPv4 MAC using arping
+# * Add handling to replace IPv6 address in samba_user with IPv4 on the fly
+#   (very difficult)
 my %active = IServ::DB::SelectAll_Hash "
   -- add whitelisted hosts
-  SELECT mac, ip, proxyenforce FROM hosts
-    WHERE (
-      -- whitelisted in computer management
-      internet
-      -- whitelisted in the computer module
-      OR override_route
-      -- whitelisted by deploy
-      OR deploy_until IS NOT NULL
-    ) AND mac IS NOT NULL
-  -- add users with inet_access privilege
-  UNION SELECT mac, ip, proxyenforce FROM samba_user_last
-    JOIN users_priv USING (act)
-    LEFT OUTER JOIN hosts USING (ip)
-    WHERE privilege LIKE 'inet_access'
-  -- add users with NACs
-  UNION SELECT mac, ip, proxyenforce FROM nacs
-    LEFT OUTER JOIN hosts USING (ip)
-    WHERE ip IS NOT NULL
-    AND timer IS NOT NULL
-  -- remove hosts that have been blacklisted in the computer module
-  EXCEPT SELECT mac, ip, proxyenforce FROM hosts WHERE NOT override_route
-  -- remove users with inet_block privilege
-  EXCEPT SELECT mac, ip, proxyenforce FROM samba_user_last
-    JOIN users_priv USING (act)
-    LEFT OUTER JOIN hosts USING (ip)
-    WHERE privilege LIKE 'inet_block'
-  ORDER BY mac
+  SELECT mac, ip FROM (
+    SELECT mac, ip, proxyenforce FROM hosts
+      WHERE (
+      	-- whitelisted in computer management
+      	internet
+      	-- whitelisted in the computer module
+      	OR override_route
+      	-- whitelisted by deploy
+      	OR deploy_until IS NOT NULL
+      ) AND mac IS NOT NULL
+    -- add users with inet_access privilege
+    UNION SELECT mac, ip, proxyenforce FROM samba_user_last
+      JOIN users_priv USING (act)
+      LEFT OUTER JOIN hosts USING (ip)
+      WHERE privilege LIKE 'inet_access'
+    -- add users with NACs
+    UNION SELECT mac, ip, proxyenforce FROM nacs
+      LEFT OUTER JOIN hosts USING (ip)
+      WHERE ip IS NOT NULL
+      AND timer IS NOT NULL
+    -- remove hosts that have been blacklisted in the computer module
+    EXCEPT SELECT mac, ip, proxyenforce FROM hosts WHERE NOT override_route
+    -- remove users with inet_block privilege
+    EXCEPT SELECT mac, ip, proxyenforce FROM samba_user_last
+      JOIN users_priv USING (act)
+      LEFT OUTER JOIN hosts USING (ip)
+      WHERE privilege LIKE 'inet_block'
+    ORDER BY mac
+  ) AS r WHERE mac IS NOT NULL
   ";
 
 # update ipsets
@@ -89,6 +99,7 @@ while (my ($k, $row) = each %all_hosts)
 
 for my $mac (sort keys %hosts)
 {
+  next unless length $mac;
   my $has_interface = 0;
 
   for my $ip_range (sort keys %if_mapping)
