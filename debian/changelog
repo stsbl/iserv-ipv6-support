@@ -1,3 +1,10 @@
+stsbl-iserv-ipv6-support (21.06.21.1) stable; urgency=medium
+
+  * Added fix for breaking firewall when activation entries without mac
+    address are present
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Mon, 21 Jun 2021 03:01:29 +0200
+
 stsbl-iserv-ipv6-support (21.06.09.2) testing; urgency=medium
 
   * Added debhelper token
