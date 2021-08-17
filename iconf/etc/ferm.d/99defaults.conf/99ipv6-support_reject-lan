@@ -1,0 +1,19 @@
+# Rejects not yet matched traffic from LAN networks. On IPv4 we must this
+# restrict to directly attached IP ranges to avoid sending ICMP replies to the
+# internet which can be used for DDOS amplification in conjunction with
+# spoofed source addresses. With IPv6 on opposite, we're setting an individual
+# LAN for each server where it is safe that all LAN ranges will be routed to
+# local network.
+domain (ip6) {
+  table filter {
+    chain FORWARD {
+      proto tcp mod set set iserv-portal-lan6 src REJECT reject-with tcp-reset;
+      mod set set iserv-portal-lan6 src REJECT reject-with icmp6-adm-prohibited;
+    }
+    chain INPUT {
+      proto tcp mod set set iserv-portal-lan6 src REJECT reject-with tcp-reset;
+      mod set set iserv-portal-lan6 src REJECT reject-with icmp6-adm-prohibited;
+    }
+  }
+}
+
