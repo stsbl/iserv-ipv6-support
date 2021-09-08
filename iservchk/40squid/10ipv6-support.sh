@@ -7,6 +7,9 @@ MkDir 0750 proxy:proxy /var/spool/squid-block
 MkDir 0755 root:root /etc/squid-block
 Check /etc/squid-block/squid-block.conf
 Remove /etc/init.d/squid-block
+  
+Shell "unmask squid-block"
+  systemctl unmask squid-block
 
 Test 'squid block cache directory'
   [ -d /var/spool/squid-block/00 ]
@@ -75,6 +78,9 @@ Test "start squid-block"
 
 EOT
 else
-  echo "Stop squid-block"
-  echo
+  cat <<EOT
+Shell "mask squid-block"
+  systemctl mask squid-block
+
+EOT
 fi

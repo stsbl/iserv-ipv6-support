@@ -5,7 +5,6 @@ Maintainer: Stadtteilschule Blankenese <repository@stsbl.de>
 Build-Depends: debhelper-compat (= 13),
                dh-python,
                dh-sequence-iserv,
-               dh-sequence-python2,
                dh-sequence-python3,
                dh-sequence-stsbl
 Standards-Version: 4.5.0
@@ -25,7 +24,7 @@ Depends: ipv6ndpwatchd,
          libnetaddr-mac-perl,
          libpath-tiny-perl,
          libregexp-ipv6-perl,
-         python,
+         python3,
          sipcalc,
          stsbl-iserv-config-ipv6 (>= 20.02.26),
          stsbl-iserv-dns-ula (>= 19.11.15),
