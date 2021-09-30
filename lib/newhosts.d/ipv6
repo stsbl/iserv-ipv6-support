@@ -36,7 +36,7 @@ sub format_def(%)
   my (%def) = @_;
   my @ret;
 
-  push @ret, "[client_" . (delete $def{_id}) . "]";
+  push @ret, "[client_" . $def{hostname} . "]";
 
   for (sort keys %def)
   {
@@ -72,8 +72,6 @@ sub format_def(%)
     push @{ $prefixes{$nic} }, [$prefix, $length];
   }
 
-  my $id_counter = 0;
-
   for (sort keys %hosts)
   {
     my $mac = $hosts{$_}{mac};
@@ -83,7 +81,6 @@ sub format_def(%)
  
     unless (exists $defs{$mac})
     {
-      $defs{$mac}{_id} = ++$id_counter;
       $defs{$mac}{class} = "default_" . $hosts{$_}{interface};
       $defs{$mac}{hostname} = $hosts{$_}{name};
       $defs{$mac}{mac} = $mac;

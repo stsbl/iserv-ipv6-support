@@ -1,0 +1,6 @@
+Test "run newhosts once to regenerate clients.conf"
+  grep -qx 15ipv6-support_regenerate-clients-conf /var/lib/iserv/config/update.log
+  ---
+  /usr/lib/iserv/newhosts &&
+      echo 15ipv6-support_regenerate-clients-conf >> /var/lib/iserv/config/update.log
+
