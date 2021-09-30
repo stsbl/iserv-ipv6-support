@@ -8,8 +8,10 @@ MkDir 0755 root:root /etc/squid-block
 Check /etc/squid-block/squid-block.conf
 Remove /etc/init.d/squid-block
   
-Shell "unmask squid-block"
-  systemctl unmask squid-block
+Test "unmask squid-block"
+  ! [ "\$(systemctl is-enabled squid-block.service)" = "masked" ]
+  ---
+  systemctl -q unmask squid-block
 
 Test 'squid block cache directory'
   [ -d /var/spool/squid-block/00 ]
@@ -79,8 +81,12 @@ Test "start squid-block"
 EOT
 else
   cat <<EOT
-Shell "mask squid-block"
-  systemctl mask squid-block
+Test "mask squid-block"
+  [ "\$(systemctl is-enabled squid-block.service)" = "masked" ]
+  ---
+  # is probably a symlink to the real unit
+  rm -f /etc/systemd/system/squid-block.service
+  systemctl -q mask squid-block
 
 EOT
 fi
