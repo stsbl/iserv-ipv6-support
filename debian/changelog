@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (21.10.01.1) stable; urgency=medium
+
+  * Dhcpy6d clients.conf: Fixed compatibility with newer dhcpy6d version
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Fri, 01 Oct 2021 01:40:35 +0200
+
 stsbl-iserv-ipv6-support (21.09.30.1) stable; urgency=medium
 
   * Rewrote generate-ipv6-lula for Python 3, fixed squid-block handling
