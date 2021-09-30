@@ -1,3 +1,13 @@
+stsbl-iserv-ipv6-support (21.09.30.1) stable; urgency=medium
+
+  * Rewrote generate-ipv6-lula for Python 3, fixed squid-block handling
+    without LAN
+  * BIND: Fixed creating AAAA records when no IPv6 address is assigned to
+    interface
+  * Fixed masking squid-block
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Thu, 30 Sep 2021 22:31:00 +0200
+
 stsbl-iserv-ipv6-support (21.08.17.1) stable; urgency=medium
 
   * Added reject for LAN networks
