@@ -1,19 +1,33 @@
 #!/usr/bin/perl -CSDAL
 
+use warnings;
+use strict;
+use IServ::Conf;
+
 # exit early if pxe module isn't installed
 print <STDIN> and exit if not -f "/var/lib/dpkg/info/iserv-pxe.list";
 
 my $ips = {};
 
-for $row (split /\n/, qx(netquery6 -lu "nic\tip"))
+my @interfaces;
+if (grep $_ eq "*", @{ $conf->{DHCP} })
+{
+  @interfaces = split /\n/, qx(netquery6 -lu "nic");
+}
+else
+{
+  @interfaces = @{ $conf->{DHCP} };
+}
+
+for my $row (split /\n/, qx(netquery6 -lu "nic\tip"))
 {
   my ($nic, $ip) = split /\t/, $row;
-  $ips->{$nic} = $ip;
+  $ips->{$nic} = $ip if grep $_ eq $nic, @interfaces;
 }
 
 while (<STDIN>)
 {
-  if (/^\[class_default_(.+)\]$}/ and exists $ips->{$1})
+  if (/^\[class_default_(.+)\]$/ and exists $ips->{$1})
   {
     print;
     print "bootfiles = $1_ipxe $1_efi64 $1_efi32 $1_efibc\n";
@@ -23,7 +37,7 @@ while (<STDIN>)
 }
 
 print "\n";
-for $nic (sort keys %{ $ips })
+for my $nic (sort keys %{ $ips })
 {
   print "[bootfile_${nic}_ipxe]\n";
   print "user_class = iPXE\n";

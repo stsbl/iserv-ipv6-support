@@ -13,6 +13,7 @@ Homepage: ${iserv:Homepage}
 Package: stsbl-iserv-ipv6-support
 Architecture: all
 Depends: ipv6ndpwatchd,
+         iserv-config-file,
          iserv-portal,
          iserv-regdns,
          iserv-server-ferm (>= 19.05.14),
