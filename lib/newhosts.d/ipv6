@@ -36,7 +36,7 @@ sub format_def(%)
   my (%def) = @_;
   my @ret;
 
-  push @ret, "[client_" . $def{hostname} . "]";
+  push @ret, "[" . lc($def{hostname}) . "]";
 
   for (sort keys %def)
   {
@@ -109,8 +109,6 @@ sub format_def(%)
     }
 
     my @addresses;
-    push @addresses, join_prefix_and_suffix("fe80::", 64, $hosts{$_}{ipv6_iid}, 64);
-    push @addresses, join_prefix_and_suffix("fe80::", 64, "::" . as_ipv6_suffix $mac_converter, 64);
     push @{ $defs{$mac}{address} }, @addresses;
   }
 
