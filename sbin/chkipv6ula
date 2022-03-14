@@ -80,8 +80,8 @@ do
   echo "Using prefix $prefix for interface $net."
 
   suffix="$(/usr/lib/iserv/ipv6_iid "$net")"
-  address="$(echo "$prefix" | sed 's/::$//g'):${suffix}/64"
-  address="$(perl -mNet::IP -e 'print Net::IP::ip_compress_address shift, 6;' "$address")"
+  address="$(echo "$prefix" | sed 's/::$//g'):${suffix}"
+  address="$(perl -mNet::IP -e 'print Net::IP::ip_compress_address shift, 6;' "$address")/64"
 
   if ! netquery6 -i "$net" -u -f "ip/length" | grep -q "^$address$"
   then
