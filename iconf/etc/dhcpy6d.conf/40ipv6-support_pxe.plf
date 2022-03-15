@@ -3,9 +3,10 @@
 use warnings;
 use strict;
 use IServ::Conf;
+use IServ::InstallationChecker qw(IsInstalled);
 
 # exit early if pxe module isn't installed
-print <STDIN> and exit if not -f "/var/lib/dpkg/info/iserv-pxe.list";
+print <STDIN> and exit unless IsInstalled "iserv-pxe";
 
 my $ips = {};
 
@@ -27,7 +28,7 @@ for my $row (split /\n/, qx(netquery6 -lu "nic\tip"))
 
 while (<STDIN>)
 {
-  if (/^\[class_default_(.+)\]$/ and exists $ips->{$1})
+  if (/^\[class_(?:default|fixed)_(.+)\]$/ and exists $ips->{$1})
   {
     print;
     print "bootfiles = $1_ipxe $1_efi64 $1_efi32 $1_efibc\n";
