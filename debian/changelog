@@ -1,3 +1,9 @@
+stsbl-iserv-ipv6-support (22.03.15.1) stable; urgency=medium
+
+  * dhcpy6d: Added bootfiles to fixed classes
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Tue, 15 Mar 2022 02:36:49 +0100
+
 stsbl-iserv-ipv6-support (22.03.14.1) stable; urgency=medium
 
   * chkipv6ula: Fixed compression
