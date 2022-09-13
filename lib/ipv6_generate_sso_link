@@ -3,14 +3,22 @@
 use warnings;
 use strict;
 use File::Slurp::Unicode;
+use IServ::Act;
 use IServ::Conf;
+use IServ::DB;
+use IServ::Tools;
 use IServ::Valid;
 use JSON;
-use WWW::Curl::Easy;
+use LWP::UserAgent;
+use URI::Encode qw(uri_encode);
 
 my $username;
 my $timeout_connect = 30;
 my $timeout_request = 60;
+
+my $fn_oauth = "/var/lib/iserv/auth/oauth-client/client.json";
+my $fn_session_start_code_secret = "/var/lib/iserv/auth/session_start_code/api.secret";
+my $url_sso = sprintf "https://ipv4.%s%s?sso=", $conf->{Domain}, $conf->{PortalBasePath};
 
 if (defined $ENV{SUDO_USER})
 {
@@ -23,55 +31,54 @@ else
 
 undef %ENV;
 
-sub query($)
+sub get_uuid_for_act($)
 {
-  my ($username) = @_;
-  my $json = JSON->new->ascii->allow_nonref;
-  my $uri = "http://127.0.0.1/iserv/api/IServ/Sso/authenticate";
-  my $ct = "application/json";
-  my $m_ct = qr/^application\/json/;
+  my ($act) = @_;
 
-  my $fn_api_password = "/var/lib/iserv/pwd/ipv6sso.pwd";
-  my $api_user = "ipv6sso";
-  my $api_password = join "", read_file $fn_api_password;
-  chomp $api_password;
+  eval {
+    my %user = IServ::Tools::get_user($act);
 
-  # why curl instead of lwp?
-  # - curl supports connect timeout
-  # - curl has reliable request timeout
-  # - curl has proper error messages
-  # - curl does not enforce client cert
-  # - curl is supposed to be faster
-  # https://curl.haxx.se/libcurl/c/curl_easy_setopt.html
-
-  my $curl = WWW::Curl::Easy->new;
-  $curl->setopt(CURLOPT_CONNECTTIMEOUT, $timeout_connect);
-  $curl->setopt(CURLOPT_FAILONERROR, 1);
-  $curl->setopt(CURLOPT_HTTPHEADER, ["Content-Type: $ct"]);
-  $curl->setopt(CURLOPT_POST, 1);
-  $curl->setopt(CURLOPT_POSTFIELDS, $json->encode({username => $username}));
-  $curl->setopt(CURLOPT_TIMEOUT, $timeout_request);
-  $curl->setopt(CURLOPT_URL, $uri);
-  $curl->setopt(CURLOPT_USERPWD, "$api_user:$api_password");
-  $curl->setopt(CURLOPT_WRITEDATA, \my $res);
-  my $err = $curl->perform;
-
-  die "curl error $err: ".$curl->errbuf."\n" if $err;
-  my $res_ct = $curl->getinfo(CURLINFO_CONTENT_TYPE);
-  die "empty response\n" unless defined $res;
-  die "invalid content type: $res_ct\n$res\n" unless $res_ct =~ $m_ct;
-  die "invalid json hash:\n$res\n" unless $res =~ /^{.*}$/;
-  $json->decode($res);
+    return $user{"uuid"};
+  };
 }
 
-my $res = query $username;
+my $user_uuid = get_uuid_for_act $username;
 
-die "no return url given" if not defined $res->{return_to};
+my $json = JSON->new->ascii->allow_nonref;
+my $user_agent = LWP::UserAgent->new(timeout => 3, agent => 'sso_login ');  # Space behind agent appends default UA string
+my $oauth_client_config = $json->decode(scalar read_file $fn_oauth);
+my $session_start_code_secret = scalar read_file $fn_session_start_code_secret;
 
-my $return_to = $res->{return_to};
-my $host = sprintf "ipv4.%s", $conf->{Domain};
+my $iserv_auth_base_uri = 'http://127.0.0.1' . $conf->{'PortalBasePath'} . '/auth';
 
-$return_to =~ s/127.0.0.1/$host/g;
-$return_to =~ s/http:\/\//https:\/\//g;
+##
+# Fetches a session start code from iserv-auth
+#
+sub get_sso_token()
+{
+  my $url = $iserv_auth_base_uri . '/api/v1/user/' . $user_uuid . '/session-start-code';
+  my $response = $user_agent->post($url, {
+      client_id                 => $oauth_client_config->{publicId},
+      client_secret             => $oauth_client_config->{secret},
+      session_start_code_secret => $session_start_code_secret,
+      admin                     => 0
+  });
 
-print $return_to;
+  if ($response->code != 201)
+  {
+    die sprintf("unsuccessful api response. status code: %s\n", $response->code);
+  }
+
+  my $result = eval { $json->decode($response->content); };
+
+  if (!defined $result or $result eq '')
+  {
+    die "invalid json in api response\n";
+  }
+
+  return ($result->{id}, $result->{code});
+}
+
+my (undef, $sso_token) = get_sso_token();
+
+printf "%s%s:%s\n", $url_sso, uri_encode($username, { encode_reserved => 1 } ), uri_encode($sso_token, { encode_reserved => 1 } );
