@@ -38,26 +38,10 @@ use IServ\HostBundle\Service\HostManager;
  */
 class Network6
 {
-    /**
-     * @var Shell
-     */
-    private $shell;
-
-    /**
-     * @var HostManager
-     */
-    private $hostManager;
-
-    /**
-     * The constructor.
-     *
-     * @param Shell $shell
-     * @param HostManager $hostManager
-     */
-    public function __construct(Shell $shell, HostManager $hostManager)
-    {
-        $this->shell = $shell;
-        $this->hostManager = $hostManager;
+    public function __construct(
+        private readonly Shell $shell,
+        private readonly HostManager $hostManager,
+    ) {
     }
 
     /**

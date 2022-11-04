@@ -4,21 +4,20 @@ declare(strict_types=1);
 
 namespace Stsbl\IPv6Bundle\EventListener;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use IServ\ComputerRequestBundle\Entity\ComputerRequest;
 use IServ\CoreBundle\Event\HomePageEvent;
 use IServ\CoreBundle\EventListener\HomePageListenerInterface;
 use IServ\CoreBundle\Service\BundleDetector;
-use IServ\CoreBundle\Service\Config;
 use IServ\CoreBundle\Service\Shell;
-use IServ\CoreBundle\Service\Sudo as SudoService;
-use IServ\CoreBundle\Util\Sudo;
 use IServ\HostBundle\Entity\Host;
 use IServ\HostBundle\Util\Network;
-use Psr\Container\ContainerInterface;
+use IServ\Library\Config\Config;
+use IServ\Library\Sudo\SudoInterface;
 use Stsbl\IPv6Bundle\Util\Network6;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Contracts\Service\ServiceSubscriberInterface;
 
 /*
  * The MIT License
@@ -48,85 +47,48 @@ use Symfony\Contracts\Service\ServiceSubscriberInterface;
  * @author Felix Jacobi <felix.jacobi@stsbl.de>
  * @license MIT License <https://opensource.org/licenses/MIT>
  */
-final class HomePageListener implements HomePageListenerInterface, ServiceSubscriberInterface
+final class HomePageListener implements HomePageListenerInterface
 {
-    /**
-     * @var BundleDetector
-     */
-    private $bundleDetector;
+    private EntityManagerInterface $doctrine;
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     * @var \Doctrine\Persistence\ManagerRegistry
-     */
-    private $doctrine;
-
-    /**
-     * @var \Symfony\Component\HttpFoundation\Request
-     */
-    private $request;
-
-    /**
-     * @var \IServ\Library\Config\Config
-     */
-    private $config;
-
-    /**
-     * @var Network6
-     */
-    private $network6;
-
-    /**
-     * @var Shell
-     */
-    private $shell;
+    private ?Request $request = null;
 
     /**
      * Creates sso link to ipv4.mein-iserv.de
      */
     private function generateSsoLink(): ?string
     {
-        $this->container->get(SudoService::class);
-        $link = Sudo::shell_exec('sudo /usr/lib/iserv/ipv6_generate_sso_link');
+        /** @noinspection PhpUndefinedMethodInspection */
+        $link = $this->sudo->shell_exec('sudo /usr/lib/iserv/ipv6_generate_sso_link');
 
         // No output => no link available
         if (null === $link) {
             return  null;
         }
-        $link = \trim($link);
 
-        return $link;
+        return \trim($link);
     }
 
     public function __construct(
-        BundleDetector $bundleDetector,
-        \IServ\Library\Config\Config $config,
-        ContainerInterface $container,
-        Network6 $network6,
-        \Doctrine\Persistence\ManagerRegistry $doctrine,
+        private readonly BundleDetector $bundleDetector,
+        private readonly Config $config,
+        private readonly Network6 $network6,
         RequestStack $requestStack,
-        Shell $shell
+        ManagerRegistry $doctrine,
+        private readonly SudoInterface $sudo,
     ) {
-        $this->bundleDetector = $bundleDetector;
-        $this->config = $config;
-        $this->container = $container;
         $this->doctrine = $doctrine->getManager();
-        $this->network6 = $network6;
         $this->request = $requestStack->getCurrentRequest();
-        $this->shell = $shell;
     }
 
     public function onBuildHomePage(HomePageEvent $event): void
     {
-        $ip = $this->request->getClientIp();
+        $ip = $this->request?->getClientIp();
         $lan = $this->config->get('LAN');
 
         // Skip if ip is not in LAN, computer request module is not installed or activation is disabled
-        if (!Network::ipInLan($ip, $lan) ||
+        if (null === $ip ||
+            !Network::ipInLan($ip, $lan) ||
             !$this->config->get('Activation') ||
             !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) ||
             !$this->bundleDetector->isLoaded('IServComputerRequestBundle')) {
@@ -165,15 +127,5 @@ final class HomePageListener implements HomePageListenerInterface, ServiceSubscr
             ['action' => $computerRequest !== null ? 'pending' : 'request', 'link' => $ssoLink],
             -600 // keep in sync with \IServ\ComputerRequestBundle\EventListener::onBuildIDesk()!
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedServices(): array
-    {
-        return [
-            SudoService::class, // fetch sudo lazily to prevent eager util initialization!
-        ];
     }
 }
