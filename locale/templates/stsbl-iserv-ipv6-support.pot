@@ -1,17 +1,12 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# TRANSLATION CATALOG OF STSBL-ISERV-IPV6-SUPPORT.
+# Copyright (C) 2023 IServ GmbH
+# This file is distributed under the same license as the stsbl-iserv-ipv6-support package.
+# IServ GmbH <info@iserv.eu>, 2023.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-13 11:19+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Project-Id-Version: stsbl-iserv-ipv6-support\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -29,7 +24,7 @@ msgid ""
 "include all current IPv6 ranges of the server."
 msgstr ""
 
-#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
+#: modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
 msgid "Internet access requested"
 msgstr ""
 
@@ -37,15 +32,15 @@ msgstr ""
 msgid "Network"
 msgstr ""
 
-#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
+#: modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
 msgid "Reload start page to request internet access"
 msgstr ""
 
-#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
+#: modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
 msgid "Request internet access"
 msgstr ""
 
-#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
+#: modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
 msgid ""
 "This device is not registered in the host management which could result in "
 "you not being able to access the internet. Request your device to be added "
@@ -61,12 +56,12 @@ msgid ""
 "Update Regdns configuration automatically to include current IPv6 addresses"
 msgstr ""
 
-#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
+#: modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
 msgid ""
 "You have already filed a request to add this device to the host management."
 msgstr ""
 
-#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
+#: modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
 msgid ""
 "Your request for internet access has been granted, but your device isn't "
 "using the assigned IP address yet. Instruct your device to renew its DHCP "
