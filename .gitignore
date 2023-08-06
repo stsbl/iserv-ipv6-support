@@ -4,3 +4,7 @@ debian/stsbl-iserv-ipv6-support.debhelper.log
 debian/files
 debian/debhelper-build-stamp
 debian/*.debhelper
+/Makefile.iservmake
+/locale
+/system-locale
+!/locale/templates/*_misc.pot
