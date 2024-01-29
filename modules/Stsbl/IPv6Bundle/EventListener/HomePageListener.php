@@ -10,7 +10,6 @@ use IServ\ComputerRequestBundle\Entity\ComputerRequest;
 use IServ\CoreBundle\Event\HomePageEvent;
 use IServ\CoreBundle\EventListener\HomePageListenerInterface;
 use IServ\CoreBundle\Service\BundleDetector;
-use IServ\CoreBundle\Service\Shell;
 use IServ\HostBundle\Entity\Host;
 use IServ\HostBundle\Util\Network;
 use IServ\Library\Config\Config;
