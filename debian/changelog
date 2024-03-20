@@ -1,3 +1,14 @@
+stsbl-iserv-ipv6-support (24.03.20.1) stable; urgency=medium
+
+  * Renamed locale templates
+  * Renamed pot files
+  * Updated .gitignore
+  * Updated CS to PSR-12
+  * iservmake: Disabled Pootle download
+  * Added IPv6 firewall for incoming DoT
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Wed, 20 Mar 2024 21:35:51 +0100
+
 stsbl-iserv-ipv6-support (22.11.26.1) stable; urgency=medium
 
   * Squid: Listen on ::1 as well
