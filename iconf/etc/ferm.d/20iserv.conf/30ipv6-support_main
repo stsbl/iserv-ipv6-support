@@ -48,8 +48,8 @@ domain (ip6) {
     }
 
     chain input_lan {
-      proto tcp dport (domain netbios-ssn microsoft-ds ipp 4447 4448) ACCEPT;
-      proto udp dport (domain ntp netbios-ns netbios-dgm radius mdns) ACCEPT;
+      proto tcp dport (domain domain-s netbios-ssn microsoft-ds ipp 4447 4448) ACCEPT;
+      proto udp dport (domain domain-s ntp netbios-ns netbios-dgm radius mdns) ACCEPT;
       # Only allow DHCPv6 server on interfaces where it is enabled in config
       proto tcp dport (3128 3129 13128 13129) jump input_squid;
     }
