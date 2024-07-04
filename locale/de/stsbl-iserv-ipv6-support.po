@@ -34,7 +34,7 @@ msgstr ""
 "Bereiche automatisch aktualisieren, damit alle aktuellen Ipv6-Adressen "
 "enthalten sind."
 
-#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
+#: modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
 msgid "Internet access requested"
 msgstr "Internetzugang beantragt"
 
@@ -42,23 +42,23 @@ msgstr "Internetzugang beantragt"
 msgid "Network"
 msgstr "Netzwerk"
 
-#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
+#: modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
 msgid "Reload start page to request internet access"
 msgstr "Startseite neuladen um Internetzugang zu beantragen"
 
-#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
+#: modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
 msgid "Request internet access"
 msgstr "Internetzugang beantragen"
 
-#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
+#: modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
 msgid ""
 "This device is not registered in the host management which could result in "
 "you not being able to access the internet. Request your device to be added "
 "to remedy this."
 msgstr ""
-"Dieses Gerät ist nicht in der Geräteverwaltung registriert, was dazu "
-"führen könnte, dass Sie keinen Internetzugang haben. Bewerben Sie "
-"sich mit Ihrem Gerät, um dies zu beheben."
+"Dieses Gerät ist nicht in der Geräteverwaltung registriert, was dazu führen "
+"könnte, dass Sie keinen Internetzugang haben. Bewerben Sie sich mit Ihrem "
+"Gerät, um dies zu beheben."
 
 #: config/11ipv6-support
 msgid "Update LAN ranges automatically to include current IPv6 ranges"
@@ -73,12 +73,12 @@ msgstr ""
 "Regdns-Konfiguration zum Einschließen der akutellen IPv6-Adressen "
 "automatisch aktualisieren"
 
-#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
+#: modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
 msgid ""
 "You have already filed a request to add this device to the host management."
 msgstr "Sie haben bereits eine Bewerbung für dieses Gerät gestellt."
 
-#: /tmp/twig2php-stsbl-iserv-ipv6-support/modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
+#: modules/Stsbl/IPv6Bundle/Resources/views/device_request_homepage.html.twig.php
 msgid ""
 "Your request for internet access has been granted, but your device isn't "
 "using the assigned IP address yet. Instruct your device to renew its DHCP "
@@ -86,7 +86,7 @@ msgid ""
 "able to access the internet."
 msgstr ""
 "Ihre Anfrage auf Internetzugang wurde angenommen, aber Ihr Gerät benutzt "
-"noch nicht die Ihnen zugewiesene IP-Adresse. Fordern sie Ihr Gerät dazu "
-"auf sein DHCP-leasing zu erneuern; Falls Sie nicht wissen, wie Sie dies tun "
+"noch nicht die Ihnen zugewiesene IP-Adresse. Fordern sie Ihr Gerät dazu auf "
+"sein DHCP-leasing zu erneuern; Falls Sie nicht wissen, wie Sie dies tun "
 "können, starten Sie einfach Ihr Gerät neu. Sie sollten dann Zugang zum "
 "Internet haben."
