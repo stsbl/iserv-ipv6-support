@@ -4,11 +4,45 @@ use warnings;
 use strict;
 use IServ::Conf;
 use IServ::InstallationChecker qw(IsInstalled);
+use Socket qw(AF_INET6 inet_pton);
 
 # exit early if pxe module isn't installed
 print <STDIN> and exit unless IsInstalled "iserv-pxe";
 
 my $ips = {};
+my $config_dir = '/var/lib/iserv/config';
+my $state_dir = '/var/lib/iserv/config-ipv6/dhcpcd';
+my %delegation = map { chomp; $_ => 1 } grep { /\S/ } do {
+  my $file = "$config_dir/ipv6-delegation-interfaces.list";
+  -f $file ? do { open my $fh, '<', $file or die "$file: $!"; <$fh> } : ();
+};
+my ($upstream) = do {
+  my $file = "$config_dir/ipv6-dhcp-interfaces.list";
+  -f $file ? do { open my $fh, '<', $file or die "$file: $!"; grep { /\S/ } <$fh> } : ();
+};
+chomp $upstream if defined $upstream;
+my $sla_len = 62;
+if (defined $upstream && -f "$state_dir/$upstream.sla-len") {
+  open my $fh, '<', "$state_dir/$upstream.sla-len" or die "$state_dir/$upstream.sla-len: $!";
+  $sla_len = <$fh>; chomp $sla_len;
+}
+sub prefix_placeholder {
+  my ($address) = @_;
+  return $address unless defined $upstream && $sla_len =~ /^\d+$/ && $sla_len % 4 == 0;
+  return $address if $address =~ /^f[cd]/i;
+  my $packed = inet_pton(AF_INET6, $address) or return $address;
+  my $hex = unpack('H*', $packed);
+  my $offset = $sla_len / 4;
+  my $tail = substr($hex, $offset);
+  my $first_length = 4 - ($offset % 4);
+  my $suffix = substr($tail, 0, $first_length);
+  my @groups = (substr($tail, $first_length) =~ /(.{4})/g);
+  $suffix .= ':' . join(':', @groups) if @groups;
+  $suffix =~ s/(?:^|:)0000(?::0000)*(?=:|$)/::/;
+  $suffix =~ s/(^|:)0+([0-9a-f])/$1$2/g;
+  $suffix =~ s/:::+/::/g;
+  return '$prefix$' . $suffix;
+}
 
 my @interfaces;
 if (grep $_ eq "*", @{ $conf->{DHCP} })
@@ -20,10 +54,10 @@ else
   @interfaces = @{ $conf->{DHCP} };
 }
 
-for my $row (split /\n/, qx(netquery6 -lu "nic\tip"))
+for my $row (split /\n/, qx(netquery6 -gul "nic\tip"))
 {
   my ($nic, $ip) = split /\t/, $row;
-  $ips->{$nic} = $ip if grep $_ eq $nic, @interfaces;
+  $ips->{$nic} = $delegation{$nic} ? prefix_placeholder($ip) : $ip if grep $_ eq $nic, @interfaces;
 }
 
 while (<STDIN>)
