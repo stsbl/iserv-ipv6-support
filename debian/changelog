@@ -1,3 +1,11 @@
+stsbl-iserv-ipv6-support (26.08.26.1) stable; urgency=medium
+
+  * Updated locales
+  * Feat: use dynamic prefixes in PXE bootfile URLs
+  * Refactor: use configured prefix placeholder interface
+
+ -- Felix Jacobi <Felix@jacobi-hamburg.net>  Wed, 26 Aug 2026 23:23:26 +0200
+
 stsbl-iserv-ipv6-support (24.03.20.1) stable; urgency=medium
 
   * Renamed locale templates
