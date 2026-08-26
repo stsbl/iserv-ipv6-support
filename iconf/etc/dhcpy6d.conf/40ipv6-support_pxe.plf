@@ -9,6 +9,12 @@ use IServ::InstallationChecker qw(IsInstalled);
 print <STDIN> and exit unless IsInstalled "iserv-pxe";
 
 my $ips = {};
+sub prefix_placeholder {
+  my ($address) = @_;
+  my $placeholder = qx(/usr/lib/iserv/iserv-ipv6-prefix --placeholder $address);
+  chomp $placeholder;
+  return $placeholder || $address;
+}
 
 my @interfaces;
 if (grep $_ eq "*", @{ $conf->{DHCP} })
@@ -20,10 +26,10 @@ else
   @interfaces = @{ $conf->{DHCP} };
 }
 
-for my $row (split /\n/, qx(netquery6 -lu "nic\tip"))
+for my $row (split /\n/, qx(netquery6 -gul "nic\tip"))
 {
   my ($nic, $ip) = split /\t/, $row;
-  $ips->{$nic} = $ip if grep $_ eq $nic, @interfaces;
+  $ips->{$nic} = prefix_placeholder($ip) if grep $_ eq $nic, @interfaces;
 }
 
 while (<STDIN>)
