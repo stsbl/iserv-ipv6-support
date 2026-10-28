@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+[ "$IPV6CHDETECTD_PHASE" = prepare ] || exit 0
+/usr/lib/iserv/newhosts.d/ipv6

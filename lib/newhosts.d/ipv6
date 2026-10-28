@@ -119,8 +119,12 @@ sub format_def(%)
 
   if (write_file_if_modified $fn_clients, join "\n", @content)
   {
-    print "Restarting dhcp server ...\n";
-    system "systemctl", "try-restart", "dhcpy6d.service";
+    unless ($ENV{IPV6CHDETECTD_RUNNING})
+    {
+      print "Restarting dhcp server ...\n";
+      system "systemctl", "try-restart", "dhcpy6d.service"
+          and die "failed to restart dhcpy6d\n";
+    }
   }
 
   print_time("update dhcp", $moduletime);
@@ -132,7 +136,11 @@ sub format_def(%)
   my @macs = map { uc "$_\n" } IServ::DB::SelectCol "SELECT Mac FROM hosts WHERE Mac IS NOT NULL ORDER BY Mac";
 
   path($fn_all_macs)->spew_utf8(@macs);
-  system "chkipsets", "-r", "-q", "iserv-ipv6-support-all";
+  unless ($ENV{IPV6CHDETECTD_RUNNING})
+  {
+    system "chkipsets", "-r", "-q", "iserv-ipv6-support-all"
+        and die "failed to update IPv6 host ipsets\n";
+  }
 
   print_time("update known macs", $moduletime);
 }

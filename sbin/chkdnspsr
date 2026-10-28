@@ -1,26 +1,39 @@
 #!/bin/bash -e
+set -o pipefail
 
 . /usr/lib/iserv/cfg
 
-[ -z "$ExternalIPs" ] && exit 0
+[ -z "$ExternalIPs" ] && [ -z "$UpdateIPv6Regdns" ] && exit 0
 
 ERRORS=0
 
 DEFIF="$(. /usr/lib/iserv/ipv6_defif)"
 
-IPs="$(netquery6 -i "$DEFIF" -g "ip" | while read i
+query_status=0
+addresses=
+if [ -n "$DEFIF" ]; then
+  addresses="$(netquery6 -i "$DEFIF" -g "ip")" || query_status=$?
+fi
+# netquery6 returns 1 for a legitimate empty result; other failures must never
+# be interpreted as withdrawal of all addresses.
+if [ "$query_status" -gt 1 ]; then
+  exit "$query_status"
+fi
+IPs="$(printf '%s\n' "$addresses" | while read -r i
 do
+  [ -n "$i" ] || continue
   perl -e 'use Net::IP; print Net::IP::ip_expand_address "$ARGV[0]", 6;' "$i"
   echo
 done | sort)"
   
 CURIPs="$(dig +short ipv6.$Domain AAAA @ns.iserv.eu 2> /dev/null | while read i
 do
+  [ -n "$i" ] || continue
   perl -e 'use Net::IP; print Net::IP::ip_expand_address "$ARGV[0]", 6;' "$i"
   echo
 done | sort)"
 
-if ! [ -z "$IPs" ] && ! [ "$IPs" = "$CURIPs" ]
+if ! [ "$IPs" = "$CURIPs" ]
 then
   if ! [ "$1" = "-r" ]
   then

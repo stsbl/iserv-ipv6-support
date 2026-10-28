@@ -1,12 +1,5 @@
-if [ "$PHASE" = "post-up" ] && [ "$ADDRFAM" = "inet6" ]
-then
-  # Exclude interfaces treated by WIDE DHCPv6 client (will be handled by hook there)
-  if ! [ "$METHOD" = "manual" ] &&
-      ! grep -qx "$IFACE" /var/lib/iserv/config/ipv6-delegation-interfaces.list &&
-      ! grep -qx "$IFACE" /var/lib/iserv/config/ipv6-dhcp-interfaces.list
-  then
-    chklan6cfg || chklan6cfg -r
-    chkregdns6cfg || chkregdns6cfg -r
-  fi
+# Queue the settled interface state without blocking ifupdown.
+if [ "$PHASE" = post-up ] && [ "$ADDRFAM" = inet6 ]; then
+  ipv6chdetectd --notify || true
 fi
 

@@ -1,6 +1,3 @@
 #!/bin/sh
-
-chklan6cfg || chklan6cfg -r
-chkregdns6cfg || chkregdns6cfg -r
-
-true
+# Compatibility for old installations; work is serialized by the worker.
+ipv6chdetectd --notify || true

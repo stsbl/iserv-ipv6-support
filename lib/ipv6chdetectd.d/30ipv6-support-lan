@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+[ "$IPV6CHDETECTD_PHASE" = prepare ] || exit 0
+chklan6cfg -r
+chkregdns6cfg -r

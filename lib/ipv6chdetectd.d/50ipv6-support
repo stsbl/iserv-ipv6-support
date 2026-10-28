@@ -1,0 +1,76 @@
+#!/bin/bash
+set -e
+. /usr/lib/iserv/ipv6chdetectd-functions
+
+[ "$IPV6CHDETECTD_PHASE" = configure ] || exit 0
+lan_config()
+{
+  ipv6_config "$@"
+  ipv6_requires "$1" 30ipv6-support-lan
+}
+lan_watch()
+{
+  ipv6_watch "$@"
+  ipv6_requires "$1" 30ipv6-support-lan
+}
+
+if iservpkginstalled iserv-portal; then
+  if iservpkginstalled iserv-server-ferm; then
+    lan_config ferm.service restart /etc/ferm.d/20iserv.conf /etc/ferm.d/99defaults.conf
+    lan_watch ferm.service restart /var/lib/iserv/config-file/config.json
+    ipv6_validate ferm.service ferm --noexec /etc/ferm/ferm.conf
+    ipv6_action ferm.service /usr/lib/iserv/ipv6chdetectd-firewall
+    ipv6_watch @known-macs restart /var/lib/iserv/ipv6-support/ipset/all.d/ipv6-support
+    ipv6_action @known-macs chkipsets -r -q iserv-ipv6-support-all
+    ipv6_requires @known-macs 50ipv6-support-hosts
+  fi
+  if iservpkginstalled iserv-server-nginx; then
+    lan_config nginx.service reload /etc/nginx/server-iserv /etc/nginx/server-http-iserv /etc/nginx/sites-available/iserv
+    ipv6_validate nginx.service nginx -t
+  fi
+  if iservpkginstalled squid; then
+    lan_config squid.service reload /etc/squid/squid.conf
+    ipv6_validate squid.service squid -k parse
+    if ipv6_has_addresses; then
+      lan_config squid-block.service reload /etc/squid-block/squid-block.conf
+      ipv6_validate squid-block.service squid -k parse -f /etc/squid-block/squid-block.conf
+      ipv6_state squid-block.service start
+    else
+      ipv6_state squid-block.service stop
+    fi
+  fi
+  if iservpkginstalled iserv-server-bind; then
+    lan_config bind9.service reload /etc/bind/includes/acls.conf /etc/bind/named.conf.iserv /etc/bind/db.iserv.fallback /etc/bind/db.forward.fallback
+    nics=$(ipv6_query -gul nic)
+    while IFS= read -r nic; do
+      [[ "$nic" =~ ^[a-zA-Z0-9_.:-]+$ ]] || continue
+      lan_config bind9.service reload "/etc/bind/db.iserv.$nic" "/etc/bind/db.forward.$nic"
+    done < <(printf '%s\n' "$nics" | sort -u)
+    # Previously generated schema members must also lose obsolete addresses.
+    for target in /etc/bind/db.iserv.* /etc/bind/db.forward.*; do
+      case "$target" in *.dpkg-*|*.bak|*.orig|*~) continue;; esac
+      [ ! -f "$target" ] || lan_config bind9.service reload "$target"
+    done
+    ipv6_validate bind9.service named-checkconf
+  fi
+fi
+if iservpkginstalled iserv-wlan && iservpkginstalled iserv-server-freeradius; then
+  lan_config freeradius.service restart /etc/freeradius/3.0/clients.conf
+  ipv6_validate freeradius.service freeradius -C
+fi
+if iservpkginstalled iserv-docker-matrix; then
+  lan_config @matrix restart /etc/iserv/docker-matrix/homeserver.yaml
+  ipv6_action @matrix /usr/lib/iserv/ipv6chdetectd-matrix
+fi
+if iservpkginstalled iserv-server-samba-ad; then
+  lan_config samba-ad-dc.service restart /etc/samba/smb.conf
+  ipv6_validate samba-ad-dc.service testparm -s
+elif iservpkginstalled iserv-server-samba || iservpkginstalled iserv-server-samba-nt; then
+  lan_config smbd.service reload /etc/samba/smb.conf
+  ipv6_validate smbd.service testparm -s
+fi
+if iservpkginstalled iserv-regdns; then
+  lan_watch @regdns restart /var/lib/iserv/config-file/config.json
+  ipv6_action @regdns regdns
+  ipv6_always @protocol-dns chkdnspsr -r
+fi

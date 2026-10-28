@@ -24,13 +24,14 @@ USAGE
 exit 0 unless $conf->{UpdateIPv6Regdns};
 
 my @current = @{ $conf->{ExternalIPs} };
-exit 0 unless @current;
 
 my %seen;
 $seen{$_} = 1 for @current;
 
 my %old_ipv6 = map { $_ => 1 } grep /$Regexp::IPv6::IPv6_re/, @current;
-my %new_ipv6 = map { $_ => 1 } split "\n", qx(netquery6 -i "\$(. /usr/lib/iserv/ipv6_defif)" -gl ip);
+my $addresses = qx(netquery6 -i "\$(. /usr/lib/iserv/ipv6_defif)" -gl ip);
+die "netquery6 failed: $?\n" if $? != 0 and $? != 256;
+my %new_ipv6 = map { $_ => 1 } split "\n", $addresses;
 
 for (keys %new_ipv6)
 {
@@ -58,16 +59,20 @@ delete $seen{$_} for keys %old_ipv6;
 # fill new ips
 $seen{$_} = 1 for keys %new_ipv6;
 
-exit 0 unless keys %seen;
+exit 0 unless keys %seen or keys %old_ipv6;
 
 if ($opt{repair})
 {
   # build value for store_cfg
-  my $arg = '("'.join('" "', sort keys %seen).'")';
+  my $arg = '(' . join(' ', map { '"' . $_ . '"' } sort keys %seen) . ')';
   system "store_cfg_array", "/etc/iserv/config", "ExternalIPs", $arg
     and die "failed to write new config: $!\n";
-  system "/usr/lib/iserv/newconf";
-  system "regdns";
+  system "/usr/lib/iserv/newconf" and die "failed to generate configuration\n";
+  unless ($ENV{IPV6CHDETECTD_RUNNING})
+  {
+    system "ipv6chdetectd", "--notify" and die "failed to queue IPv6 configuration update\n";
+  }
+  system "regdns" and die "failed to update registered DNS\n" unless $ENV{IPV6CHDETECTD_RUNNING};
 } 
 else
 {

@@ -1,0 +1,7 @@
+#!/bin/sh
+set -e
+# Apply the bind-mounted configuration only to an existing, running container.
+# Do not run image imports, provisioning, or start a disabled Matrix instance.
+if [ "$(docker inspect --format '{{.State.Running}}' matrix 2>/dev/null)" = true ]; then
+  docker restart matrix
+fi

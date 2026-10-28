@@ -1,0 +1,32 @@
+use strict;
+use warnings;
+use Test::More;
+use File::Temp qw(tempdir);
+use File::Path qw(make_path);
+my $dir=tempdir(CLEANUP=>1);
+make_path("$dir/bin");
+sub write_file { my ($name,$text)=@_; open my $fh,'>',$name or die $!; print $fh $text; close $fh; }
+write_file("$dir/cfg", "Domain=example.test\nExternalIPs=(1.2.3.4)\nUpdateIPv6Regdns=1\n");
+write_file("$dir/bin/netquery6", "#!/bin/sh\nexit 0\n");
+write_file("$dir/bin/ipv6_defif", "#!/bin/sh\necho eth0\n");
+write_file("$dir/bin/dig", "#!/bin/sh\ncase \"\$*\" in *AAAA*) echo 2001:db8::1;; *) echo 1.2.3.4;; esac\n");
+write_file("$dir/bin/myip", "#!/bin/sh\necho 1.2.3.4\n");
+write_file("$dir/bin/perl", "#!/bin/sh\nprintf 2001:db8::1\n");
+write_file("$dir/bin/regdns", "#!/bin/sh\necho \"\$*\" >> '$dir/log'\n");
+chmod 0755,glob "$dir/bin/*";
+open my $fh,'<','sbin/chkdnspsr' or die $!;
+my $source=do {local $/; <$fh>};
+$source =~ s{/usr/lib/iserv/cfg}{$dir/cfg}g;
+$source =~ s{/usr/lib/iserv/ipv6_defif}{$dir/bin/ipv6_defif}g;
+write_file("$dir/script",$source);
+local $ENV{PATH}="$dir/bin:$ENV{PATH}";
+is(system('/bin/bash',"$dir/script",'-r'),0,'protocol DNS update handles removal of last IPv6 address');
+my $log='';
+if (open my $result,'<',"$dir/log") { $log=do {local $/; <$result>}; }
+like($log,qr/^-d ipv6\.example\.test\. AAAA$/m,'obsolete protocol AAAA record is removed');
+unlike($log,qr/^-a /m,'no nonexistent replacement address is published');
+unlink "$dir/log";
+write_file("$dir/bin/netquery6", "#!/bin/sh\nexit 2\n");
+isnt(system('/bin/bash',"$dir/script",'-r'),0,'actual address query failure is reported');
+ok(!-e "$dir/log",'query failure does not delete or publish DNS records');
+done_testing;
