@@ -1,5 +1,6 @@
 stsbl-iserv-ipv6-support (26.10.28.1) UNRELEASED; urgency=medium
 
+  * Exclude dated BIND backups from zone regeneration.
   * Update portal LAN consumers and reload affected daemons through hooks.
   * Serialize LAN/DNS updates and defer host-derived DHCPv6 restarts.
 

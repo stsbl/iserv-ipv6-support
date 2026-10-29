@@ -49,6 +49,12 @@ if iservpkginstalled iserv-portal; then
     # Previously generated schema members must also lose obsolete addresses.
     for target in /etc/bind/db.iserv.* /etc/bind/db.forward.*; do
       case "$target" in *.dpkg-*|*.bak|*.orig|*~) continue;; esac
+      # IServ date-suffixed backups also match the iconf schema regex.
+      # Current interfaces are registered explicitly above, including names
+      # containing dates; historical snapshots must never be regenerated.
+      if [[ "$target" =~ \.[0-9]{8}(-[0-9]+)?($|\.) ]]; then
+        continue
+      fi
       [ ! -f "$target" ] || lan_config bind9.service reload "$target"
     done
     ipv6_validate bind9.service named-checkconf
